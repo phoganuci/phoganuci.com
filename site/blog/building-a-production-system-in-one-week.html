@@ -104,9 +104,9 @@
 
     <section class="section">
       <span class="section-label fade-in">01</span>
-      <h2 class="section-heading fade-in">What Got Built</h2>
+      <h2 class="section-heading fade-in">The Experiment</h2>
 
-      <p class="section-prose fade-in"><a href="https://eat-or-yeet.com">Eat or Yeet</a>: a recipe platform with auth, search, ratings, image processing, and a full recipe lifecycle. SSR frontend, Go API, Postgres, Redis, Typesense. Running on a single $14/month node.</p>
+      <p class="section-prose fade-in">The goal was to see how fast one engineer with AI could stand up production-grade infrastructure. The result: <a href="https://eat-or-yeet.com">Eat or Yeet</a>, a recipe platform with auth, search, ratings, image processing, and a full recipe lifecycle. SSR frontend, Go API, Postgres, Redis, Typesense. Running on a single $14/month node.</p>
 
       <div class="diagram-container fade-in">
         <pre class="mermaid">
@@ -193,7 +193,6 @@ graph TB
 
         <h3 class="fade-in">Monorepo: Two Build Systems, One Repo</h3>
         <div class="fade-in">
-          <p>The entire project lives in a single repository: Go backend, React frontend, Protobuf definitions, Helm charts, Pulumi infrastructure, and CI workflows. The alternatives were clear: separate repos per service (coordination overhead, version matrix hell) or a monorepo with a unified build system. The monorepo won, but with a twist: two build systems, not one.</p>
           <p>Go services use <strong>Bazel</strong>. TypeScript frontend uses <strong>Nx</strong>. The conventional wisdom says pick one. Bazel can build JavaScript. Nx has plugins for everything. But each tool is dominant in its own ecosystem for a reason. Bazel's <code>rules_go</code> and <code>nogo</code> integration is unmatched for Go: hermetic builds, compile-time static analysis, and zero-config cross-compilation. Nx's understanding of TypeScript project references, its computation cache, and its integration with Vite, Storybook, and Playwright is unmatched for frontend. Forcing one tool to do both means fighting the tool instead of shipping.</p>
           <p>The conventional knock on this approach is setup complexity. Gazelle for BUILD file generation, <code>gopackagesdriver</code> to bridge gopls and Bazel for IDE support, Starlark macros for custom rules, Nx workspace config, TypeScript project references. With AI, that complexity flattens to near-zero. Claude generated the initial BUILD files, configured Gazelle's resolve directives, wired up <code>gopackagesdriver</code>, scaffolded the Nx workspace config with project references, and built the cross-build-system CI wiring. The setup that would normally take days of reading docs and fighting config took hours.</p>
           <p>The hard part of a monorepo with generated code (proto types, mocks, instrumented wrappers) is telling the build system where things live. Gazelle can't see Bazel-generated outputs, so it needs explicit resolve directives. A handful of regex rules in the root <code>BUILD.bazel</code> handles every generated import pattern:</p>
@@ -1315,9 +1314,9 @@ export class ArgoCd extends pulumi.ComponentResource {
 
       <div class="post-body">
         <div class="fade-in">
-          <p>4+ months of traditional output, one week, one person. The plan was wrong 7 times. The system was designed to catch that.</p>
+          <p>4+ months of traditional output, one week, one person.</p>
           <p>AI didn't replace judgment. It removed the mechanical ceiling. Architecture, trade-offs, verification, still human. Volume, consistency, documentation. That's where AI changes the equation.</p>
-          <p>The future isn't AI replacing engineers. It's one engineer with AI doing what used to require a team and a quarter.</p>
+          <p>This isn't the future. It's now. One engineer with AI doing what used to require a team and a quarter.</p>
         </div>
       </div>
     </section>
