@@ -1,0 +1,6 @@
+name: phoganuci-com
+runtime:
+  name: nodejs
+  options:
+    typescript: true
+description: Infrastructure for phoganuci.com — S3, CloudFront, ACM, Route53

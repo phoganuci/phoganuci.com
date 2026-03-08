@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Patrick Hogan</title>
+  <meta name="description" content="Engineering blog: AI-assisted development, infrastructure as code, production systems.">
+  <meta name="author" content="Patrick Hogan">
+  <link rel="canonical" href="https://phoganuci.com/blog">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Blog — Patrick Hogan">
+  <meta property="og:description" content="Engineering blog: AI-assisted development, infrastructure as code, production systems.">
+  <meta property="og:url" content="https://phoganuci.com/blog">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/style.css">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Patrick Hogan's Blog",
+    "url": "https://phoganuci.com/blog",
+    "description": "Engineering blog: AI-assisted development, infrastructure as code, production systems.",
+    "author": {
+      "@type": "Person",
+      "name": "Patrick Hogan"
+    },
+    "blogPost": [
+      {
+        "@type": "BlogPosting",
+        "headline": "The Seven-Day Production System",
+        "datePublished": "2026-03-08",
+        "url": "https://phoganuci.com/blog/building-a-production-system-in-one-week",
+        "description": "One engineer, 153 commits, and a complete production system with Go, React, and Kubernetes."
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    .blog-hero {
+      position: relative;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10rem 2rem 6rem;
+      overflow: hidden;
+    }
+
+    .blog-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 50%, var(--bg-deep) 100%);
+      z-index: 0;
+    }
+
+    .blog-hero-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .blog-hero-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .blog-hero-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      object-fit: cover;
+    }
+
+    .blog-hero-inner h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-gold) 50%, var(--accent-teal) 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 6s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .blog-hero-inner .subtitle {
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      color: var(--text-tertiary);
+      line-height: 1.7;
+      max-width: 420px;
+    }
+
+    /* Featured post — full-width immersive card */
+    .featured-section {
+      max-width: var(--max-width);
+      margin: -2rem auto 0;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 3;
+    }
+
+    .featured-card {
+      display: block;
+      position: relative;
+      background: linear-gradient(145deg, var(--bg-surface) 0%, var(--bg-mid) 100%);
+      border: 1px solid var(--border-med);
+      border-radius: 20px;
+      padding: 3.5rem 4rem;
+      transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease),
+                  border-color 0.5s var(--ease);
+      color: inherit;
+      overflow: hidden;
+    }
+
+    .featured-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-gold), var(--accent-teal), var(--accent-rose), var(--accent-blue));
+      opacity: 0.6;
+      transition: opacity 0.4s var(--ease);
+    }
+
+    .featured-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: radial-gradient(ellipse at 80% 20%, rgba(232,168,73,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .featured-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5),
+                  0 0 80px rgba(232, 168, 73, 0.06);
+      border-color: rgba(232, 168, 73, 0.25);
+      color: inherit;
+    }
+
+    .featured-card:hover::before {
+      opacity: 1;
+    }
+
+    .featured-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-gold);
+      margin-bottom: 1.25rem;
+    }
+
+    .featured-title {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .featured-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+    }
+
+    .featured-meta .dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+    }
+
+    .featured-excerpt {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      max-width: 600px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Horizontal stat strip */
+    .stat-strip {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+      max-width: 560px;
+    }
+
+    .stat-strip-item {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      text-align: center;
+      border-right: 1px solid var(--border-subtle);
+      background: rgba(255,255,255,0.015);
+    }
+
+    .stat-strip-item:last-child {
+      border-right: none;
+    }
+
+    .stat-strip-value {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .stat-strip-label {
+      display: block;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-top: 0.25rem;
+    }
+
+    /* Read arrow */
+    .featured-read {
+      position: absolute;
+      right: 3.5rem;
+      bottom: 3.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      transition: color 0.3s var(--ease);
+    }
+
+    .featured-read svg {
+      transition: transform 0.3s var(--ease);
+    }
+
+    .featured-card:hover .featured-read {
+      color: var(--accent-gold);
+    }
+
+    .featured-card:hover .featured-read svg {
+      transform: translateX(4px);
+    }
+
+    /* More coming */
+    .blog-more {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 5rem 2rem 2rem;
+      text-align: center;
+    }
+
+    .blog-more p {
+      font-size: 0.9rem;
+      color: var(--text-tertiary);
+    }
+
+    @media (max-width: 768px) {
+      .blog-hero {
+        min-height: 45vh;
+        padding: 8rem 1.5rem 4rem;
+      }
+
+      .featured-section {
+        padding: 0 1.5rem;
+      }
+
+      .featured-card {
+        padding: 2rem 2rem 5rem;
+      }
+
+      .featured-read {
+        right: 2rem;
+        bottom: 2rem;
+      }
+
+      .stat-strip {
+        flex-wrap: wrap;
+      }
+
+      .stat-strip-item {
+        flex: 1 1 45%;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .stat-strip-item:nth-child(2) {
+        border-right: none;
+      }
+
+      .stat-strip-item:nth-last-child(-n+2) {
+        border-bottom: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .blog-hero {
+        padding: 6rem 1rem 3rem;
+      }
+
+      .featured-section {
+        padding: 0 1rem;
+      }
+
+      .featured-card {
+        padding: 1.5rem 1.5rem 4.5rem;
+      }
+
+      .featured-read {
+        right: 1.5rem;
+        bottom: 1.5rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blog-hero-canvas { display: none; }
+      .blog-hero-inner h1 {
+        animation: none;
+        background-position: 0% 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">@phoganuci</a>
+      <div class="nav-links">
+        <a href="index.html">Blog</a>
+        <a href="https://github.com/phoganuci" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <section class="blog-hero">
+      <canvas class="blog-hero-canvas" id="blogCanvas"></canvas>
+      <div class="blog-hero-inner fade-in">
+        <img src="../assets/profile.jpeg" alt="Patrick Hogan" class="blog-hero-avatar">
+        <h1>Writing</h1>
+        <p class="subtitle">Case studies and technical deep dives. Engineer-to-engineer.</p>
+      </div>
+    </section>
+
+    <div class="featured-section fade-in">
+      <a href="building-a-production-system-in-one-week.html" class="featured-card">
+        <div class="featured-eyebrow">Case Study</div>
+        <h2 class="featured-title">A Production System<br>in One Week</h2>
+        <div class="featured-meta">
+          <time>March 8, 2026</time>
+          <span class="dot"></span>
+          <span>18 min read</span>
+        </div>
+        <p class="featured-excerpt">Go backend, React frontend, Kubernetes infrastructure, full CI/CD. One engineer with AI, from zero to production on a $14/month node.</p>
+        <div class="stat-strip">
+          <div class="stat-strip-item">
+            <span class="stat-strip-value">153</span>
+            <span class="stat-strip-label">Commits</span>
+          </div>
+          <div class="stat-strip-item">
+            <span class="stat-strip-value">96K</span>
+            <span class="stat-strip-label">Lines</span>
+          </div>
+          <div class="stat-strip-item">
+            <span class="stat-strip-value">134</span>
+            <span class="stat-strip-label">Change Docs</span>
+          </div>
+          <div class="stat-strip-item">
+            <span class="stat-strip-value">$14</span>
+            <span class="stat-strip-label">Per Month</span>
+          </div>
+        </div>
+        <div class="featured-read">
+          Read <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+    </div>
+
+    <div class="blog-more fade-in">
+      <p>More posts coming soon.</p>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>Patrick Hogan &middot; 2026</p>
+  </footer>
+
+  <script>
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) nav.classList.add('nav-scrolled');
+      else nav.classList.remove('nav-scrolled');
+    }, { passive: true });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Canvas — particles + nebula
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      (function() {
+        const canvas = document.getElementById('blogCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const PARTICLE_COUNT = 35;
+        const CONNECTION_DIST = 140;
+        let particles = [], nebulaBlobs = [];
+
+        const colors = [
+          { r: 232, g: 168, b: 73 },
+          { r: 78, g: 205, b: 196 },
+          { r: 232, g: 93, b: 117 },
+          { r: 123, g: 147, b: 219 },
+        ];
+
+        function resize() {
+          const rect = canvas.parentElement.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = rect.width * dpr;
+          canvas.height = rect.height * dpr;
+          canvas.style.width = rect.width + 'px';
+          canvas.style.height = rect.height + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          init(rect.width, rect.height);
+        }
+
+        function init(w, h) {
+          particles = [];
+          nebulaBlobs = [];
+          for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const c = colors[Math.floor(Math.random() * colors.length)];
+            particles.push({
+              x: Math.random() * w, y: Math.random() * h,
+              vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.18,
+              radius: Math.random() * 1.5 + 0.5, color: c,
+              alpha: Math.random() * 0.5 + 0.3, phase: Math.random() * Math.PI * 2,
+            });
+          }
+          for (let i = 0; i < 5; i++) {
+            const c = colors[i % colors.length];
+            nebulaBlobs.push({
+              x: Math.random() * w, y: Math.random() * h,
+              radius: Math.random() * 200 + 100, color: c,
+              alpha: Math.random() * 0.04 + 0.02,
+              vx: (Math.random() - 0.5) * 0.05, vy: (Math.random() - 0.5) * 0.04,
+              phase: Math.random() * Math.PI * 2
+            });
+          }
+        }
+
+        function draw() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const w = canvas.width / dpr, h = canvas.height / dpr;
+          ctx.clearRect(0, 0, w, h);
+
+          for (const b of nebulaBlobs) {
+            b.x += b.vx; b.y += b.vy; b.phase += 0.002;
+            if (b.x < -b.radius) b.x = w + b.radius;
+            if (b.x > w + b.radius) b.x = -b.radius;
+            if (b.y < -b.radius) b.y = h + b.radius;
+            if (b.y > h + b.radius) b.y = -b.radius;
+            const a = b.alpha + Math.sin(b.phase) * 0.008;
+            const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.radius);
+            g.addColorStop(0, `rgba(${b.color.r},${b.color.g},${b.color.b},${a})`);
+            g.addColorStop(0.5, `rgba(${b.color.r},${b.color.g},${b.color.b},${a * 0.3})`);
+            g.addColorStop(1, `rgba(${b.color.r},${b.color.g},${b.color.b},0)`);
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2); ctx.fill();
+          }
+
+          for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+              const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+              const d = Math.sqrt(dx * dx + dy * dy);
+              if (d < CONNECTION_DIST) {
+                ctx.strokeStyle = `rgba(255,255,255,${(1 - d / CONNECTION_DIST) * 0.1})`;
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          for (const p of particles) {
+            p.x += p.vx; p.y += p.vy; p.phase += 0.015;
+            if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+            if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+            const pulse = 0.7 + Math.sin(p.phase) * 0.3;
+            ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${p.alpha * pulse})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+          }
+
+          requestAnimationFrame(draw);
+        }
+
+        resize(); draw();
+        let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(resize, 150); });
+      })();
+    }
+  </script>
+
+</body>
+</html>
