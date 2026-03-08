@@ -17,7 +17,8 @@
       "Bash(pulumi destroy:*)",
       "Bash(sed:*)",
       "Bash(AWS_PROFILE=phoganuci-com aws cloudfront:*)",
-      "Bash(AWS_PROFILE=phoganuci-com aws s3:*)"
+      "Bash(AWS_PROFILE=phoganuci-com aws s3:*)",
+      "Bash(just deploy:*)"
     ]
   }
 }
