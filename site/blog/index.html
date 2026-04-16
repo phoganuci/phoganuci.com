@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog — Patrick Hogan</title>
-  <meta name="description" content="Engineering blog: AI-assisted development, infrastructure as code, production systems.">
+  <title>Blog | Patrick Hogan</title>
+  <meta name="description" content="Engineering essays and RFCs: AI-assisted development, agent governance, and production systems.">
   <meta name="author" content="Patrick Hogan">
   <link rel="canonical" href="https://phoganuci.com/blog">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Blog — Patrick Hogan">
-  <meta property="og:description" content="Engineering blog: AI-assisted development, infrastructure as code, production systems.">
+  <meta property="og:title" content="Blog | Patrick Hogan">
+  <meta property="og:description" content="Engineering essays and RFCs: AI-assisted development, agent governance, and production systems.">
   <meta property="og:url" content="https://phoganuci.com/blog">
   <meta property="og:image" content="https://phoganuci.com/assets/profile.jpeg">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Blog — Patrick Hogan">
-  <meta name="twitter:description" content="Engineering blog: AI-assisted development, infrastructure as code, production systems.">
+  <meta name="twitter:title" content="Blog | Patrick Hogan">
+  <meta name="twitter:description" content="Engineering essays and RFCs: AI-assisted development, agent governance, and production systems.">
   <meta name="twitter:image" content="https://phoganuci.com/assets/profile.jpeg">
 
   <!-- Fonts -->
@@ -35,7 +35,7 @@
     "@type": "Blog",
     "name": "Patrick Hogan's Blog",
     "url": "https://phoganuci.com/blog",
-    "description": "Engineering blog: AI-assisted development, infrastructure as code, production systems.",
+    "description": "Engineering essays and RFCs: AI-assisted development, agent governance, and production systems.",
     "author": {
       "@type": "Person",
       "name": "Patrick Hogan"
@@ -43,10 +43,10 @@
     "blogPost": [
       {
         "@type": "BlogPosting",
-        "headline": "Building a Production System in One Week",
-        "datePublished": "2026-03-08",
-        "url": "https://phoganuci.com/blog/building-a-production-system-in-one-week",
-        "description": "One engineer, 153 commits, and a complete production system with Go, React, and Kubernetes."
+        "headline": "Agent Governance for Claude Code",
+        "datePublished": "2026-04-16",
+        "url": "https://phoganuci.com/blog/agent-governance-for-claude-code",
+        "description": "A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl."
       }
     ]
   }
@@ -122,7 +122,7 @@
       max-width: 420px;
     }
 
-    /* Featured post — full-width immersive card */
+    /* Featured post: full-width immersive card */
     .featured-section {
       max-width: var(--max-width);
       margin: -2rem auto 0;
@@ -387,47 +387,29 @@
       <div class="blog-hero-inner fade-in">
         <img src="../assets/profile.jpeg" alt="Patrick Hogan" class="blog-hero-avatar">
         <h1>Writing</h1>
-        <p class="subtitle">Case studies and technical deep dives.</p>
+        <p class="subtitle">Essays and RFCs on AI-assisted development and engineering systems.</p>
       </div>
     </section>
 
     <div class="featured-section fade-in">
-      <a href="building-a-production-system-in-one-week.html" class="featured-card">
-        <div class="featured-eyebrow">Case Study</div>
-        <h2 class="featured-title">Building a Production<br>System in One Week</h2>
+      <a href="agent-governance-for-claude-code.html" class="featured-card">
+        <div class="featured-eyebrow">RFC</div>
+        <h2 class="featured-title">Agent Governance<br>for Claude Code</h2>
         <div class="featured-meta">
-          <time>March 8, 2026</time>
+          <time>April 16, 2026</time>
           <span class="dot"></span>
-          <span>18 min read</span>
+          <span>12 min read</span>
         </div>
-        <p class="featured-excerpt">Go backend, React frontend, Kubernetes infrastructure, full CI/CD. One engineer with AI, from zero to production on a $14/month node.</p>
-        <div class="stat-strip">
-          <div class="stat-strip-item">
-            <span class="stat-strip-value">153</span>
-            <span class="stat-strip-label">Commits</span>
-          </div>
-          <div class="stat-strip-item">
-            <span class="stat-strip-value">96K</span>
-            <span class="stat-strip-label">Lines</span>
-          </div>
-          <div class="stat-strip-item">
-            <span class="stat-strip-value">134</span>
-            <span class="stat-strip-label">Change Docs</span>
-          </div>
-          <div class="stat-strip-item">
-            <span class="stat-strip-value">$14</span>
-            <span class="stat-strip-label">Per Month</span>
-          </div>
-        </div>
+        <p class="featured-excerpt">A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.</p>
         <div class="featured-read">
           Read <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </div>
       </a>
     </div>
 
-    <div class="blog-more fade-in">
-      <p>More posts coming soon.</p>
-    </div>
+    <section class="blog-more fade-in">
+      <p>More essays are on the way.</p>
+    </section>
 
   </main>
 
@@ -452,7 +434,7 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // Canvas — particles + nebula
+    // Canvas: particles + nebula
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       (function() {
         const canvas = document.getElementById('blogCanvas');

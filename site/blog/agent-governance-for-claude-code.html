@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Governance for Claude Code | Patrick Hogan</title>
+  <meta name="description" content="A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.">
+  <meta name="author" content="Patrick Hogan">
+  <link rel="canonical" href="https://phoganuci.com/blog/agent-governance-for-claude-code">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Agent Governance for Claude Code">
+  <meta property="og:description" content="A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.">
+  <meta property="og:url" content="https://phoganuci.com/blog/agent-governance-for-claude-code">
+  <meta property="og:image" content="https://phoganuci.com/assets/profile.jpeg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Agent Governance for Claude Code">
+  <meta name="twitter:description" content="A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.">
+  <meta name="twitter:image" content="https://phoganuci.com/assets/profile.jpeg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/style.css">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Agent Governance for Claude Code",
+    "description": "A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.",
+    "datePublished": "2026-04-16",
+    "author": {
+      "@type": "Person",
+      "name": "Patrick Hogan"
+    },
+    "url": "https://phoganuci.com/blog/agent-governance-for-claude-code",
+    "publisher": {
+      "@type": "Person",
+      "name": "Patrick Hogan"
+    }
+  }
+  </script>
+
+  <style>
+    .doc-types td:first-child {
+      width: 24%;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .doc-types td:last-child {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .rfc-callout {
+      background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(78,205,196,0.04) 100%);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-teal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .rfc-callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .inline-contract {
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 640px) {
+      .doc-types td:first-child,
+      .doc-types td:last-child {
+        display: block;
+        width: 100%;
+      }
+
+      .doc-types td:first-child {
+        padding-bottom: 0.15rem;
+      }
+
+      .doc-types td:last-child {
+        padding-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">@phoganuci</a>
+      <div class="nav-links">
+        <a href="index.html">Blog</a>
+        <a href="https://github.com/phoganuci" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="post-header post-header--hero">
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
+    <div class="hero-content">
+      <span class="section-label fade-in">RFC</span>
+      <h1 class="fade-in">Agent Governance<br>for Claude Code</h1>
+      <p class="hero-subtitle fade-in">A shared process layer for routing work, freezing plans, and extending repos without leaking local truth into the global layer.</p>
+      <div class="post-meta fade-in">
+        <span>April 16, 2026</span>
+        <span class="separator"></span>
+        <span>12 min read</span>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </header>
+
+  <article>
+    <div class="post-body">
+
+      <h2 class="fade-in">Foreword</h2>
+
+      <p class="fade-in">Unstructured Claude Code setups fail in the same way. A single <code>CLAUDE.md</code> turns into a junk drawer. Commands stop being entrypoints and start hiding policy. Repo-specific rules leak into the shared install. Planning artifacts drift across chat, scratch files, and commits until nobody can tell which spec actually governed the work.</p>
+
+      <p class="fade-in">This system is not a warehouse of agents. It governs authority, routing, lifecycle, extension boundaries, and durable rationale. The right name is <code>agent-governance</code>.</p>
+
+      <div class="rfc-callout fade-in">
+        <p><strong>Thesis:</strong> the global layer owns process; the repo layer owns local truth. Everything in this RFC follows from that boundary.</p>
+      </div>
+
+      <h2 class="fade-in">The Failure Mode</h2>
+
+      <p class="fade-in">Claude Code guidance usually collapses into one of two bad states. Either everything gets stuffed into one root memory file, or the docs tree grows without types, boundaries, or ownership rules. Both look fine for a week. Both rot quickly.</p>
+
+      <p class="fade-in">The consequences are predictable. Shared process guidance gets mixed with repo-local conventions. Repos either copy-paste the same workflow docs everywhere or invent incompatible local shapes. Commands drift into hidden behavior. Plans lose fidelity as work moves from discussion to implementation. Durable rationale disappears into chat history instead of landing in a record that later contributors can actually find.</p>
+
+      <blockquote class="fade-in">
+        <p>The problem is not missing documentation. The problem is missing governance over where process lives, where repo truth lives, and how work moves between the two.</p>
+      </blockquote>
+
+      <h2 class="fade-in">Two Layers, One Rule</h2>
+
+      <p class="fade-in">The system is deliberately split in two. The global layer in <code>~/.claude</code> owns the reusable process contract. The active repository owns the local architecture, domain rules, facts, references, and commands that only make sense inside that codebase.</p>
+
+<pre class="fade-in file-tree"><code>~/.claude/
+├── <span class="tree-file">CLAUDE.md</span>                        <span class="tree-comment"># Root contract, authority order, phase boundaries</span>
+├── <span class="tree-dir">commands/</span>                         <span class="tree-comment"># Reserved shared agent-* entrypoints</span>
+└── <span class="tree-dir">docs/agents/</span>                      <span class="tree-comment"># Shared process docs</span>
+    ├── <span class="tree-dir">router/</span>
+    ├── <span class="tree-dir">policy/</span>
+    ├── <span class="tree-dir">playbooks/</span>
+    ├── <span class="tree-dir">reference/</span>
+    ├── <span class="tree-dir">index/</span>
+    └── <span class="tree-dir">decisions/</span>
+
+repo/
+├── <span class="tree-file">CLAUDE.md</span>                        <span class="tree-comment"># Repo entrypoint, composed with shared framework docs</span>
+├── <span class="tree-dir">.claude/commands/</span>                 <span class="tree-comment"># Repo-local ergonomic commands</span>
+└── <span class="tree-dir">docs/agents/</span>                      <span class="tree-comment"># Repo-local truth</span>
+    ├── <span class="tree-dir">router/</span>
+    ├── <span class="tree-dir">policy/</span>
+    ├── <span class="tree-dir">playbooks/</span>
+    ├── <span class="tree-dir">reference/</span>
+    ├── <span class="tree-dir">index/</span>
+    └── <span class="tree-dir">decisions/</span></code></pre>
+
+      <div class="diagram-container fade-in">
+        <pre class="mermaid">
+graph TD
+  subgraph GLOBAL["Global Layer: ~/.claude"]
+    direction TB
+    ROOT["CLAUDE.md<br/>root contract"]:::routing
+    SHARED["router / policy / playbooks<br/>reference / index / decisions"]:::api
+    CMDS["agent-* commands"]:::data
+    ROOT --> SHARED
+    ROOT --> CMDS
+  end
+
+  subgraph REPO["Repo Layer: active repository"]
+    direction TB
+    RROOT["./CLAUDE.md"]:::routing
+    LOCAL["docs/agents/*<br/>repo-local truth"]:::api
+    RCMDS[".claude/commands/*"]:::data
+    RROOT --> LOCAL
+    RROOT --> RCMDS
+  end
+
+  GLOBAL --> REPO
+
+  classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
+  classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
+  classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
+        </pre>
+      </div>
+
+      <p class="fade-in">That split matters because it keeps the framework reusable. Shared docs explain how work should happen. Repo docs explain how this codebase works. The framework never becomes a dumping ground for somebody else's frontend rules, deployment topology, or naming conventions.</p>
+
+<pre class="fade-in inline-contract"><code>The framework owns:
+- ~/.claude/CLAUDE.md
+- ~/.claude/commands/*.md
+- shared workflow, review, verification, and documentation discipline
+
+The repo owns:
+- ./CLAUDE.md
+- docs/agents/...
+- .claude/commands/*.md
+- repo-specific architecture, references, facts, and Decision Records</code></pre>
+
+      <h2 class="fade-in">Typed Docs, Not A Blob</h2>
+
+      <p class="fade-in">The second governance rule is that the docs tree stays typed. Each directory exists for one job. That sounds bureaucratic until you have to extend the system without rereading the whole corpus every time.</p>
+
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Doc Type</th>
+            <th>Job</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>router/</code></td>
+            <td>Decides what to load next once the task is partially understood.</td>
+          </tr>
+          <tr>
+            <td><code>policy/</code></td>
+            <td>Defines binding rules that the agent is expected to follow.</td>
+          </tr>
+          <tr>
+            <td><code>playbooks/</code></td>
+            <td>Provides ordered workflows such as adoption, verification, and change closeout.</td>
+          </tr>
+          <tr>
+            <td><code>reference/</code></td>
+            <td>Holds deeper material once the agent has already narrowed the problem.</td>
+          </tr>
+          <tr>
+            <td><code>index/</code></td>
+            <td>Gives stable names to recurring tasks and route lookups.</td>
+          </tr>
+          <tr>
+            <td><code>decisions/</code></td>
+            <td>Preserves durable rationale so later contributors do not have to rediscover it.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="fade-in">Commands stay thin for the same reason. A shared command should load canonical docs in the right order. It should not smuggle repo-specific policy into the global layer. That is why the shared namespace stays reserved as <code>agent-*</code>, and repo-local commands are expected to use repo-specific names rather than shadowing framework commands.</p>
+
+      <h2 class="fade-in">Change Bundles: Plans That Survive Context Loss</h2>
+
+      <p class="fade-in">The most important operational contract in the system is the change bundle. Non-trivial work gets one durable home under <code>docs/changes/NNNNNNN-short-name/</code>. The bundle spans planning, implementation, validation, and closeout, even when the work takes multiple commits.</p>
+
+      <p class="fade-in">That matters because the bundle is the handoff boundary between planning and execution, especially in agent-first workflows. The failure is rarely that code is missing. The failure is that the next agent cannot recover why existing code is the way it is, which constraints still matter, and which plan actually governs the change. Without a bundle, that rationale gets split across chat, scratch files, commit messages, and the implementer's memory. With a bundle, the frozen plan, active state, validation evidence, and approved deviations all have one durable home.</p>
+
+<pre class="fade-in file-tree"><code>docs/changes/0000123-agent-governance/
+├── <span class="tree-file">plan.md</span>                         <span class="tree-comment"># Exact approved plan, frozen after open</span>
+├── <span class="tree-file">state.yaml</span>                      <span class="tree-comment"># Presence marks the bundle as active</span>
+├── <span class="tree-file">verification.md</span>                 <span class="tree-comment"># Validation evidence, kept after closeout</span>
+├── <span class="tree-file">review.md</span>                       <span class="tree-comment"># Optional, for approved deviations or learnings</span>
+└── <span class="tree-file">notes.md</span>                        <span class="tree-comment"># Optional scratchpad, removed at close</span></code></pre>
+
+      <p class="fade-in">One detail makes this model much better than a loose planning note: there is no repo-level active index. Open work is discovered from bundle-local <code>state.yaml</code> files. Final numbering is assigned only when the bundle is materialized, not while the agent is still planning.</p>
+
+<pre class="fade-in"><code class="language-yaml">change: 0000123
+slug: agent-governance
+status: open
+created_at: 2026-04-16T00:00:00Z
+updated_at: 2026-04-16T00:00:00Z</code></pre>
+
+      <blockquote class="fade-in">
+        <p>It must include enough concrete context that an implementer with no prior repo knowledge can execute the phase without spelunking.</p>
+      </blockquote>
+
+      <p class="fade-in">That sentence is the quality bar. A plan is not allowed to hand-wave. If the implementer needs file paths, signatures, schema shapes, migration steps, or acceptance checks, the plan needs to inline them. "Discover during implementation" is a planning failure.</p>
+
+      <div class="diagram-container fade-in">
+        <pre class="mermaid">
+graph LR
+  PLAN["/agent-plan-change<br/>exact approved plan<br/>no writes"]:::routing --> OPEN["/agent-open-change<br/>materialize bundle<br/>bundle-only commit"]:::api
+  OPEN --> IMPLEMENT["implementation<br/>one or many commits"]:::data
+  IMPLEMENT --> CLOSE["/agent-close-change<br/>remove transient state<br/>keep durable record"]:::routing
+
+  classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
+  classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
+  classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
+        </pre>
+      </div>
+
+      <ul class="fade-in">
+        <li><code>/agent-plan-change</code> produces the exact approved plan in chat and stays non-mutating.</li>
+        <li><code>/agent-open-change</code> rescans <code>docs/changes/</code>, chooses the final number, writes <code>plan.md</code>, <code>state.yaml</code>, and <code>verification.md</code>, then creates the initial bundle-only commit.</li>
+        <li><code>/agent-close-change</code> removes transient artifacts such as <code>state.yaml</code> and <code>notes.md</code> while leaving the durable record behind.</li>
+      </ul>
+
+      <h2 class="fade-in">How Repos Grow Without Polluting The Global Layer</h2>
+
+      <p class="fade-in">Extension is split into three distinct workflows because adoption, capability growth, and durable rationale are not the same operation. That split is governance, not ornament.</p>
+
+      <ul class="fade-in">
+        <li><code>/agent-adopt</code> onboards a repo to the framework for the first time.</li>
+        <li><code>/agent-add-capability</code> adds repo-local policy, playbooks, references, task entries, or repo commands.</li>
+        <li><code>/agent-record-decision</code> provisions a Decision Record when the repo needs a durable explanation for a lasting boundary.</li>
+      </ul>
+
+      <p class="fade-in">A concrete example helps. If a repo wants frontend best practices, the framework should define the process for adding that capability, but the actual frontend rules still belong inside the repo.</p>
+
+<pre class="fade-in file-tree"><code>repo/
+├── <span class="tree-file">CLAUDE.md</span>
+├── <span class="tree-dir">.claude/commands/</span>
+│   └── <span class="tree-file">frontend-change.md</span>
+└── <span class="tree-dir">docs/agents/</span>
+    ├── <span class="tree-dir">router/</span>
+    │   └── <span class="tree-file">capability-map.md</span>
+    ├── <span class="tree-dir">policy/</span>
+    │   └── <span class="tree-file">frontend.md</span>
+    ├── <span class="tree-dir">reference/</span>
+    │   └── <span class="tree-file">frontend-best-practices.md</span>
+    └── <span class="tree-dir">decisions/</span>
+        └── <span class="tree-file">DR-002-frontend-boundaries.md</span></code></pre>
+
+      <p class="fade-in">That is the right split of responsibility. The framework governs how a repo adds the capability. The repo owns the actual content of the capability.</p>
+
+      <h2 class="fade-in">Enterprise Distribution Without Global Sprawl</h2>
+
+      <p class="fade-in">The enterprise distribution model applies the same boundary at company scale. For one engineer, installing files directly into <code>~/.claude</code> is fine. At company scale, that path should be treated as the runtime surface, not the authored source of truth.</p>
+
+<pre class="fade-in file-tree"><code>~/.claude/
+├── <span class="tree-file">CLAUDE.md</span>                        <span class="tree-comment"># Thin shim to the active installed version</span>
+├── <span class="tree-dir">commands/</span>                         <span class="tree-comment"># Thin agent-* command shims</span>
+└── <span class="tree-dir">vendor/company-framework/</span>
+    ├── <span class="tree-file">current</span>                      <span class="tree-comment"># Active version pointer</span>
+    ├── <span class="tree-dir">1.4.0/</span>                        <span class="tree-comment"># Previous release</span>
+    └── <span class="tree-dir">1.5.0/</span>                        <span class="tree-comment"># Current release payload</span></code></pre>
+
+      <p class="fade-in">That distinction buys three things immediately: version visibility, fast rollback, and a clean separation between the runtime install and the authored framework source. Repos still own repo-local truth. The shared layer just arrives through a managed install surface instead of manual copying.</p>
+
+      <ul class="fade-in">
+        <li>enterprise policy memory for hard company-wide instructions</li>
+        <li>managed settings for enforced permissions and configuration</li>
+        <li>a user install in <code>~/.claude</code> for the shared framework runtime</li>
+        <li>repo-local docs and commands for project behavior</li>
+      </ul>
+
+      <p class="fade-in">For a broad internal rollout, the distribution mechanism should look more like a product than a setup note.</p>
+
+<pre class="fade-in"><code class="language-bash">company-claude install
+company-claude update
+company-claude doctor
+company-claude adopt-repo</code></pre>
+
+      <p class="fade-in">That installer or manager should install the chosen framework version, flip the active shim target, verify the effective runtime surface, and optionally bootstrap the minimum repo-local adoption files. MCP can augment that with dynamic company services later, but it should not be the primary distribution vehicle for the core process docs.</p>
+
+      <h2 class="fade-in">Tradeoffs</h2>
+
+      <p class="fade-in">This design is not free. It introduces more files than a single monolithic memory document. Authors need to learn the difference between router, policy, playbooks, references, indexes, and decisions. Non-trivial work now has explicit open and close steps instead of a vague planning note plus some luck.</p>
+
+      <p class="fade-in">Those costs are worth paying because they buy auditability, a clean Plan Mode story, and a sustainable extension path. The system scales from one repo to many repos, then from one user install to an enterprise rollout, without changing the core boundary: process stays shared, truth stays local.</p>
+
+      <h2 class="fade-in">What An Implementer Does Next</h2>
+
+      <ol class="fade-in">
+        <li>Install the shared framework in <code>~/.claude</code> as the process layer.</li>
+        <li>Adopt the target repo with a minimal local shape: repo <code>CLAUDE.md</code>, repo <code>docs/agents/</code>, and optional repo commands.</li>
+        <li>Use <code>/agent-plan-change</code> for any non-trivial implementation work.</li>
+        <li>Materialize the approved plan with <code>/agent-open-change</code> before touching code or evergreen docs.</li>
+        <li>Keep validation evidence inside the bundle while work proceeds, then run <code>/agent-close-change</code> to remove transient state and preserve the durable record.</li>
+        <li>Use <code>/agent-add-capability</code> when the repo grows, and <code>/agent-record-decision</code> when the repo needs durable rationale for a lasting choice.</li>
+      </ol>
+
+      <p class="fade-in">That is the utility of the model. A human can understand it quickly, and an implementer with zero context can execute it without spelunking through old chats or reverse-engineering somebody else's memory layout.</p>
+
+    </div>
+  </article>
+
+  <footer class="footer">
+    <p>Patrick Hogan &middot; 2026</p>
+  </footer>
+
+  <!-- Mermaid -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#1E2130',
+        primaryColor: '#5C3E14',
+        primaryTextColor: '#FFFFFF',
+        primaryBorderColor: '#E8A849',
+        secondaryColor: '#1B3D3A',
+        secondaryTextColor: '#FFFFFF',
+        secondaryBorderColor: '#4ECDC4',
+        tertiaryColor: '#2A3054',
+        tertiaryTextColor: '#FFFFFF',
+        tertiaryBorderColor: '#7B93DB',
+        lineColor: '#555',
+        fontSize: '14px'
+      }
+    });
+  </script>
+
+  <script>
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) nav.classList.add('nav-scrolled');
+      else nav.classList.remove('nav-scrolled');
+    }, { passive: true });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      (function() {
+        const canvas = document.getElementById('heroCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const PARTICLE_COUNT = 35;
+        const CONNECTION_DIST = 140;
+        let particles = [], nebulaBlobs = [];
+        const colors = [
+          { r: 232, g: 168, b: 73 },
+          { r: 78, g: 205, b: 196 },
+          { r: 232, g: 93, b: 117 },
+          { r: 123, g: 147, b: 219 },
+        ];
+
+        function resize() {
+          const rect = canvas.parentElement.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = rect.width * dpr;
+          canvas.height = rect.height * dpr;
+          canvas.style.width = rect.width + 'px';
+          canvas.style.height = rect.height + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          init(rect.width, rect.height);
+        }
+
+        function init(w, h) {
+          particles = [];
+          nebulaBlobs = [];
+          for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const c = colors[Math.floor(Math.random() * colors.length)];
+            particles.push({
+              x: Math.random() * w, y: Math.random() * h,
+              vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.18,
+              radius: Math.random() * 1.5 + 0.5, color: c,
+              alpha: Math.random() * 0.5 + 0.3, phase: Math.random() * Math.PI * 2,
+            });
+          }
+          for (let i = 0; i < 5; i++) {
+            const c = colors[i % colors.length];
+            nebulaBlobs.push({
+              x: Math.random() * w, y: Math.random() * h,
+              radius: Math.random() * 200 + 100, color: c,
+              alpha: Math.random() * 0.04 + 0.02,
+              vx: (Math.random() - 0.5) * 0.05, vy: (Math.random() - 0.5) * 0.04,
+              phase: Math.random() * Math.PI * 2
+            });
+          }
+        }
+
+        function draw() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const w = canvas.width / dpr, h = canvas.height / dpr;
+          ctx.clearRect(0, 0, w, h);
+
+          for (const b of nebulaBlobs) {
+            b.x += b.vx; b.y += b.vy; b.phase += 0.002;
+            if (b.x < -b.radius) b.x = w + b.radius;
+            if (b.x > w + b.radius) b.x = -b.radius;
+            if (b.y < -b.radius) b.y = h + b.radius;
+            if (b.y > h + b.radius) b.y = -b.radius;
+            const a = b.alpha + Math.sin(b.phase) * 0.008;
+            const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.radius);
+            g.addColorStop(0, `rgba(${b.color.r},${b.color.g},${b.color.b},${a})`);
+            g.addColorStop(0.5, `rgba(${b.color.r},${b.color.g},${b.color.b},${a * 0.3})`);
+            g.addColorStop(1, `rgba(${b.color.r},${b.color.g},${b.color.b},0)`);
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2); ctx.fill();
+          }
+
+          for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+              const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+              const d = Math.sqrt(dx * dx + dy * dy);
+              if (d < CONNECTION_DIST) {
+                ctx.strokeStyle = `rgba(255,255,255,${(1 - d / CONNECTION_DIST) * 0.1})`;
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          for (const p of particles) {
+            p.x += p.vx; p.y += p.vy; p.phase += 0.015;
+            if (p.x < 0) p.x = w;
+            if (p.x > w) p.x = 0;
+            if (p.y < 0) p.y = h;
+            if (p.y > h) p.y = 0;
+            const pulse = 0.7 + Math.sin(p.phase) * 0.3;
+            ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${p.alpha * pulse})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+          }
+
+          requestAnimationFrame(draw);
+        }
+
+        resize();
+        draw();
+
+        let timeoutId;
+        window.addEventListener('resize', () => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(resize, 150);
+        });
+      })();
+    }
+  </script>
+
+</body>
+</html>

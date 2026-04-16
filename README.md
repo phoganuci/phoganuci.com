@@ -55,7 +55,7 @@ See `infra/` for the full Pulumi program.
 
 ## Posts
 
-- [Building a Production System in One Week](/blog/building-a-production-system-in-one-week)
+- [Agent Governance for Claude Code](/blog/agent-governance-for-claude-code)
 - Enterprise Spin-Up Checklist (coming soon)
 - How This Blog is Hosted (coming soon)
 - Clickops is in Trouble (coming soon)
