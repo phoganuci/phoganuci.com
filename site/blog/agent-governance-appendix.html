@@ -355,73 +355,6 @@ Load these docs in order:
 Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
       </details>
 
-      <details>
-        <summary>commands/agent-audit-eng.md <span class="file-desc">Engineering audit</span></summary>
-<pre><code class="language-markdown">---
-description: Run the framework engineering audit workflow.
----
-
-Load these docs in order:
-1. `$CLAUDE_HOME/docs/agents/reference/review-triggers.md`
-2. `$CLAUDE_HOME/docs/agents/reference/review-dimensions.md`
-3. `$CLAUDE_HOME/docs/agents/reference/review-gates.md`
-4. `$CLAUDE_HOME/docs/agents/policy/core.md`
-5. `$CLAUDE_HOME/docs/agents/policy/agent-workflow.md`
-6. `$CLAUDE_HOME/docs/agents/reference/audit-eng.md`
-7. `$CLAUDE_HOME/docs/agents/playbooks/review.md`
-
-Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
-      </details>
-
-      <details>
-        <summary>commands/agent-audit-design.md <span class="file-desc">Design audit</span></summary>
-<pre><code class="language-markdown">---
-description: Run the framework design audit workflow.
----
-
-Load these docs in order:
-1. `$CLAUDE_HOME/docs/agents/reference/review-triggers.md`
-2. `$CLAUDE_HOME/docs/agents/reference/review-dimensions.md`
-3. `$CLAUDE_HOME/docs/agents/reference/review-gates.md`
-4. `$CLAUDE_HOME/docs/agents/policy/agent-workflow.md`
-5. `$CLAUDE_HOME/docs/agents/reference/audit-design.md`
-
-Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
-      </details>
-
-      <details>
-        <summary>commands/agent-audit-pm.md <span class="file-desc">Product/spec audit</span></summary>
-<pre><code class="language-markdown">---
-description: Run the framework product/spec audit workflow.
----
-
-Load these docs in order:
-1. `$CLAUDE_HOME/docs/agents/reference/review-triggers.md`
-2. `$CLAUDE_HOME/docs/agents/reference/review-dimensions.md`
-3. `$CLAUDE_HOME/docs/agents/reference/review-gates.md`
-4. `$CLAUDE_HOME/docs/agents/policy/agent-workflow.md`
-5. `$CLAUDE_HOME/docs/agents/reference/audit-pm.md`
-
-Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
-      </details>
-
-      <details>
-        <summary>commands/agent-audit-security.md <span class="file-desc">Security audit</span></summary>
-<pre><code class="language-markdown">---
-description: Run the framework security audit workflow.
----
-
-Load these docs in order:
-1. `$CLAUDE_HOME/docs/agents/reference/review-triggers.md`
-2. `$CLAUDE_HOME/docs/agents/reference/review-dimensions.md`
-3. `$CLAUDE_HOME/docs/agents/reference/review-gates.md`
-4. `$CLAUDE_HOME/docs/agents/policy/core.md`
-5. `$CLAUDE_HOME/docs/agents/policy/agent-workflow.md`
-6. `$CLAUDE_HOME/docs/agents/reference/audit-security.md`
-
-Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
-      </details>
-
       <!-- ============================================================ -->
       <!-- Router Docs                                                   -->
       <!-- ============================================================ -->
@@ -829,7 +762,7 @@ Run repo baseline first, then domain-specific checks.
 
 Workflow gates: missing approved plan or insufficient context is a verification failure. Closing a bundle without current verification.md is a failure.
 
-Run gates first, then use review-triggers.md for audit wrappers.</code></pre>
+Run gates first, then use review-triggers.md for audit references.</code></pre>
       </details>
 
       <details>
@@ -848,7 +781,7 @@ Before finalizing a phase:
 1. Classify the change using review-triggers.md.
 2. Identify required review dimensions.
 3. Run required gates first.
-4. Invoke audit wrappers for triggered dimensions.
+4. Load audit references for triggered dimensions.
 5. Show all findings to the user.
 6. Fix findings holistically.
 7. Honest self-check for shortcuts.
@@ -911,9 +844,9 @@ source_of_truth: $CLAUDE_HOME/docs/agents/reference/review-model.md
 
 # Review Model Reference
 
-Primitives: policy, playbook, trigger, review dimension, gate, audit wrapper.
+Primitives: policy, playbook, trigger, review dimension, gate, audit reference.
 
-Order: classify change, apply triggers, run gates, invoke audit wrappers, show findings and fix holistically.
+Order: classify change, apply triggers, run gates, load audit references, show findings and fix holistically.
 
 Audits wrap dimensions that cannot be fully enforced by playbooks and gates.</code></pre>
       </details>
@@ -929,15 +862,15 @@ source_of_truth: $CLAUDE_HOME/docs/agents/reference/review-triggers.md
 
 # Review Triggers Reference
 
-Backend API/schema/persistence/client/worker: correctness, testing, architecture, docs. Wrapper: /agent-audit-eng.
+Backend API/schema/persistence/client/worker: correctness, testing, architecture, docs. Audit reference: audit-eng.md.
 
-Route/layout/shared UI/styling/SSR/mobile: correctness, testing, design, docs. Wrappers: /agent-audit-eng, /agent-audit-design.
+Route/layout/shared UI/styling/SSR/mobile: correctness, testing, design, docs. Audit references: audit-eng.md, audit-design.md.
 
-Auth/session/secrets/uploads/public endpoints: security, correctness, docs. Wrappers: /agent-audit-security, /agent-audit-eng.
+Auth/session/secrets/uploads/public endpoints: security, correctness, docs. Audit references: audit-security.md, audit-eng.md.
 
-Roadmap feature/major user-journey/product-flow: product, design, correctness, docs. Wrappers: /agent-audit-pm, /agent-audit-design, /agent-audit-eng.
+Roadmap feature/major user-journey/product-flow: product, design, correctness, docs. Audit references: audit-pm.md, audit-design.md, audit-eng.md.
 
-Docs architecture/workflow: docs, architecture. No wrapper by default.</code></pre>
+Docs architecture/workflow: docs, architecture. No audit reference by default.</code></pre>
       </details>
 
       <details>
@@ -980,7 +913,7 @@ Passing gates does not eliminate triggered design, product, or security review.<
       </details>
 
       <details>
-        <summary>docs/agents/reference/audit-eng.md <span class="file-desc">Engineering audit wrapper</span></summary>
+        <summary>docs/agents/reference/audit-eng.md <span class="file-desc">Engineering audit reference</span></summary>
 <pre><code class="language-markdown">---
 kind: reference
 binding: false
@@ -996,7 +929,7 @@ Action: show all findings, fix holistically, patch typed docs first when the gap
       </details>
 
       <details>
-        <summary>docs/agents/reference/audit-design.md <span class="file-desc">Design audit wrapper</span></summary>
+        <summary>docs/agents/reference/audit-design.md <span class="file-desc">Design audit reference</span></summary>
 <pre><code class="language-markdown">---
 kind: reference
 binding: false
@@ -1012,7 +945,7 @@ Reporting: file/location, user impact, violation reason, remediation direction, 
       </details>
 
       <details>
-        <summary>docs/agents/reference/audit-pm.md <span class="file-desc">Product audit wrapper</span></summary>
+        <summary>docs/agents/reference/audit-pm.md <span class="file-desc">Product audit reference</span></summary>
 <pre><code class="language-markdown">---
 kind: reference
 binding: false
@@ -1028,7 +961,7 @@ Reporting: critical, important, opportunity, questions.</code></pre>
       </details>
 
       <details>
-        <summary>docs/agents/reference/audit-security.md <span class="file-desc">Security audit wrapper</span></summary>
+        <summary>docs/agents/reference/audit-security.md <span class="file-desc">Security audit reference</span></summary>
 <pre><code class="language-markdown">---
 kind: reference
 binding: false
