@@ -372,9 +372,9 @@
 
       <p class="fade-in">One bundle spans one body of work, not one commit. The same bundle can survive across multiple implementation commits until the work is closed.</p>
 
-      <!-- 6. Plan / Open / Close Workflow -->
+      <!-- 6. Plan / Open / Implement / Close Workflow -->
 
-      <h3 class="fade-in">6. Plan / Open / Close Workflow</h3>
+      <h3 class="fade-in">6. Plan / Open / Implement / Close Workflow</h3>
 
       <p class="fade-in">The framework formalizes the lifecycle as <code>plan -> open -> implement -> close</code>.</p>
 
@@ -488,16 +488,57 @@ graph LR
 
       <p class="fade-in">The command surface is intentionally small:</p>
 
-      <ul class="fade-in">
-        <li><code>/agent-plan-change</code></li>
-        <li><code>/agent-open-change</code></li>
-        <li><code>/agent-implement-change</code></li>
-        <li><code>/agent-close-change</code></li>
-        <li><code>/agent-adopt</code></li>
-        <li><code>/agent-add-capability</code></li>
-        <li><code>/agent-record-decision</code></li>
-        <li><code>/agent-improve</code></li>
-      </ul>
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Command</th>
+            <th>Phase</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/agent-plan-change</code></td>
+            <td>Plan</td>
+            <td>Produce the approved plan without writing to disk. Safe in Plan Mode.</td>
+          </tr>
+          <tr>
+            <td><code>/agent-open-change</code></td>
+            <td>Open</td>
+            <td>Materialize the bundle (<code>plan.md</code>, <code>state.yaml</code>, <code>verification.md</code>) and commit it.</td>
+          </tr>
+          <tr>
+            <td><code>/agent-implement-change</code></td>
+            <td>Implement</td>
+            <td>Load the frozen plan, implementation-phase docs, and domain playbooks. Set up the task structure.</td>
+          </tr>
+          <tr>
+            <td><code>/agent-close-change</code></td>
+            <td>Close</td>
+            <td>Remove transient artifacts, retain the durable record.</td>
+          </tr>
+          <tr>
+            <td><code>/agent-adopt</code></td>
+            <td>Explore</td>
+            <td>First-time repo onboarding to the framework.</td>
+          </tr>
+          <tr>
+            <td><code>/agent-add-capability</code></td>
+            <td>Explore</td>
+            <td>Wizard for adding a repo-local policy, playbook, reference, or command.</td>
+          </tr>
+          <tr>
+            <td><code>/agent-record-decision</code></td>
+            <td>Explore</td>
+            <td>Wizard for provisioning a Decision Record with durable rationale.</td>
+          </tr>
+          <tr>
+            <td><code>/agent-improve</code></td>
+            <td>Explore</td>
+            <td>Root-cause doc and routing friction repair.</td>
+          </tr>
+        </tbody>
+      </table>
 
       <p class="fade-in">These commands are process-oriented. They load canonical docs and guide the workflow. They are not the place for hidden repo-specific standards or arbitrary scaffolding logic.</p>
 
