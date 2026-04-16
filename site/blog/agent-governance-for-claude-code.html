@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agent Governance for Claude Code | Patrick Hogan</title>
-  <meta name="description" content="A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.">
+  <title>RFC: Claude Agents Framework | Patrick Hogan</title>
+  <meta name="description" content="An RFC defining a reusable Claude Code framework installed at ~/.claude. The global layer owns process; the repo layer owns local truth.">
   <meta name="author" content="Patrick Hogan">
   <link rel="canonical" href="https://phoganuci.com/blog/agent-governance-for-claude-code">
 
   <!-- Open Graph -->
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Agent Governance for Claude Code">
-  <meta property="og:description" content="A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.">
+  <meta property="og:title" content="RFC: Claude Agents Framework">
+  <meta property="og:description" content="An RFC defining a reusable Claude Code framework installed at ~/.claude. The global layer owns process; the repo layer owns local truth.">
   <meta property="og:url" content="https://phoganuci.com/blog/agent-governance-for-claude-code">
   <meta property="og:image" content="https://phoganuci.com/assets/profile.jpeg">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Agent Governance for Claude Code">
-  <meta name="twitter:description" content="A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.">
+  <meta name="twitter:title" content="RFC: Claude Agents Framework">
+  <meta name="twitter:description" content="An RFC defining a reusable Claude Code framework installed at ~/.claude. The global layer owns process; the repo layer owns local truth.">
   <meta name="twitter:image" content="https://phoganuci.com/assets/profile.jpeg">
 
   <!-- Fonts -->
@@ -33,14 +33,15 @@
   <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
 
   <!-- JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Agent Governance for Claude Code",
-    "description": "A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.",
+    "headline": "RFC: Claude Agents Framework",
+    "description": "An RFC defining a reusable Claude Code framework installed at ~/.claude. The global layer owns process; the repo layer owns local truth.",
     "datePublished": "2026-04-16",
     "author": {
       "@type": "Person",
@@ -80,8 +81,12 @@
       margin-bottom: 0;
     }
 
-    .inline-contract {
+    .post-body h4 {
       margin-top: 2rem;
+    }
+
+    .post-body h4 code {
+      font-size: 1rem;
     }
 
     @media (max-width: 640px) {
@@ -117,12 +122,12 @@
     <canvas class="hero-canvas" id="heroCanvas"></canvas>
     <div class="hero-content">
       <span class="section-label fade-in">RFC</span>
-      <h1 class="fade-in">Agent Governance<br>for Claude Code</h1>
-      <p class="hero-subtitle fade-in">A shared process layer for routing work, freezing plans, and extending repos without leaking local truth into the global layer.</p>
+      <h1 class="fade-in">Claude Agents<br>Framework</h1>
+      <p class="hero-subtitle fade-in">A reusable Claude Code framework installed at <code>~/.claude</code>. The global layer owns process; the repo layer owns local truth.</p>
       <div class="post-meta fade-in">
         <span>April 16, 2026</span>
         <span class="separator"></span>
-        <span>12 min read</span>
+        <span>18 min read</span>
       </div>
     </div>
     <div class="scroll-indicator">
@@ -134,92 +139,116 @@
   <article>
     <div class="post-body">
 
-      <h2 class="fade-in">Foreword</h2>
+      <!-- ============================================================ -->
+      <!-- Summary                                                       -->
+      <!-- ============================================================ -->
 
-      <p class="fade-in">Unstructured Claude Code setups fail in the same way. A single <code>CLAUDE.md</code> turns into a junk drawer. Commands stop being entrypoints and start hiding policy. Repo-specific rules leak into the shared install. Planning artifacts drift across chat, scratch files, and commits until nobody can tell which spec actually governed the work.</p>
+      <h2 class="fade-in">Summary</h2>
 
-      <p class="fade-in">This system is not a warehouse of agents. It governs authority, routing, lifecycle, extension boundaries, and durable rationale. The right name is <code>agent-governance</code>.</p>
+      <p class="fade-in">This RFC defines a reusable Claude Code framework installed at <code>~/.claude</code>.</p>
+
+      <p class="fade-in">The framework is the shared process layer. It standardizes:</p>
+
+      <ul class="fade-in">
+        <li>the root contract in <code>CLAUDE.md</code></li>
+        <li>the typed documentation tree for routing, policy, playbooks, references, indexes, and decisions</li>
+        <li>the global <code>agent-*</code> command surface</li>
+        <li>the lifecycle for non-trivial implementation work through change bundles in <code>docs/changes/*</code></li>
+        <li>the extension model that lets repos add their own local standards without moving repo truth into the global layer</li>
+      </ul>
 
       <div class="rfc-callout fade-in">
-        <p><strong>Thesis:</strong> the global layer owns process; the repo layer owns local truth. Everything in this RFC follows from that boundary.</p>
+        <p>The core rule is simple: the global layer owns process; the repo layer owns local truth.</p>
       </div>
 
-      <h2 class="fade-in">System At A Glance</h2>
+      <p class="fade-in">The <a href="agent-governance-appendix.html">appendix</a> contains the complete file skeletons for every file in the framework. An implementer should be able to produce the full working system from this document alone.</p>
 
-      <p class="fade-in">Before diving into the decisions, here is the minimum component map an implementer needs in their head. The system is not just a docs tree. It is a small operating surface: one shared root contract, one typed shared docs layer, one repo-local truth layer, one reserved shared command surface, one repo-local command surface, and one durable artifact model for non-trivial work.</p>
+      <!-- ============================================================ -->
+      <!-- Problem                                                       -->
+      <!-- ============================================================ -->
 
-      <table class="doc-types fade-in">
-        <thead>
-          <tr>
-            <th>Component</th>
-            <th>Purpose</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>~/.claude/CLAUDE.md</code></td>
-            <td>The root contract. Defines authority order, phase boundaries, path conventions, and the shared command surface.</td>
-          </tr>
-          <tr>
-            <td><code>~/.claude/docs/agents/</code></td>
-            <td>The shared typed docs layer. Holds router, policy, playbooks, reference material, task indexes, and shared decisions.</td>
-          </tr>
-          <tr>
-            <td><code>~/.claude/commands/agent-*.md</code></td>
-            <td>Thin shared command entrypoints. They load canonical docs and drive shared process workflows without owning repo-specific behavior.</td>
-          </tr>
-          <tr>
-            <td><code>./CLAUDE.md</code></td>
-            <td>The repo entrypoint. Composes the shared framework with repo-specific routing, conventions, and boundary rules.</td>
-          </tr>
-          <tr>
-            <td><code>repo/docs/agents/</code></td>
-            <td>The repo-local truth layer. Holds architecture, domain policies, playbooks, references, task names, and Decision Records for that codebase.</td>
-          </tr>
-          <tr>
-            <td><code>repo/.claude/commands/</code></td>
-            <td>Repo-local ergonomic commands. These wrap repo capabilities without polluting the global <code>agent-*</code> namespace.</td>
-          </tr>
-          <tr>
-            <td><code>docs/changes/NNNNNNN-short-name/</code></td>
-            <td>The durable change-bundle contract for non-trivial work: frozen plan, active state, validation evidence, approved deviations, and closeout artifacts.</td>
-          </tr>
-          <tr>
-            <td><code>~/.claude/vendor/company-framework/</code></td>
-            <td>The enterprise distribution surface. Versioned installed framework payloads live here, with thin shims exposing the active version at runtime.</td>
-          </tr>
-        </tbody>
-      </table>
+      <h2 class="fade-in">Problem</h2>
 
-      <h2 class="fade-in">The Failure Mode</h2>
+      <p class="fade-in">Without a clear structure, Claude Code guidance tends to collapse into one of two bad states:</p>
 
-      <p class="fade-in">Claude Code guidance usually collapses into one of two bad states. Either everything gets stuffed into one root memory file, or the docs tree grows without types, boundaries, or ownership rules. Both look fine for a week. Both rot quickly.</p>
+      <ul class="fade-in">
+        <li>a single oversized <code>CLAUDE.md</code> that mixes routing, rules, rationale, and repo conventions</li>
+        <li>an untyped pile of docs and commands with no clear boundary between shared process and repo-local behavior</li>
+      </ul>
 
-      <p class="fade-in">The consequences are predictable. Shared process guidance gets mixed with repo-local conventions. Repos either copy-paste the same workflow docs everywhere or invent incompatible local shapes. Commands drift into hidden behavior. Plans lose fidelity as work moves from discussion to implementation. Durable rationale disappears into chat history instead of landing in a record that later contributors can actually find.</p>
+      <p class="fade-in">That creates predictable failures:</p>
 
-      <blockquote class="fade-in">
-        <p>The problem is not missing documentation. The problem is missing governance over where process lives, where repo truth lives, and how work moves between the two.</p>
-      </blockquote>
+      <ul class="fade-in">
+        <li>process guidance and repo-specific conventions get mixed together</li>
+        <li>commands drift into hidden policy instead of acting as thin entrypoints</li>
+        <li>repos duplicate the same workflow guidance or invent incompatible local structures</li>
+        <li>it becomes unclear where durable rationale should live</li>
+        <li>planning and implementation artifacts accumulate inconsistently across commits</li>
+      </ul>
 
-      <h2 class="fade-in">Two Layers, One Rule</h2>
+      <p class="fade-in">The framework needs to solve those problems without becoming a global dumping ground for frontend, backend, or infrastructure standards that only make sense inside a specific repo.</p>
 
-      <p class="fade-in">The system is deliberately split in two. The global layer in <code>~/.claude</code> owns the reusable process contract. The active repository owns the local architecture, domain rules, facts, references, and commands that only make sense inside that codebase.</p>
+      <!-- ============================================================ -->
+      <!-- Goals                                                         -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Goals</h2>
+
+      <ul class="fade-in">
+        <li>Provide a reusable process layer that can be installed once in <code>~/.claude</code>.</li>
+        <li>Make the boundary between the global framework and repo-local extensions explicit.</li>
+        <li>Keep docs typed so routing, policy, playbooks, references, indexes, and decisions each have a clear job.</li>
+        <li>Support Claude Code Plan Mode without requiring writes during planning.</li>
+        <li>Make non-trivial implementation work legible across multiple commits through a consistent bundle model.</li>
+        <li>Keep the global command surface small, namespaced, and process-oriented.</li>
+        <li>Give repos a clean path to add local standards, workflows, and durable rationale.</li>
+      </ul>
+
+      <!-- ============================================================ -->
+      <!-- Non-Goals                                                     -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Non-Goals</h2>
+
+      <ul class="fade-in">
+        <li>Define universal frontend, backend, or infrastructure standards in the global framework.</li>
+        <li>Replace repo-local architecture docs with global abstractions.</li>
+        <li>Provide a global command for every domain or team workflow.</li>
+        <li>Maintain a repo-level active-work index for change bundles.</li>
+        <li>Turn the framework into a repo scaffolding engine for arbitrary project structure.</li>
+      </ul>
+
+      <!-- ============================================================ -->
+      <!-- Proposed Design                                               -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Proposed Design</h2>
+
+      <!-- 1. Two-Level Hierarchy -->
+
+      <h3 class="fade-in">1. Two-Level Hierarchy</h3>
+
+      <p class="fade-in">The system has two layers:</p>
+
+      <ul class="fade-in">
+        <li>Global layer in <code>~/.claude</code></li>
+        <li>Repo layer inside the active repository</li>
+      </ul>
+
+      <p class="fade-in">The global layer contains the shared process contract:</p>
 
 <pre class="fade-in file-tree"><code>~/.claude/
-├── <span class="tree-file">CLAUDE.md</span>                        <span class="tree-comment"># Root contract, authority order, phase boundaries</span>
-├── <span class="tree-dir">commands/</span>                         <span class="tree-comment"># Reserved shared agent-* entrypoints</span>
-└── <span class="tree-dir">docs/agents/</span>                      <span class="tree-comment"># Shared process docs</span>
-    ├── <span class="tree-dir">router/</span>
-    ├── <span class="tree-dir">policy/</span>
-    ├── <span class="tree-dir">playbooks/</span>
-    ├── <span class="tree-dir">reference/</span>
-    ├── <span class="tree-dir">index/</span>
-    └── <span class="tree-dir">decisions/</span>
-
-repo/
-├── <span class="tree-file">CLAUDE.md</span>                        <span class="tree-comment"># Repo entrypoint, composed with shared framework docs</span>
-├── <span class="tree-dir">.claude/commands/</span>                 <span class="tree-comment"># Repo-local ergonomic commands</span>
-└── <span class="tree-dir">docs/agents/</span>                      <span class="tree-comment"># Repo-local truth</span>
+├── <span class="tree-file">CLAUDE.md</span>
+├── <span class="tree-dir">commands/</span>
+│   ├── <span class="tree-file">agent-plan-change.md</span>
+│   ├── <span class="tree-file">agent-open-change.md</span>
+│   ├── <span class="tree-file">agent-close-change.md</span>
+│   ├── <span class="tree-file">agent-adopt.md</span>
+│   ├── <span class="tree-file">agent-add-capability.md</span>
+│   ├── <span class="tree-file">agent-record-decision.md</span>
+│   ├── <span class="tree-file">agent-improve.md</span>
+│   └── <span class="tree-file">agent-audit-*.md</span>
+└── <span class="tree-dir">docs/agents/</span>
     ├── <span class="tree-dir">router/</span>
     ├── <span class="tree-dir">policy/</span>
     ├── <span class="tree-dir">playbooks/</span>
@@ -227,51 +256,26 @@ repo/
     ├── <span class="tree-dir">index/</span>
     └── <span class="tree-dir">decisions/</span></code></pre>
 
-      <div class="diagram-container fade-in">
-        <pre class="mermaid">
-graph TD
-  subgraph GLOBAL["Global Layer: ~/.claude"]
-    direction TB
-    ROOT["CLAUDE.md<br/>root contract"]:::routing
-    SHARED["router / policy / playbooks<br/>reference / index / decisions"]:::api
-    CMDS["agent-* commands"]:::data
-    ROOT --> SHARED
-    ROOT --> CMDS
-  end
+      <p class="fade-in">Each repo extends that with local docs and optional local commands:</p>
 
-  subgraph REPO["Repo Layer: active repository"]
-    direction TB
-    RROOT["./CLAUDE.md"]:::routing
-    LOCAL["docs/agents/*<br/>repo-local truth"]:::api
-    RCMDS[".claude/commands/*"]:::data
-    RROOT --> LOCAL
-    RROOT --> RCMDS
-  end
+<pre class="fade-in file-tree"><code>repo/
+├── <span class="tree-file">CLAUDE.md</span>
+├── <span class="tree-dir">.claude/commands/</span>
+└── <span class="tree-dir">docs/agents/</span>
+    ├── <span class="tree-dir">router/</span>
+    ├── <span class="tree-dir">policy/</span>
+    ├── <span class="tree-dir">playbooks/</span>
+    ├── <span class="tree-dir">reference/</span>
+    ├── <span class="tree-dir">index/</span>
+    └── <span class="tree-dir">decisions/</span></code></pre>
 
-  GLOBAL --> REPO
+      <p class="fade-in">The global layer explains how work should happen. The repo layer explains how that codebase works.</p>
 
-  classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
-  classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
-  classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
-        </pre>
-      </div>
+      <!-- 2. Typed Documentation Tree -->
 
-      <p class="fade-in">That split matters because it keeps the framework reusable. Shared docs explain how work should happen. Repo docs explain how this codebase works. The framework never becomes a dumping ground for somebody else's frontend rules, deployment topology, or naming conventions.</p>
+      <h3 class="fade-in">2. Typed Documentation Tree</h3>
 
-<pre class="fade-in inline-contract"><code>The framework owns:
-- ~/.claude/CLAUDE.md
-- ~/.claude/commands/*.md
-- shared workflow, review, verification, and documentation discipline
-
-The repo owns:
-- ./CLAUDE.md
-- docs/agents/...
-- .claude/commands/*.md
-- repo-specific architecture, references, facts, and Decision Records</code></pre>
-
-      <h2 class="fade-in">Typed Docs, Not A Blob</h2>
-
-      <p class="fade-in">The second governance rule is that the docs tree stays typed. Each directory exists for one job. That sounds bureaucratic until you have to extend the system without rereading the whole corpus every time.</p>
+      <p class="fade-in">The framework uses a typed docs tree so each category has a single job:</p>
 
       <table class="doc-types fade-in">
         <thead>
@@ -283,175 +287,96 @@ The repo owns:
         <tbody>
           <tr>
             <td><code>router/</code></td>
-            <td>Decides what to load next once the task is partially understood.</td>
+            <td>Decides what to load next.</td>
           </tr>
           <tr>
             <td><code>policy/</code></td>
-            <td>Defines binding rules that the agent is expected to follow.</td>
+            <td>Defines binding rules.</td>
           </tr>
           <tr>
             <td><code>playbooks/</code></td>
-            <td>Provides ordered workflows such as adoption, verification, and change closeout.</td>
+            <td>Defines ordered workflows.</td>
           </tr>
           <tr>
             <td><code>reference/</code></td>
-            <td>Holds deeper material once the agent has already narrowed the problem.</td>
+            <td>Holds deeper topic material.</td>
           </tr>
           <tr>
             <td><code>index/</code></td>
-            <td>Gives stable names to recurring tasks and route lookups.</td>
+            <td>Provides stable task and routing lookups.</td>
           </tr>
           <tr>
             <td><code>decisions/</code></td>
-            <td>Preserves durable rationale so later contributors do not have to rediscover it.</td>
+            <td>Preserves durable rationale through Decision Records.</td>
           </tr>
         </tbody>
       </table>
 
-      <p class="fade-in">Commands stay thin for the same reason. A shared command should load canonical docs in the right order. It should not smuggle repo-specific policy into the global layer. That is why the shared namespace stays reserved as <code>agent-*</code>, and repo-local commands are expected to use repo-specific names rather than shadowing framework commands.</p>
+      <p class="fade-in">This avoids the common failure mode where one document mixes routing, rules, examples, and rationale without clear boundaries.</p>
 
-      <h3 class="fade-in">Minimum Viable File Skeletons</h3>
+      <!-- 3. Root Contract -->
 
-      <p class="fade-in">Directory names are not enough for a zero-context implementer. The minimum viable system needs explicit starting shapes for the root contract, a typed doc, a command shim, and the repo entrypoint.</p>
+      <h3 class="fade-in">3. Root Contract</h3>
 
-<pre class="fade-in"><code># ~/.claude/CLAUDE.md
+      <p class="fade-in"><code>~/.claude/CLAUDE.md</code> is the root contract. It defines:</p>
 
-This file defines the shared process layer for Claude Code.
+      <ul class="fade-in">
+        <li>the meaning of <code>$CLAUDE_HOME</code></li>
+        <li>the authority order</li>
+        <li>the phase contract</li>
+        <li>the command-surface rules</li>
+        <li>the high-level capability summary</li>
+      </ul>
 
-## Path Convention
-- $CLAUDE_HOME always means ~/.claude
-- framework docs live under $CLAUDE_HOME/docs/agents/...
-- repo docs use repo-relative paths
+      <p class="fade-in">That file is the shared entrypoint Claude Code loads as user memory.</p>
 
-## Read This First
-- $CLAUDE_HOME/docs/agents/router/phases.md
-- $CLAUDE_HOME/docs/agents/router/capability-map.md
-- $CLAUDE_HOME/docs/agents/router/composition.md
+      <!-- 4. Composition Contract -->
 
-## Phase Contract
-- plan with /agent-plan-change
-- open with /agent-open-change before repo writes
-- close with /agent-close-change after verification
+      <h3 class="fade-in">4. Composition Contract</h3>
 
-## Command Surface
-- shared commands use the reserved agent-* namespace</code></pre>
+      <p class="fade-in">The framework needs a clear answer to "what belongs here versus in the repo?".</p>
 
-<pre class="fade-in"><code>---
-kind: router
-binding: false
-scope: repo
-phases: [explore, plan, implement, verify, commit]
-use_when:
-  - choosing which policy and playbook apply to a task
-avoid_when:
-  - looking for detailed implementation rules
-escalate_to:
-  - $CLAUDE_HOME/docs/agents/router/composition.md
-  - $CLAUDE_HOME/docs/agents/playbooks/docs-workflow.md
-source_of_truth: $CLAUDE_HOME/docs/agents/router/capability-map.md
----
+      <p class="fade-in"><code>docs/agents/router/composition.md</code> provides that contract:</p>
 
-# Capability Map
+      <ul class="fade-in">
+        <li>the global layer owns shared workflow, verification, review, and documentation discipline</li>
+        <li>the repo layer owns repo-specific architecture, naming, testing rules, references, facts, gotchas, and Decision Records</li>
+        <li>repo commands should use distinct local names instead of relying on shadowing framework commands</li>
+        <li>the framework command surface stays generic and process-oriented</li>
+      </ul>
 
-## Planning / Review / Docs Workflow
-Load:
-- $CLAUDE_HOME/docs/agents/policy/agent-workflow.md
-- $CLAUDE_HOME/docs/agents/playbooks/change-bundles.md
+      <!-- 5. Change Bundle Model -->
 
-Escalate to:
-- repo ./CLAUDE.md
-- repo docs/agents/index/tasks.md</code></pre>
+      <h3 class="fade-in">5. Change Bundle Model</h3>
 
-<pre class="fade-in"><code>---
-description: Prepare a non-mutating implementation plan for a change bundle.
----
+      <p class="fade-in">Non-trivial implementation work is recorded as a change bundle under <code>docs/changes/NNNNNNN-short-name/</code>.</p>
 
-Use this command for non-trivial implementation work when you need an approved plan before any repo writes.
+      <p class="fade-in">Canonical shape:</p>
 
-Workflow:
-1. Load $CLAUDE_HOME/CLAUDE.md and the relevant router, policy, and playbook docs.
-2. Produce the exact plan body that will become plan.md.
-3. Propose a provisional bundle path and slug.
-4. Review the plan with the user.
-5. Hand off to /agent-open-change outside Plan Mode.
+<pre class="fade-in file-tree"><code>docs/changes/0000123-frontend-boundaries/
+├── <span class="tree-file">plan.md</span>
+├── <span class="tree-file">state.yaml</span>
+├── <span class="tree-file">verification.md</span>
+├── <span class="tree-file">review.md</span>      <span class="tree-comment"># optional</span>
+└── <span class="tree-file">notes.md</span>       <span class="tree-comment"># optional, removed at close</span></code></pre>
 
-Rules:
-- do not create files
-- do not commit
-- do not compress the approved plan</code></pre>
+      <p class="fade-in">Bundle semantics:</p>
 
-<pre class="fade-in"><code># ./CLAUDE.md
+      <ul class="fade-in">
+        <li><code>plan.md</code> is the exact approved plan and freezes once the bundle is opened.</li>
+        <li><code>state.yaml</code> marks the bundle as active while work is in progress.</li>
+        <li><code>verification.md</code> captures the validation record and remains after closeout.</li>
+        <li><code>review.md</code> exists only for approved deviations from the frozen plan or meaningful learnings worth preserving.</li>
+        <li><code>notes.md</code> is disposable scratch space and is removed during closeout.</li>
+      </ul>
 
-This repo composes with the shared framework in ~/.claude.
+      <p class="fade-in">One bundle spans one body of work, not one commit. The same bundle can survive across multiple implementation commits until the work is closed.</p>
 
-## Load First
-- ~/.claude/CLAUDE.md
-- docs/agents/router/capability-map.md
+      <!-- 6. Plan / Open / Close Workflow -->
 
-## Repo Routing
-- load repo policy docs for architecture, boundaries, and tests
-- load repo playbooks for repeated workflows
+      <h3 class="fade-in">6. Plan / Open / Close Workflow</h3>
 
-## Repo Conventions
-- repo-specific naming, testing, and boundary rules live here or under docs/agents/...</code></pre>
-
-      <h2 class="fade-in">Change Bundles: Plans That Survive Context Loss</h2>
-
-      <p class="fade-in">The most important operational contract in the system is the change bundle. Non-trivial work gets one durable home under <code>docs/changes/NNNNNNN-short-name/</code>. The bundle spans planning, implementation, validation, and closeout, even when the work takes multiple commits.</p>
-
-      <p class="fade-in">That matters because the bundle is the handoff boundary between planning and execution, especially in agent-first workflows. The failure is rarely that code is missing. The failure is that future agents operating in the codebase cannot recover why existing code is the way it is, which constraints still matter, and which plan actually governs the change. Without a bundle, that rationale gets split across chat, scratch files, commit messages, and the implementer's memory. With a bundle, the frozen plan, active state, validation evidence, and approved deviations all have one durable home.</p>
-
-<pre class="fade-in file-tree"><code>docs/changes/0000123-agent-governance/
-├── <span class="tree-file">plan.md</span>                         <span class="tree-comment"># Exact approved plan, frozen after open</span>
-├── <span class="tree-file">state.yaml</span>                      <span class="tree-comment"># Presence marks the bundle as active</span>
-├── <span class="tree-file">verification.md</span>                 <span class="tree-comment"># Validation evidence, kept after closeout</span>
-├── <span class="tree-file">review.md</span>                       <span class="tree-comment"># Optional, for approved deviations or learnings</span>
-└── <span class="tree-file">notes.md</span>                        <span class="tree-comment"># Optional scratchpad, removed at close</span></code></pre>
-
-      <p class="fade-in">One detail makes this model much better than a loose planning note: there is no repo-level active index. Open work is discovered from bundle-local <code>state.yaml</code> files. Final numbering is assigned only when the bundle is materialized, not while the agent is still planning.</p>
-
-<pre class="fade-in"><code class="language-yaml">change: 0000123
-slug: agent-governance
-status: open
-created_at: 2026-04-16T00:00:00Z
-updated_at: 2026-04-16T00:00:00Z</code></pre>
-
-      <h3 class="fade-in">Bundle File Skeletons</h3>
-
-      <p class="fade-in">The directory shape only matters if the key files are explicit enough for future agents to operate against the current code safely. In practice, that means <code>plan.md</code> and <code>verification.md</code> need stable, readable skeletons.</p>
-
-<pre class="fade-in"><code># plan.md
-
-## Summary
-Describe the exact body of work and the intended end state.
-
-## Planned Deltas
-- file paths to edit
-- public interfaces or schemas that change
-- config or migration steps
-- cleanup work that must happen before closeout
-
-## Acceptance Checks
-- tests to run
-- review gates to satisfy
-- user-visible outcomes that must be true</code></pre>
-
-<pre class="fade-in"><code># verification.md
-
-## Commands Run
-- just test
-- bazel test //...
-
-## Results
-- what passed
-- what failed and was fixed
-- residual gaps or intentionally deferred risk</code></pre>
-
-      <blockquote class="fade-in">
-        <p>It must include enough concrete context that an implementer with no prior repo knowledge can execute the phase without spelunking.</p>
-      </blockquote>
-
-      <p class="fade-in">That sentence is the quality bar. A plan is not allowed to hand-wave. If the implementer needs file paths, signatures, schema shapes, migration steps, or acceptance checks, the plan needs to inline them. "Discover during implementation" is a planning failure.</p>
+      <p class="fade-in">The framework formalizes the lifecycle as <code>plan -> open -> implement -> close</code>.</p>
 
       <div class="diagram-container fade-in">
         <pre class="mermaid">
@@ -466,23 +391,212 @@ graph LR
         </pre>
       </div>
 
-      <ul class="fade-in">
-        <li><code>/agent-plan-change</code> produces the exact approved plan in chat and stays non-mutating.</li>
-        <li><code>/agent-open-change</code> rescans <code>docs/changes/</code>, chooses the final number, writes <code>plan.md</code>, <code>state.yaml</code>, and <code>verification.md</code>, then creates the initial bundle-only commit.</li>
-        <li><code>/agent-close-change</code> removes transient artifacts such as <code>state.yaml</code> and <code>notes.md</code> while leaving the durable record behind.</li>
-      </ul>
+      <h4 class="fade-in"><code>/agent-plan-change</code></h4>
 
-      <h2 class="fade-in">How Repos Grow Without Polluting The Global Layer</h2>
+      <p class="fade-in"><code>/agent-plan-change</code> is the planning entrypoint for non-trivial work.</p>
 
-      <p class="fade-in">Extension is split into three distinct workflows because adoption, capability growth, and durable rationale are not the same operation. That split is governance, not ornament.</p>
+      <p class="fade-in">It:</p>
 
       <ul class="fade-in">
-        <li><code>/agent-adopt</code> onboards a repo to the framework for the first time.</li>
-        <li><code>/agent-add-capability</code> adds repo-local policy, playbooks, references, task entries, or repo commands.</li>
-        <li><code>/agent-record-decision</code> provisions a Decision Record when the repo needs a durable explanation for a lasting boundary.</li>
+        <li>inspects the repo and loads the relevant global and repo-local docs</li>
+        <li>produces the exact approved plan content that will become <code>plan.md</code></li>
+        <li>proposes a provisional bundle path and slug</li>
+        <li>does not write to disk, assign the final number, or commit anything</li>
       </ul>
 
-      <p class="fade-in">A concrete example helps. If a repo wants frontend best practices, the framework should define the process for adding that capability, but the actual frontend rules still belong inside the repo.</p>
+      <p class="fade-in">This makes it safe for Claude Code Plan Mode.</p>
+
+      <h4 class="fade-in"><code>/agent-open-change</code></h4>
+
+      <p class="fade-in"><code>/agent-open-change</code> runs after planning is approved and outside Plan Mode.</p>
+
+      <p class="fade-in">It:</p>
+
+      <ul class="fade-in">
+        <li>rechecks <code>docs/changes/</code> and assigns the final next available number</li>
+        <li>reuses an existing open bundle when the same work is already open</li>
+        <li>writes <code>plan.md</code>, <code>state.yaml</code>, and <code>verification.md</code></li>
+        <li>creates the initial bundle commit</li>
+      </ul>
+
+      <p class="fade-in">The open-change commit contains only the bundle artifacts. It does not contain implementation edits.</p>
+
+      <h4 class="fade-in"><code>/agent-close-change</code></h4>
+
+      <p class="fade-in"><code>/agent-close-change</code> runs after implementation and final verification are complete.</p>
+
+      <p class="fade-in">It:</p>
+
+      <ul class="fade-in">
+        <li>ensures <code>verification.md</code> reflects the final validation evidence</li>
+        <li>keeps <code>review.md</code> only when it is justified</li>
+        <li>removes <code>state.yaml</code>, <code>notes.md</code>, and other transient scratch artifacts</li>
+        <li>leaves the durable record behind</li>
+      </ul>
+
+      <p class="fade-in">Closeout may happen in the final implementation commit or in an immediate follow-up cleanup commit.</p>
+
+      <!-- 7. No Repo-Level Active Index -->
+
+      <h3 class="fade-in">7. No Repo-Level Active Index</h3>
+
+      <p class="fade-in">The framework does not maintain a repo-level active-work index.</p>
+
+      <p class="fade-in">Open bundles are discovered from <code>docs/changes/*/state.yaml</code>. Final numbering is assigned only by <code>/agent-open-change</code>, which rechecks the filesystem at materialization time. This keeps the workflow simple and avoids coordination overhead or collision-prone shared indexes.</p>
+
+      <!-- 8. Extension Lifecycle -->
+
+      <h3 class="fade-in">8. Extension Lifecycle</h3>
+
+      <p class="fade-in">The framework separates adoption, growth, and learning:</p>
+
+      <ul class="fade-in">
+        <li><code>docs/agents/playbooks/adopt-framework.md</code> covers first-time repo onboarding</li>
+        <li><code>docs/agents/playbooks/add-capability.md</code> covers adding repo-local capabilities</li>
+        <li><code>docs/agents/playbooks/record-decision.md</code> covers provisioning Decision Records</li>
+      </ul>
+
+      <p class="fade-in">That distinction matters because those are different activities:</p>
+
+      <ul class="fade-in">
+        <li>adoption establishes the repo's local entrypoint</li>
+        <li>capability growth adds new repo-local rules or workflows</li>
+        <li>decision recording preserves rationale that future contributors would otherwise have to rediscover</li>
+      </ul>
+
+      <!-- 9. Command Model -->
+
+      <h3 class="fade-in">9. Command Model</h3>
+
+      <p class="fade-in">Framework commands live under <code>~/.claude/commands/</code> and use the reserved <code>agent-*</code> namespace.</p>
+
+      <p class="fade-in">The command surface is intentionally small:</p>
+
+      <ul class="fade-in">
+        <li><code>/agent-plan-change</code></li>
+        <li><code>/agent-open-change</code></li>
+        <li><code>/agent-close-change</code></li>
+        <li><code>/agent-adopt</code></li>
+        <li><code>/agent-add-capability</code></li>
+        <li><code>/agent-record-decision</code></li>
+        <li><code>/agent-improve</code></li>
+        <li><code>/agent-audit-eng</code></li>
+        <li><code>/agent-audit-design</code></li>
+        <li><code>/agent-audit-pm</code></li>
+        <li><code>/agent-audit-security</code></li>
+      </ul>
+
+      <p class="fade-in">These commands are process-oriented. They load canonical docs and guide the workflow. They are not the place for hidden repo-specific standards or arbitrary scaffolding logic.</p>
+
+      <p class="fade-in">More specific commands should usually be repo-local.</p>
+
+      <!-- 10. Enterprise Distribution Model -->
+
+      <h3 class="fade-in">10. Enterprise Distribution Model</h3>
+
+      <p class="fade-in">For company-scale deployment, <code>~/.claude</code> should be treated as the runtime installation surface, not the authored source of truth.</p>
+
+      <p class="fade-in">The framework should be owned in a versioned internal source repository or package and then installed onto developer machines in a stable vendor path.</p>
+
+      <p class="fade-in">Recommended shape:</p>
+
+<pre class="fade-in file-tree"><code>~/.claude/
+├── <span class="tree-file">CLAUDE.md</span>
+├── <span class="tree-dir">commands/</span>
+│   ├── <span class="tree-file">agent-plan-change.md</span>
+│   ├── <span class="tree-file">agent-open-change.md</span>
+│   ├── <span class="tree-file">agent-close-change.md</span>
+│   └── <span class="tree-file">...</span>
+└── <span class="tree-dir">vendor/company-framework/</span>
+    ├── <span class="tree-file">current</span>
+    ├── <span class="tree-dir">1.4.0/</span>
+    └── <span class="tree-dir">1.5.0/</span></code></pre>
+
+      <p class="fade-in">In this model:</p>
+
+      <ul class="fade-in">
+        <li><code>~/.claude/CLAUDE.md</code> is a thin shim that imports the current installed framework version</li>
+        <li><code>~/.claude/commands/</code> contains thin command shims in the reserved <code>agent-*</code> namespace</li>
+        <li><code>vendor/company-framework/&lt;version&gt;/</code> contains the actual framework release</li>
+        <li>repos continue to own repo-local architecture and workflow truth in checked-in docs</li>
+      </ul>
+
+      <p class="fade-in">This structure gives the organization:</p>
+
+      <ul class="fade-in">
+        <li>controlled rollout of framework versions</li>
+        <li>fast rollback by switching the active version</li>
+        <li>a clear distinction between installed runtime files and authored source</li>
+        <li>a stable global command surface that does not require every repo to vendor a copy</li>
+      </ul>
+
+      <p class="fade-in">The enterprise rollout should use four layers:</p>
+
+      <ul class="fade-in">
+        <li>enterprise policy memory for hard company-wide instructions</li>
+        <li>enterprise managed settings for enforced permissions and configuration</li>
+        <li>user install at <code>~/.claude</code> for the shared framework runtime</li>
+        <li>repo-local docs and commands for project-specific behavior</li>
+      </ul>
+
+      <p class="fade-in">The framework should not rely on manual file copying at scale. It should be shipped through an internal installer or manager, for example:</p>
+
+<pre class="fade-in"><code class="language-bash">company-claude install
+company-claude update
+company-claude doctor
+company-claude adopt-repo</code></pre>
+
+      <p class="fade-in">That tool should install the chosen framework version, update the active shim target, verify the effective runtime surface, and optionally bootstrap the minimal repo-local adoption files.</p>
+
+      <p class="fade-in">The framework may also integrate with MCP for dynamic company services such as service-catalog lookup or policy workflows, but MCP should not be the primary distribution mechanism for the core process docs. The base framework should still arrive through installed memory files and commands so it remains stable, inspectable, and versioned.</p>
+
+      <!-- 11. Repo Capability Growth -->
+
+      <h3 class="fade-in">11. Repo Capability Growth</h3>
+
+      <p class="fade-in"><code>/agent-add-capability</code> is the framework wizard for growing an already-adopted repo.</p>
+
+      <p class="fade-in">It should:</p>
+
+      <ul class="fade-in">
+        <li>inspect the repo for <code>./CLAUDE.md</code>, repo <code>docs/agents/...</code>, and <code>.claude/commands/...</code></li>
+        <li>determine whether the capability needs a policy, playbook, reference, task entry, command, or directory <code>CLAUDE.md</code></li>
+        <li>produce a concrete repo-local checklist with exact file paths and required updates</li>
+        <li>redirect to <code>/agent-adopt</code> if the repo has not been integrated yet</li>
+      </ul>
+
+      <p class="fade-in">The framework should make the setup path concrete without inventing the repo's standards.</p>
+
+      <!-- 12. Decision Records As The Learning Loop -->
+
+      <h3 class="fade-in">12. Decision Records As The Learning Loop</h3>
+
+      <p class="fade-in">Repos should use Decision Records to preserve durable rationale over time.</p>
+
+      <p class="fade-in">In this system, Decision Records are how a repo learns. Policies say what must be true. Playbooks say how work proceeds. References explain the deeper topic. Decision Records explain why a lasting choice was made.</p>
+
+      <p class="fade-in">A repo should record a Decision Record when:</p>
+
+      <ul class="fade-in">
+        <li>a capability setup chooses one approach over meaningful alternatives</li>
+        <li>a new policy depends on non-obvious rationale</li>
+        <li>a workflow introduces a lasting boundary or contract</li>
+        <li>contributors would otherwise have to rediscover the same reasoning repeatedly</li>
+      </ul>
+
+      <p class="fade-in">A repo should not record a Decision Record for routine feature work or temporary implementation notes.</p>
+
+      <p class="fade-in"><code>/agent-record-decision</code> provisions these records deliberately by choosing the next <code>DR-NNN-*.md</code> path and surfacing the other repo docs that should point to that decision.</p>
+
+      <!-- ============================================================ -->
+      <!-- Example                                                       -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Example: Frontend Best Practices</h2>
+
+      <p class="fade-in">If a repo wants frontend best practices, those rules belong in the repo layer, not in the global framework.</p>
+
+      <p class="fade-in">A typical repo-local addition would look like this:</p>
 
 <pre class="fade-in file-tree"><code>repo/
 ├── <span class="tree-file">CLAUDE.md</span>
@@ -498,56 +612,72 @@ graph LR
     └── <span class="tree-dir">decisions/</span>
         └── <span class="tree-file">DR-002-frontend-boundaries.md</span></code></pre>
 
-      <p class="fade-in">That is the right split of responsibility. The framework governs how a repo adds the capability. The repo owns the actual content of the capability.</p>
-
-      <h2 class="fade-in">Enterprise Distribution Without Global Sprawl</h2>
-
-      <p class="fade-in">The enterprise distribution model applies the same boundary at company scale. For one engineer, installing files directly into <code>~/.claude</code> is fine. At company scale, that path should be treated as the runtime surface, not the authored source of truth.</p>
-
-<pre class="fade-in file-tree"><code>~/.claude/
-├── <span class="tree-file">CLAUDE.md</span>                        <span class="tree-comment"># Thin shim to the active installed version</span>
-├── <span class="tree-dir">commands/</span>                         <span class="tree-comment"># Thin agent-* command shims</span>
-└── <span class="tree-dir">vendor/company-framework/</span>
-    ├── <span class="tree-file">current</span>                      <span class="tree-comment"># Active version pointer</span>
-    ├── <span class="tree-dir">1.4.0/</span>                        <span class="tree-comment"># Previous release</span>
-    └── <span class="tree-dir">1.5.0/</span>                        <span class="tree-comment"># Current release payload</span></code></pre>
-
-      <p class="fade-in">That distinction buys three things immediately: version visibility, fast rollback, and a clean separation between the runtime install and the authored framework source. Repos still own repo-local truth. The shared layer just arrives through a managed install surface instead of manual copying.</p>
+      <p class="fade-in">In that design:</p>
 
       <ul class="fade-in">
-        <li>enterprise policy memory for hard company-wide instructions</li>
-        <li>managed settings for enforced permissions and configuration</li>
-        <li>a user install in <code>~/.claude</code> for the shared framework runtime</li>
-        <li>repo-local docs and commands for project behavior</li>
+        <li><code>policy/frontend.md</code> contains binding frontend rules</li>
+        <li><code>reference/frontend-best-practices.md</code> contains deeper frontend guidance</li>
+        <li><code>router/capability-map.md</code> tells Claude when to load the frontend docs</li>
+        <li><code>.claude/commands/frontend-change.md</code> is optional ergonomics for repeated repo-local work</li>
+        <li><code>DR-002-frontend-boundaries.md</code> preserves the durable rationale behind lasting frontend boundaries</li>
       </ul>
 
-      <p class="fade-in">For a broad internal rollout, the distribution mechanism should look more like a product than a setup note.</p>
+      <p class="fade-in">The framework owns the process for adding this capability. The repo owns the actual frontend standards.</p>
 
-<pre class="fade-in"><code class="language-bash">company-claude install
-company-claude update
-company-claude doctor
-company-claude adopt-repo</code></pre>
-
-      <p class="fade-in">That installer or manager should install the chosen framework version, flip the active shim target, verify the effective runtime surface, and optionally bootstrap the minimum repo-local adoption files. MCP can augment that with dynamic company services later, but it should not be the primary distribution vehicle for the core process docs.</p>
+      <!-- ============================================================ -->
+      <!-- Tradeoffs                                                     -->
+      <!-- ============================================================ -->
 
       <h2 class="fade-in">Tradeoffs</h2>
 
-      <p class="fade-in">This design is not free. It introduces more files than a single monolithic memory document. Authors need to learn the difference between router, policy, playbooks, references, indexes, and decisions. Non-trivial work now has explicit open and close steps instead of a vague planning note plus some luck.</p>
+      <h3 class="fade-in">Benefits</h3>
 
-      <p class="fade-in">Those costs are worth paying because they buy auditability, a clean Plan Mode story, and a sustainable extension path. The system scales from one repo to many repos, then from one user install to an enterprise rollout, without changing the core boundary: process stays shared, truth stays local.</p>
+      <ul class="fade-in">
+        <li>Shared process is centralized and reusable.</li>
+        <li>Repo-specific standards stay local to the repo.</li>
+        <li>The docs tree is easier to reason about because each type has a clear job.</li>
+        <li>The bundle model makes multi-commit work legible without overloading commits themselves.</li>
+        <li>Plan Mode has a clean non-mutating story.</li>
+        <li>The command surface stays safe because it does not claim generic repo-local names globally.</li>
+        <li>Enterprise rollout can be versioned, audited, and rolled back cleanly.</li>
+      </ul>
 
-      <h2 class="fade-in">What An Implementer Does Next</h2>
+      <h3 class="fade-in">Costs</h3>
 
-      <ol class="fade-in">
-        <li>Install the shared framework in <code>~/.claude</code> as the process layer.</li>
-        <li>Adopt the target repo with a minimal local shape: repo <code>CLAUDE.md</code>, repo <code>docs/agents/</code>, and optional repo commands.</li>
-        <li>Use <code>/agent-plan-change</code> for any non-trivial implementation work.</li>
-        <li>Materialize the approved plan with <code>/agent-open-change</code> before touching code or evergreen docs.</li>
-        <li>Keep validation evidence inside the bundle while work proceeds, then run <code>/agent-close-change</code> to remove transient state and preserve the durable record.</li>
-        <li>Use <code>/agent-add-capability</code> when the repo grows, and <code>/agent-record-decision</code> when the repo needs durable rationale for a lasting choice.</li>
-      </ol>
+      <ul class="fade-in">
+        <li>The system introduces more files than a single monolithic <code>CLAUDE.md</code>.</li>
+        <li>Authors need to understand the difference between routing, policy, playbooks, references, and decisions.</li>
+        <li>Non-trivial work now has explicit open and close steps instead of an informal planning note.</li>
+        <li>Organizations need a lightweight installer or management mechanism instead of relying on manual setup.</li>
+      </ul>
 
-      <p class="fade-in">That is the utility of the model. A human can understand it quickly, and future agents operating in the repo can execute against the current codebase without spelunking through old chats or reverse-engineering somebody else's memory layout.</p>
+      <p class="fade-in">These costs are acceptable because they buy a clearer separation of concerns, a better Plan Mode story, and a much cleaner long-term extension path.</p>
+
+      <!-- ============================================================ -->
+      <!-- Decision                                                      -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Decision</h2>
+
+      <p class="fade-in">Adopt this framework shape as the canonical model for the Claude Agents system:</p>
+
+      <ul class="fade-in">
+        <li>global shared process installed in <code>~/.claude</code></li>
+        <li>repo-local architecture and domain guidance kept in the repo</li>
+        <li>typed documentation categories</li>
+        <li>a small namespaced global command surface</li>
+        <li>explicit <code>plan -> open -> implement -> close</code> lifecycle for non-trivial work</li>
+        <li>change bundles under <code>docs/changes/*</code> as the durable work record</li>
+        <li>explicit onboarding, capability-growth, and decision-record workflows</li>
+      </ul>
+
+      <!-- ============================================================ -->
+      <!-- Appendix Link                                                 -->
+      <!-- ============================================================ -->
+
+      <div class="rfc-callout fade-in">
+        <p><strong>Appendix:</strong> The complete file skeletons for every file in the framework are available in the <a href="agent-governance-appendix.html">implementation appendix</a>. An implementer can produce the full working system from that reference alone.</p>
+      </div>
 
     </div>
   </article>
