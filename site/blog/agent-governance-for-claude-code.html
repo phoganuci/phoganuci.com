@@ -275,42 +275,58 @@
 
       <h3 class="fade-in">2. Typed Documentation Tree</h3>
 
-      <p class="fade-in">The framework uses a typed docs tree so each category has a single job:</p>
+      <p class="fade-in">The framework uses a typed docs tree so each category has a single job. The invocation order during a typical change is:</p>
 
       <table class="doc-types fade-in">
         <thead>
           <tr>
-            <th>Doc Type</th>
+            <th>Order</th>
+            <th>Category</th>
             <th>Job</th>
+            <th>Example</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><code>router/</code></td>
-            <td>Decides what to load next.</td>
-          </tr>
-          <tr>
-            <td><code>policy/</code></td>
-            <td>Defines binding rules.</td>
-          </tr>
-          <tr>
-            <td><code>playbooks/</code></td>
-            <td>Defines ordered workflows.</td>
-          </tr>
-          <tr>
-            <td><code>reference/</code></td>
-            <td>Holds deeper topic material.</td>
-          </tr>
-          <tr>
+            <td>1</td>
             <td><code>index/</code></td>
-            <td>Provides stable task and routing lookups.</td>
+            <td>Name-to-doc lookup. Maps a work description like "plan change" to its canonical doc.</td>
+            <td><code>index/workflows.md</code></td>
           </tr>
           <tr>
+            <td>2</td>
+            <td><code>router/</code></td>
+            <td>Phase and capability routing. Decides which policy and playbook to load based on what phase you are in and what kind of work you are doing.</td>
+            <td><code>router/phases.md</code>, <code>router/capability-map.md</code></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><code>policy/</code></td>
+            <td>Binding rules. Defines what must be true during this work. Loaded early and checked throughout.</td>
+            <td><code>policy/core.md</code>, <code>policy/agent-workflow.md</code></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><code>playbooks/</code></td>
+            <td>Ordered workflows. Sequences the steps for the current phase and tells you what to do next.</td>
+            <td><code>playbooks/change-bundles.md</code>, <code>playbooks/verify.md</code></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><code>reference/</code></td>
+            <td>Deep detail. Loaded only when the playbook or policy needs deeper material on a specific topic.</td>
+            <td><code>reference/review-triggers.md</code>, <code>reference/audit-eng.md</code></td>
+          </tr>
+          <tr>
+            <td>6</td>
             <td><code>decisions/</code></td>
-            <td>Preserves durable rationale through Decision Records.</td>
+            <td>Durable rationale. Consulted when questioning a past architectural or workflow choice. Not part of the normal flow; read on demand.</td>
+            <td><code>decisions/DR-001-agent-phase-workflow.md</code></td>
           </tr>
         </tbody>
       </table>
+
+      <p class="fade-in">In short: index names, router selects, policy constrains, playbooks sequence, references deepen, and decisions explain why.</p>
 
       <p class="fade-in">This avoids the common failure mode where one document mixes routing, rules, examples, and rationale without clear boundaries.</p>
 
@@ -615,7 +631,7 @@ company-claude adopt-repo</code></pre>
 
       <ul class="fade-in">
         <li>inspect the repo for <code>./CLAUDE.md</code>, repo <code>docs/agents/...</code>, and <code>.claude/commands/...</code></li>
-        <li>determine whether the capability needs a policy, playbook, reference, task entry, command, or directory <code>CLAUDE.md</code></li>
+        <li>determine whether the capability needs a policy, playbook, reference, workflow entry, command, or directory <code>CLAUDE.md</code></li>
         <li>produce a concrete repo-local checklist with exact file paths and required updates</li>
         <li>redirect to <code>/agent-adopt</code> if the repo has not been integrated yet</li>
       </ul>
