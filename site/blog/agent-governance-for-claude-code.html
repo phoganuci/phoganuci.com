@@ -253,7 +253,6 @@
     ├── <span class="tree-dir">policy/</span>
     ├── <span class="tree-dir">playbooks/</span>
     ├── <span class="tree-dir">reference/</span>
-    ├── <span class="tree-dir">index/</span>
     └── <span class="tree-dir">decisions/</span></code></pre>
 
       <p class="fade-in">Each repo extends that with local docs and optional local commands:</p>
@@ -266,59 +265,13 @@
     ├── <span class="tree-dir">policy/</span>
     ├── <span class="tree-dir">playbooks/</span>
     ├── <span class="tree-dir">reference/</span>
-    ├── <span class="tree-dir">index/</span>
     └── <span class="tree-dir">decisions/</span></code></pre>
 
       <p class="fade-in">The global layer explains how work should happen. The repo layer explains how that codebase works.</p>
 
-      <!-- 2. Typed Documentation Tree -->
+      <!-- 2. Root Contract -->
 
-      <h3 class="fade-in">2. Typed Documentation Tree</h3>
-
-      <p class="fade-in">The framework uses a typed docs tree so each category has a single job. The invocation order during a typical change is:</p>
-
-      <table class="doc-types fade-in">
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Job</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>index/</code></td>
-            <td>Loaded first. Maps a work description like "plan change" to its canonical doc (<code>index/workflows.md</code>).</td>
-          </tr>
-          <tr>
-            <td><code>router/</code></td>
-            <td>Loaded next. Decides which policy and playbook to load based on the current phase and kind of work (<code>router/phases.md</code>, <code>router/capability-map.md</code>).</td>
-          </tr>
-          <tr>
-            <td><code>policy/</code></td>
-            <td>Loaded early, checked throughout. Defines binding rules for the current work (<code>policy/core.md</code>, <code>policy/agent-workflow.md</code>).</td>
-          </tr>
-          <tr>
-            <td><code>playbooks/</code></td>
-            <td>Sequences the steps for the current phase. Tells you what to do next (<code>playbooks/change-bundles.md</code>, <code>playbooks/verify.md</code>).</td>
-          </tr>
-          <tr>
-            <td><code>reference/</code></td>
-            <td>Loaded on demand when a playbook or policy needs deeper material on a specific topic (<code>reference/review-triggers.md</code>, <code>reference/audit-eng.md</code>).</td>
-          </tr>
-          <tr>
-            <td><code>decisions/</code></td>
-            <td>Consulted when questioning a past architectural or workflow choice. Not part of the normal flow (<code>decisions/DR-001-agent-phase-workflow.md</code>).</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p class="fade-in">In short: index names, router selects, policy constrains, playbooks sequence, references deepen, and decisions explain why.</p>
-
-      <p class="fade-in">This avoids the common failure mode where one document mixes routing, rules, examples, and rationale without clear boundaries.</p>
-
-      <!-- 3. Root Contract -->
-
-      <h3 class="fade-in">3. Root Contract</h3>
+      <h3 class="fade-in">2. Root Contract</h3>
 
       <p class="fade-in"><code>~/.claude/CLAUDE.md</code> is the root contract. It defines:</p>
 
@@ -332,24 +285,87 @@
 
       <p class="fade-in">That file is the shared entrypoint Claude Code loads as user memory.</p>
 
-      <!-- 4. Composition Contract -->
+      <!-- 3. Components -->
 
-      <h3 class="fade-in">4. Composition Contract</h3>
+      <h3 class="fade-in">3. Components</h3>
 
-      <p class="fade-in">The framework needs a clear answer to "what belongs here versus in the repo?".</p>
+      <p class="fade-in">The framework uses a typed docs tree so each category has a single job. During a typical change, they are encountered in this order:</p>
 
-      <p class="fade-in"><code>docs/agents/router/composition.md</code> provides that contract:</p>
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Job</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>router/</code></td>
+            <td>Phase, capability, and workflow routing. Given a work description like "plan change" or "verify changes", the capability map resolves it to the canonical doc. The router also decides which policy and playbook to load based on the current phase and work type. The composition contract (<code>composition.md</code>) lives here too: it answers "does this belong in the global framework or in the repo?" by splitting ownership. The global layer owns shared workflow, verification, review, and documentation discipline. The repo layer owns architecture, naming, testing rules, references, facts, gotchas, and Decision Records.</td>
+          </tr>
+          <tr>
+            <td><code>policy/</code></td>
+            <td>Binding rules. Loaded early and checked throughout. Policies define what must be true, such as test requirements, spec completeness, and documentation discipline. They are not overridden by playbooks or references.</td>
+          </tr>
+          <tr>
+            <td><code>playbooks/</code></td>
+            <td>Ordered workflows. Playbooks sequence the steps for the current phase: what to do, in what order, and what to load next. They are the primary mechanism for driving work forward.</td>
+          </tr>
+          <tr>
+            <td><code>reference/</code></td>
+            <td>Deep detail. Loaded only when a playbook or policy needs deeper material on a specific topic, such as review triggers, audit checklists, or gate definitions. Not preloaded for every change.</td>
+          </tr>
+          <tr>
+            <td><code>decisions/</code></td>
+            <td>Durable rationale. Decision Records explain why a lasting architectural or workflow choice was made. They are not part of the normal flow; consulted on demand when a past decision is questioned.</td>
+          </tr>
+        </tbody>
+      </table>
 
-      <ul class="fade-in">
-        <li>the global layer owns shared workflow, verification, review, and documentation discipline</li>
-        <li>the repo layer owns repo-specific architecture, naming, testing rules, references, facts, gotchas, and Decision Records</li>
-        <li>repo commands should use distinct local names instead of relying on shadowing framework commands</li>
-        <li>the framework command surface stays generic and process-oriented</li>
-      </ul>
+      <p class="fade-in">In short: router selects, policy constrains, playbooks sequence, references deepen, and decisions explain why.</p>
 
-      <!-- 5. Change Bundle Model -->
+      <div class="diagram-container fade-in">
+        <pre class="mermaid">
+graph TD
+    entry["CLAUDE.md<br/><i>entrypoint · authority order</i>"]:::routing
 
-      <h3 class="fade-in">5. Change Bundle Model</h3>
+    subgraph router ["router/"]
+      phases["phases.md<br/><i>what phase am I in?</i>"]:::api
+      capmap["capability-map.md<br/><i>what work am I doing?</i>"]:::api
+      composition["composition.md<br/><i>global vs repo?</i>"]:::api
+    end
+
+    policy["policy/*<br/><i>binding rules</i>"]:::data
+    playbooks["playbooks/*<br/><i>ordered workflows</i>"]:::data
+    reference["reference/*<br/><i>deep detail · on demand</i>"]:::onDemand
+    decisions["decisions/*<br/><i>durable rationale · on demand</i>"]:::onDemand
+
+    entry --> phases
+    entry --> capmap
+    entry --> composition
+
+    phases --> policy
+    capmap --> policy
+    composition --> policy
+
+    policy --> playbooks
+    playbooks --> reference
+    playbooks -.-> decisions
+
+    classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
+    classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
+    classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
+    classDef onDemand fill:#3A2054,stroke:#B07CD8,color:#fff,stroke-width:1.5px
+        </pre>
+      </div>
+
+      <p class="fade-in">This avoids the common failure mode where one document mixes routing, rules, examples, and rationale without clear boundaries.</p>
+
+      <!-- Capabilities -->
+
+      <h3 class="fade-in">Capabilities</h3>
+
+      <h4 class="fade-in">Change Bundles</h4>
 
       <p class="fade-in">Non-trivial implementation work is recorded as a change bundle under <code>docs/changes/NNNNNNN-short-name/</code>.</p>
 
@@ -374,9 +390,22 @@
 
       <p class="fade-in">One bundle spans one body of work, not one commit. The same bundle can survive across multiple implementation commits until the work is closed.</p>
 
-      <!-- 6. Repo Capability Growth -->
+      <h4 class="fade-in">Verification and Review</h4>
 
-      <h3 class="fade-in">6. Repo Capability Growth</h3>
+      <p class="fade-in">Every implementation commit must pass verification before it is considered complete. The framework provides a structured quality system:</p>
+
+      <ul class="fade-in">
+        <li><code>playbooks/verify.md</code> defines the verification workflow: what checks to run, how to record results, and when verification is sufficient</li>
+        <li><code>playbooks/review.md</code> defines the phase-completion review, a structured check at phase boundaries before work advances</li>
+        <li><code>reference/review-model.md</code> describes the review model itself</li>
+        <li><code>reference/review-triggers.md</code> lists the conditions that require review</li>
+        <li><code>reference/review-dimensions.md</code> defines the axes a review evaluates (correctness, completeness, consistency, risk)</li>
+        <li><code>reference/review-gates.md</code> defines the pass/fail criteria at each gate</li>
+      </ul>
+
+      <p class="fade-in">Verification results accumulate in the bundle's <code>verification.md</code>. The review system is not a human code-review proxy. It is a structured self-check that the agent applies at phase boundaries to catch drift, incompleteness, and unintended scope changes before they compound.</p>
+
+      <h4 class="fade-in">Repo Capability Growth</h4>
 
       <p class="fade-in"><code>/agent-add-capability</code> is the framework wizard for growing an already-adopted repo.</p>
 
@@ -391,9 +420,7 @@
 
       <p class="fade-in">The framework should make the setup path concrete without inventing the repo's standards.</p>
 
-      <!-- 7. Decision Records As The Learning Loop -->
-
-      <h3 class="fade-in">7. Decision Records As The Learning Loop</h3>
+      <h4 class="fade-in">Decision Records</h4>
 
       <p class="fade-in">Repos should use Decision Records to preserve durable rationale over time.</p>
 

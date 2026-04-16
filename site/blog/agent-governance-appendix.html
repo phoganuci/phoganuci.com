@@ -161,7 +161,6 @@ This file is intended to live at `~/.claude/CLAUDE.md`. It defines the shared pr
 Use the typed docs tree for routing and composition detail:
 - `$CLAUDE_HOME/docs/agents/router/phases.md`
 - `$CLAUDE_HOME/docs/agents/router/capability-map.md`
-- `$CLAUDE_HOME/docs/agents/index/workflows.md`
 - `$CLAUDE_HOME/docs/agents/router/composition.md`
 - `$CLAUDE_HOME/docs/agents/router/authority-order.md` when you need interpretation notes beyond the precedence guidance below
 
@@ -356,7 +355,7 @@ description: Run the repo capability-setup wizard for an adopted repo.
 
 Workflow:
 1. Inspect the repo for `./CLAUDE.md`, repo `docs/agents/...`, and `.claude/commands/...`.
-2. Load composition, add-capability playbook, capability-map, and workflow index.
+2. Load composition, add-capability playbook, and capability-map.
 3. Determine whether the capability needs a policy, playbook, reference, workflow entry, command, or directory `CLAUDE.md`.
 4. Produce a concrete repo-local setup checklist with exact file paths and required updates.
 5. If the repo is not yet adopted, stop and redirect to `/agent-adopt`.
@@ -372,7 +371,7 @@ description: Run the repo Decision Record setup wizard.
 
 Workflow:
 1. Inspect the repo for `docs/agents/decisions/` and existing `DR-NNN-*.md` files.
-2. Load composition, record-decision playbook, and workflow index.
+2. Load composition, record-decision playbook, and capability-map.
 3. Determine whether the decision is durable enough to justify a Decision Record.
 4. Choose the next DR number and a slug.
 5. Produce a concrete repo-local checklist.
@@ -413,7 +412,7 @@ source_of_truth: $CLAUDE_HOME/docs/agents/router/phases.md
 # Phase Routing
 
 ## Explore
-Load: `CLAUDE.md`, workflow index when the work is framed as a named workflow.
+Load: `CLAUDE.md`, `capability-map.md` when the work is framed as a named workflow.
 Then inspect code, tests, configs, or indexes directly.
 
 ## Plan
@@ -453,7 +452,7 @@ The repo owns: `./CLAUDE.md`, optional directory entrypoints, repo `docs/agents/
 1. `$CLAUDE_HOME` always means `~/.claude`.
 2. Repo docs use repo-relative paths.
 3. Repo `./CLAUDE.md` points to framework docs it relies on, then adds repo-specific routing.
-4. Repos extend with their own capability-map and workflow index.
+4. Repos extend with their own capability-map for repo-specific routing and workflow names.
 5. Repo-specific docs own repo behavior. Framework docs own shared workflow.
 6. Repo commands use distinct names, not same-name shadowing.
 7. Commands stay process-oriented.
@@ -476,13 +475,38 @@ source_of_truth: $CLAUDE_HOME/docs/agents/router/capability-map.md
 
 Covers framework-provided capabilities only. Repos add their own capability-map for repo-specific domains.
 
+## Workflow Lookup
+
+| Workflow | Canonical doc |
+|----------|---------------|
+| adopt framework | `$CLAUDE_HOME/docs/agents/playbooks/adopt-framework.md` |
+| add capability | `$CLAUDE_HOME/docs/agents/playbooks/add-capability.md` |
+| record decision | `$CLAUDE_HOME/docs/agents/playbooks/record-decision.md` |
+| change bundle lifecycle | `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md` |
+| plan change | `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md` |
+| open change | `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md` |
+| implement change | `$CLAUDE_HOME/docs/agents/playbooks/agent-phase-workflow.md` |
+| close change | `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md` |
+| agent phase workflow | `$CLAUDE_HOME/docs/agents/playbooks/agent-phase-workflow.md` |
+| docs workflow | `$CLAUDE_HOME/docs/agents/playbooks/docs-workflow.md` |
+| verify changes | `$CLAUDE_HOME/docs/agents/playbooks/verify.md` |
+| phase-completion review | `$CLAUDE_HOME/docs/agents/playbooks/review.md` |
+| improve docs | `$CLAUDE_HOME/docs/agents/playbooks/improve-docs.md` |
+| review model | `$CLAUDE_HOME/docs/agents/reference/review-model.md` |
+| review triggers | `$CLAUDE_HOME/docs/agents/reference/review-triggers.md` |
+| review dimensions | `$CLAUDE_HOME/docs/agents/reference/review-dimensions.md` |
+| review gates | `$CLAUDE_HOME/docs/agents/reference/review-gates.md` |
+| troubleshoot | `$CLAUDE_HOME/docs/agents/playbooks/troubleshoot.md` |
+
+Repos add repo-specific workflow names to their own `docs/agents/router/capability-map.md`.
+
 ## Planning / Review / Docs Workflow
 Load: docs policy, agent-workflow, change-bundles, agent-phase-workflow, docs-workflow, review, verify.
 Escalate to: review-model, review-triggers, review-dimensions, review-gates.
 
 ## Framework Composition / Repo Adoption / Capability Growth
 Load: composition, adopt-framework or add-capability or record-decision playbooks.
-Escalate to: repo CLAUDE.md, repo capability-map, repo workflow index, repo decisions.
+Escalate to: repo CLAUDE.md, repo capability-map, repo decisions.
 
 ## Troubleshooting
 Load: troubleshoot playbook. Escalate to repo-specific references.</code></pre>
@@ -631,13 +655,13 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/adopt-framework.md
 1. Read composition.md and decide what stays global vs repo-local.
 2. Create or update repo `./CLAUDE.md`.
 3. Add repo capability-map if needed.
-4. Add repo workflow index if needed.
+4. Fold workflow entries into the repo capability-map if named recurring workflows exist.
 5. Add first repo-local policies and playbooks for highest-friction domains.
 6. Add repo commands only for repeated workflows.
 
 ## Minimal Shape
 Small repo: `./CLAUDE.md`, one policy, one playbook.
-Larger repo: add capability-map, workflow index, multiple domain policies, directory entrypoints.
+Larger repo: add capability-map with workflow entries, multiple domain policies, directory entrypoints.
 
 ## Rules
 - Do not copy framework docs into the repo.
@@ -728,7 +752,7 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/add-capability.md
 1. Decide if new domain, workflow, or reference topic.
 2. Add minimal repo-local doc(s).
 3. Update repo capability-map.
-4. Update workflow index if named workflow.
+4. Update capability-map with workflow entry if named workflow.
 5. Update ./CLAUDE.md if routing changes.
 6. Add directory CLAUDE.md only if startup routing matters.</code></pre>
       </details>
@@ -1016,50 +1040,10 @@ Reporting: critical, important, hardening, questions.</code></pre>
       </details>
 
       <!-- ============================================================ -->
-      <!-- Index and Decisions                                           -->
+      <!-- Decisions                                                     -->
       <!-- ============================================================ -->
 
-      <h2>Index and Decisions</h2>
-
-      <details>
-        <summary>docs/agents/index/workflows.md <span class="file-desc">Workflow name routing</span></summary>
-<pre><code class="language-markdown">---
-kind: index
-binding: false
-scope: repo
-source_of_truth: $CLAUDE_HOME/docs/agents/index/workflows.md
----
-
-# Workflow Index
-
-## Plan / Workflow
-| Workflow | Canonical doc |
-|----------|---------------|
-| adopt framework | playbooks/adopt-framework.md |
-| add capability | playbooks/add-capability.md |
-| record decision | playbooks/record-decision.md |
-| change bundle lifecycle | playbooks/change-bundles.md |
-| agent phase workflow | playbooks/agent-phase-workflow.md |
-| docs workflow | playbooks/docs-workflow.md |
-| verify changes | playbooks/verify.md |
-| phase-completion review | playbooks/review.md |
-| improve docs | playbooks/improve-docs.md |
-
-## Quality system
-| Workflow | Canonical doc |
-|----------|---------------|
-| review model | reference/review-model.md |
-| review triggers | reference/review-triggers.md |
-| review dimensions | reference/review-dimensions.md |
-| review gates | reference/review-gates.md |
-
-## Domain change playbooks
-| Workflow | Canonical doc |
-|----------|---------------|
-| troubleshoot | playbooks/troubleshoot.md |
-
-Repos add repo-specific workflow names to their own docs/agents/index/workflows.md.</code></pre>
-      </details>
+      <h2>Decisions</h2>
 
       <details>
         <summary>docs/agents/decisions/DR-001-agent-phase-workflow.md <span class="file-desc">Policy-first workflow rationale</span></summary>
