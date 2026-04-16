@@ -65,6 +65,10 @@ Author: Patrick Hogan — staff engineer, builds production systems with AI.
 | Domain | Route53 | Already in AWS ecosystem, programmatic via Pulumi | CloudFlare, Namecheap |
 | Task runner | just | Same as yeet, simple, no runtime dependency | make, npm scripts |
 
+## Style Rules
+
+**No em dashes.** Use commas, periods, semicolons, colons, or parentheses instead. Never use `—` or `–` in any content.
+
 ## Content Standards
 
 **Blog posts must include:**
