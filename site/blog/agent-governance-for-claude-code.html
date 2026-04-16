@@ -144,6 +144,53 @@
         <p><strong>Thesis:</strong> the global layer owns process; the repo layer owns local truth. Everything in this RFC follows from that boundary.</p>
       </div>
 
+      <h2 class="fade-in">System At A Glance</h2>
+
+      <p class="fade-in">Before diving into the decisions, here is the minimum component map an implementer needs in their head. The system is not just a docs tree. It is a small operating surface: one shared root contract, one typed shared docs layer, one repo-local truth layer, one reserved shared command surface, one repo-local command surface, and one durable artifact model for non-trivial work.</p>
+
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>~/.claude/CLAUDE.md</code></td>
+            <td>The root contract. Defines authority order, phase boundaries, path conventions, and the shared command surface.</td>
+          </tr>
+          <tr>
+            <td><code>~/.claude/docs/agents/</code></td>
+            <td>The shared typed docs layer. Holds router, policy, playbooks, reference material, task indexes, and shared decisions.</td>
+          </tr>
+          <tr>
+            <td><code>~/.claude/commands/agent-*.md</code></td>
+            <td>Thin shared command entrypoints. They load canonical docs and drive shared process workflows without owning repo-specific behavior.</td>
+          </tr>
+          <tr>
+            <td><code>./CLAUDE.md</code></td>
+            <td>The repo entrypoint. Composes the shared framework with repo-specific routing, conventions, and boundary rules.</td>
+          </tr>
+          <tr>
+            <td><code>repo/docs/agents/</code></td>
+            <td>The repo-local truth layer. Holds architecture, domain policies, playbooks, references, task names, and Decision Records for that codebase.</td>
+          </tr>
+          <tr>
+            <td><code>repo/.claude/commands/</code></td>
+            <td>Repo-local ergonomic commands. These wrap repo capabilities without polluting the global <code>agent-*</code> namespace.</td>
+          </tr>
+          <tr>
+            <td><code>docs/changes/NNNNNNN-short-name/</code></td>
+            <td>The durable change-bundle contract for non-trivial work: frozen plan, active state, validation evidence, approved deviations, and closeout artifacts.</td>
+          </tr>
+          <tr>
+            <td><code>~/.claude/vendor/company-framework/</code></td>
+            <td>The enterprise distribution surface. Versioned installed framework payloads live here, with thin shims exposing the active version at runtime.</td>
+          </tr>
+        </tbody>
+      </table>
+
       <h2 class="fade-in">The Failure Mode</h2>
 
       <p class="fade-in">Claude Code guidance usually collapses into one of two bad states. Either everything gets stuffed into one root memory file, or the docs tree grows without types, boundaries, or ownership rules. Both look fine for a week. Both rot quickly.</p>
