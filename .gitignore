@@ -2,3 +2,4 @@ node_modules/
 infra/Pulumi.*.yaml
 .pulumi/
 *.DS_Store
+.claude/settings.local.json
