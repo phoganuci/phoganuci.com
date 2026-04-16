@@ -18,7 +18,13 @@ validate:
 deploy:
     #!/usr/bin/env bash
     set -euo pipefail
-    DIST_ID=$(cd infra && pulumi stack output cloudFrontDistributionId)
+    DIST_ID=$(aws cloudfront list-distributions \
+        --query "DistributionList.Items[?Aliases.Items && contains(Aliases.Items, 'phoganuci.com')].Id | [0]" \
+        --output text)
+    if [ -z "$DIST_ID" ] || [ "$DIST_ID" = "None" ]; then
+        echo "Could not resolve CloudFront distribution for phoganuci.com" >&2
+        exit 1
+    fi
     aws s3 sync site/ s3://phoganuci.com --delete --cache-control "public, max-age=86400"
     aws cloudfront create-invalidation --distribution-id "$DIST_ID" --paths "/*"
 

@@ -55,6 +55,13 @@ That means:
 
 For this repo, the simplest mental model is: **fix `default`, then use `phoganuci-com`.**
 
+`just deploy` resolves the live CloudFront distribution by alias (`phoganuci.com`) and then runs:
+
+- `aws s3 sync site/ s3://phoganuci.com --delete`
+- `aws cloudfront create-invalidation --distribution-id <resolved-id> --paths "/*"`
+
+That is intentional. Local content deploys should not depend on Pulumi state bucket access. If Pulumi backend access is broken, `just deploy` should still work as long as the AWS profile chain can reach the site account.
+
 ## Commands
 
 ```bash
@@ -72,7 +79,7 @@ Preferred publish path: push `site/**` changes to `main` and let GitHub Actions 
 
 Manual fallback: `just deploy`.
 
-The manual path depends on the local AWS profile chain described above. The GitHub Actions path does not depend on your local AWS login state.
+The manual path depends on the local AWS profile chain described above. It does **not** require Pulumi state access. The GitHub Actions path does not depend on your local AWS login state.
 
 ## Infrastructure
 
@@ -84,6 +91,11 @@ Pulumi (TypeScript) manages all infrastructure in a dedicated AWS account (`phog
 - GitHub Actions OIDC provider + deploy role
 
 See `infra/` for the full Pulumi program.
+
+Important distinction:
+
+- `just deploy` is for publishing already-built site files to existing infrastructure.
+- `just infra-preview`, `just infra-up`, and `just infra-outputs` still depend on Pulumi and Pulumi backend access.
 
 ## Posts
 
