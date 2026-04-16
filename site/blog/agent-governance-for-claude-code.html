@@ -301,7 +301,7 @@
         <tbody>
           <tr>
             <td><code>router/</code></td>
-            <td>Phase, capability, and workflow routing. Given a work description like "plan change" or "verify changes", the capability map resolves it to the canonical doc. The router also decides which policy and playbook to load based on the current phase and work type. The composition contract (<code>composition.md</code>) lives here too: it answers "does this belong in the global framework or in the repo?" by splitting ownership. The global layer owns shared workflow, verification, review, and documentation discipline. The repo layer owns architecture, naming, testing rules, references, facts, gotchas, and Decision Records.</td>
+            <td>Phase, capability, and workflow routing. Given a work description like "plan change" or "verify changes", the capability map resolves it to the canonical doc. The router also decides which policy and playbook to load based on the current phase and work type, and which layer (global framework vs repo) owns a given rule.</td>
           </tr>
           <tr>
             <td><code>policy/</code></td>
@@ -389,6 +389,28 @@ graph TD
       </ul>
 
       <p class="fade-in">One bundle spans one body of work, not one commit. The same bundle can survive across multiple implementation commits until the work is closed.</p>
+
+      <p class="fade-in"><strong>After <code>/agent-open-change</code></strong> — the initial bundle commit contains only these artifacts:</p>
+
+<pre class="fade-in file-tree"><code>docs/changes/0000123-frontend-boundaries/
+├── <span class="tree-file">plan.md</span>            <span class="tree-comment"># frozen approved plan</span>
+├── <span class="tree-file">state.yaml</span>         <span class="tree-comment"># marks bundle as active</span>
+└── <span class="tree-file">verification.md</span>    <span class="tree-comment"># initial skeleton</span></code></pre>
+
+      <p class="fade-in"><strong>Mid-implementation</strong> — scratch and verification accumulate as work progresses:</p>
+
+<pre class="fade-in file-tree"><code>docs/changes/0000123-frontend-boundaries/
+├── <span class="tree-file">plan.md</span>            <span class="tree-comment"># frozen, unchanged</span>
+├── <span class="tree-file">state.yaml</span>         <span class="tree-comment"># still active</span>
+├── <span class="tree-file">verification.md</span>    <span class="tree-comment"># updated with test results and checks</span>
+└── <span class="tree-file">notes.md</span>           <span class="tree-comment"># scratch (optional)</span></code></pre>
+
+      <p class="fade-in"><strong>After <code>/agent-close-change</code></strong> — transient artifacts are removed, durable record remains:</p>
+
+<pre class="fade-in file-tree"><code>docs/changes/0000123-frontend-boundaries/
+├── <span class="tree-file">plan.md</span>            <span class="tree-comment"># frozen record of what was planned</span>
+├── <span class="tree-file">verification.md</span>    <span class="tree-comment"># final validation evidence</span>
+└── <span class="tree-file">review.md</span>          <span class="tree-comment"># only if deviations or learnings (optional)</span></code></pre>
 
       <h4 class="fade-in">Verification and Review</h4>
 
