@@ -273,6 +273,45 @@ Pass any `$ARGUMENTS` through to the bundle-opening flow.</code></pre>
       </details>
 
       <details>
+        <summary>commands/agent-implement-change.md <span class="file-desc">Load implementation phase</span></summary>
+<pre><code class="language-markdown">---
+description: Load the implementation phase for an open change bundle.
+---
+
+Use this command after `/agent-open-change` has committed the initial bundle and before making implementation edits.
+
+Workflow:
+1. Find the open bundle by scanning `docs/changes/*/state.yaml`.
+2. Load the frozen `plan.md` from that bundle.
+3. Load these docs in order:
+   - `$CLAUDE_HOME/CLAUDE.md`
+   - `$CLAUDE_HOME/docs/agents/policy/agent-workflow.md`
+   - `$CLAUDE_HOME/docs/agents/playbooks/agent-phase-workflow.md`
+   - `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md`
+   - repo-local domain policy and change playbook for the work area
+4. Queue these docs for later phases:
+   - `$CLAUDE_HOME/docs/agents/playbooks/verify.md` at verify
+   - `$CLAUDE_HOME/docs/agents/playbooks/review.md` at commit
+   - `$CLAUDE_HOME/docs/agents/playbooks/docs-workflow.md` at commit
+5. Set up the implementation task structure:
+   - Load implementation docs
+   - Domain-specific implementation tasks from the plan
+   - Verify: run baseline checks, then domain-specific verification
+   - Implementation checkpoint: review against plan, check for shortcuts, ask the user
+   - Commit: load review docs, write `review.md` if deviations exist, commit
+
+Rules:
+- The plan is the best understanding at planning time. It is not infallible.
+- If the plan specifies something that does not match the actual codebase, fix it rather than blindly following.
+- Look for opportunities to make the code cleaner and the architecture more consistent with existing patterns.
+- If a plan detail is wrong or incomplete, implement the right thing and note the deviation for `review.md`.
+- No shortcuts or hacks. "The plan is fallible" is not license to skip work. If doing the right thing requires effort the plan did not anticipate, do the effort.
+- Ask the user before finalizing.
+
+Pass any `$ARGUMENTS` through to the implementation flow.</code></pre>
+      </details>
+
+      <details>
         <summary>commands/agent-close-change.md <span class="file-desc">Close bundle, clean up</span></summary>
 <pre><code class="language-markdown">---
 description: Close an open change bundle and clean up transient bundle artifacts.

@@ -242,6 +242,7 @@
 ├── <span class="tree-dir">commands/</span>
 │   ├── <span class="tree-file">agent-plan-change.md</span>
 │   ├── <span class="tree-file">agent-open-change.md</span>
+│   ├── <span class="tree-file">agent-implement-change.md</span>
 │   ├── <span class="tree-file">agent-close-change.md</span>
 │   ├── <span class="tree-file">agent-adopt.md</span>
 │   ├── <span class="tree-file">agent-add-capability.md</span>
@@ -381,7 +382,7 @@
         <pre class="mermaid">
 graph LR
   PLAN["/agent-plan-change<br/>exact approved plan<br/>no writes"]:::routing --> OPEN["/agent-open-change<br/>materialize bundle<br/>bundle-only commit"]:::api
-  OPEN --> IMPLEMENT["implementation<br/>one or many commits"]:::data
+  OPEN --> IMPLEMENT["/agent-implement-change<br/>load plan and phase docs"]:::data
   IMPLEMENT --> CLOSE["/agent-close-change<br/>remove transient state<br/>keep durable record"]:::routing
 
   classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
@@ -419,6 +420,22 @@ graph LR
       </ul>
 
       <p class="fade-in">The open-change commit contains only the bundle artifacts. It does not contain implementation edits.</p>
+
+      <h4 class="fade-in"><code>/agent-implement-change</code></h4>
+
+      <p class="fade-in"><code>/agent-implement-change</code> runs after the bundle is open and before making implementation edits.</p>
+
+      <p class="fade-in">It:</p>
+
+      <ul class="fade-in">
+        <li>finds the open bundle from <code>docs/changes/*/state.yaml</code></li>
+        <li>loads the frozen <code>plan.md</code></li>
+        <li>loads the implementation-phase docs: workflow policy, phase workflow playbook, change bundles playbook, and repo-local domain policy and change playbook</li>
+        <li>queues verify, review, and docs-workflow docs for later phases</li>
+        <li>establishes the implementation task structure with an explicit checkpoint before commit</li>
+      </ul>
+
+      <p class="fade-in">The plan is treated as the best understanding at planning time, not as infallible instruction. If the plan conflicts with the actual codebase, the implementation should do the right thing and note deviations for <code>review.md</code>.</p>
 
       <h4 class="fade-in"><code>/agent-close-change</code></h4>
 
@@ -474,6 +491,7 @@ graph LR
       <ul class="fade-in">
         <li><code>/agent-plan-change</code></li>
         <li><code>/agent-open-change</code></li>
+        <li><code>/agent-implement-change</code></li>
         <li><code>/agent-close-change</code></li>
         <li><code>/agent-adopt</code></li>
         <li><code>/agent-add-capability</code></li>
@@ -500,6 +518,7 @@ graph LR
 ├── <span class="tree-dir">commands/</span>
 │   ├── <span class="tree-file">agent-plan-change.md</span>
 │   ├── <span class="tree-file">agent-open-change.md</span>
+│   ├── <span class="tree-file">agent-implement-change.md</span>
 │   ├── <span class="tree-file">agent-close-change.md</span>
 │   └── <span class="tree-file">...</span>
 └── <span class="tree-dir">vendor/company-framework/</span>
