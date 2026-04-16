@@ -374,181 +374,76 @@
 
       <p class="fade-in">One bundle spans one body of work, not one commit. The same bundle can survive across multiple implementation commits until the work is closed.</p>
 
-      <!-- 6. Plan / Open / Implement / Close Workflow -->
+      <!-- 6. Command Surface and Workflow Lifecycle -->
 
-      <h3 class="fade-in">6. Plan / Open / Implement / Close Workflow</h3>
+      <h3 class="fade-in">6. Command Surface and Workflow Lifecycle</h3>
 
-      <p class="fade-in">The framework formalizes the lifecycle as <code>plan -> open -> implement -> close</code>.</p>
+      <p class="fade-in">Framework commands live under <code>~/.claude/commands/</code> and use the reserved <code>agent-*</code> namespace. The surface is intentionally small: eight commands covering the full lifecycle from exploration through implementation to long-term learning.</p>
 
       <div class="diagram-container fade-in">
         <pre class="mermaid">
-graph LR
-  PLAN["/agent-plan-change<br/>exact approved plan<br/>no writes"]:::routing --> OPEN["/agent-open-change<br/>materialize bundle<br/>bundle-only commit"]:::api
-  OPEN --> IMPLEMENT["/agent-implement-change<br/>load plan and phase docs"]:::data
-  IMPLEMENT --> CLOSE["/agent-close-change<br/>remove transient state<br/>keep durable record"]:::routing
+graph TB
+  subgraph explore ["Explore"]
+    ADOPT["/agent-adopt<br/>first-time repo onboarding"]:::routing
+    ADDCAP["/agent-add-capability<br/>add repo-local policy,<br/>playbook, reference, or command"]:::routing
+    IMPROVE["/agent-improve<br/>root-cause doc and<br/>routing friction repair"]:::routing
+  end
+
+  subgraph change ["Non-trivial Change Lifecycle"]
+    direction LR
+    PLAN["/agent-plan-change<br/>exact approved plan<br/>no writes"]:::api --> OPEN["/agent-open-change<br/>materialize bundle<br/>bundle-only commit"]:::api
+    OPEN --> IMPLEMENT["/agent-implement-change<br/>load plan and phase docs"]:::data
+    IMPLEMENT --> CLOSE["/agent-close-change<br/>remove transient state<br/>keep durable record"]:::api
+  end
+
+  subgraph learn ["Learn"]
+    RECORD["/agent-record-decision<br/>preserve durable rationale"]:::decision
+  end
+
+  explore --> change
+  change --> learn
 
   classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
   classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
   classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
+  classDef decision fill:#3A2054,stroke:#B07CD8,color:#fff,stroke-width:1.5px
         </pre>
       </div>
 
-      <h4 class="fade-in"><code>/agent-plan-change</code></h4>
+      <p class="fade-in">These commands are process-oriented. They load canonical docs and guide the workflow. They are not the place for hidden repo-specific standards or arbitrary scaffolding logic. More specific commands should be repo-local.</p>
 
-      <p class="fade-in"><code>/agent-plan-change</code> is the planning entrypoint for non-trivial work.</p>
+      <h4 class="fade-in">Explore Phase</h4>
 
-      <p class="fade-in">It:</p>
+      <p class="fade-in">Before any non-trivial change, a repo needs to be integrated with the framework. Three commands handle different exploration activities:</p>
 
-      <ul class="fade-in">
-        <li>inspects the repo and loads the relevant global and repo-local docs</li>
-        <li>produces the exact approved plan content that will become <code>plan.md</code></li>
-        <li>proposes a provisional bundle path and slug</li>
-        <li>does not write to disk, assign the final number, or commit anything</li>
-      </ul>
+      <p class="fade-in"><code>/agent-adopt</code> covers first-time repo onboarding: it reads the framework composition contract and produces the repo's local entrypoint, capability map, and initial docs.</p>
 
-      <p class="fade-in">This makes it safe for Claude Code Plan Mode.</p>
+      <p class="fade-in"><code>/agent-add-capability</code> is the wizard for growing a repo's local layer: adding a new policy, playbook, reference, workflow entry, or command. It inspects what already exists and produces a concrete setup checklist.</p>
 
-      <h4 class="fade-in"><code>/agent-open-change</code></h4>
+      <p class="fade-in"><code>/agent-improve</code> is for root-cause doc and routing friction repair. When the framework routes to the wrong doc or a playbook is unclear, this command diagnoses and fixes the underlying issue.</p>
 
-      <p class="fade-in"><code>/agent-open-change</code> runs after planning is approved and outside Plan Mode.</p>
+      <h4 class="fade-in">Change Lifecycle: Plan / Open / Implement / Close</h4>
 
-      <p class="fade-in">It:</p>
+      <p class="fade-in">Non-trivial implementation work follows a four-phase lifecycle:</p>
 
-      <ul class="fade-in">
-        <li>rechecks <code>docs/changes/</code> and assigns the final next available number</li>
-        <li>reuses an existing open bundle when the same work is already open</li>
-        <li>writes <code>plan.md</code>, <code>state.yaml</code>, and <code>verification.md</code></li>
-        <li>creates the initial bundle commit</li>
-      </ul>
+      <p class="fade-in"><code>/agent-plan-change</code> is the planning entrypoint. It inspects the repo, loads the relevant global and repo-local docs, and produces the exact approved plan content that will become <code>plan.md</code>. It proposes a provisional bundle path and slug but does not write to disk, assign the final number, or commit anything. This makes it safe for Claude Code Plan Mode.</p>
 
-      <p class="fade-in">The open-change commit contains only the bundle artifacts. It does not contain implementation edits.</p>
+      <p class="fade-in"><code>/agent-open-change</code> runs after planning is approved and outside Plan Mode. It rechecks <code>docs/changes/</code>, assigns the final next available number, writes <code>plan.md</code>, <code>state.yaml</code>, and <code>verification.md</code>, and creates the initial bundle commit. That commit contains only the bundle artifacts, not implementation edits.</p>
 
-      <h4 class="fade-in"><code>/agent-implement-change</code></h4>
+      <p class="fade-in"><code>/agent-implement-change</code> runs after the bundle is open and before making implementation edits. It finds the open bundle, loads the frozen plan and implementation-phase docs, queues verify and review docs for later phases, and establishes the implementation task structure with an explicit checkpoint before commit. The plan is treated as the best understanding at planning time, not as infallible instruction. If the plan conflicts with the actual codebase, the implementation should do the right thing and note deviations for <code>review.md</code>.</p>
 
-      <p class="fade-in"><code>/agent-implement-change</code> runs after the bundle is open and before making implementation edits.</p>
+      <p class="fade-in"><code>/agent-close-change</code> runs after implementation and final verification are complete. It ensures <code>verification.md</code> reflects the final validation evidence, keeps <code>review.md</code> only when justified, removes transient artifacts (<code>state.yaml</code>, <code>notes.md</code>), and leaves the durable record behind.</p>
 
-      <p class="fade-in">It:</p>
+      <p class="fade-in">Open bundles are discovered from <code>docs/changes/*/state.yaml</code>. Final numbering is assigned only by <code>/agent-open-change</code>, which rechecks the filesystem at materialization time. No repo-level active-work index is needed.</p>
 
-      <ul class="fade-in">
-        <li>finds the open bundle from <code>docs/changes/*/state.yaml</code></li>
-        <li>loads the frozen <code>plan.md</code></li>
-        <li>loads the implementation-phase docs: workflow policy, phase workflow playbook, change bundles playbook, and repo-local domain policy and change playbook</li>
-        <li>queues verify, review, and docs-workflow docs for later phases</li>
-        <li>establishes the implementation task structure with an explicit checkpoint before commit</li>
-      </ul>
+      <h4 class="fade-in">Learn Phase</h4>
 
-      <p class="fade-in">The plan is treated as the best understanding at planning time, not as infallible instruction. If the plan conflicts with the actual codebase, the implementation should do the right thing and note deviations for <code>review.md</code>.</p>
+      <p class="fade-in"><code>/agent-record-decision</code> is the wizard for provisioning Decision Records. When a repo makes a lasting architectural or workflow choice, this command produces the record so future contributors don't have to rediscover the rationale.</p>
 
-      <h4 class="fade-in"><code>/agent-close-change</code></h4>
+      <!-- 7. Enterprise Distribution Model -->
 
-      <p class="fade-in"><code>/agent-close-change</code> runs after implementation and final verification are complete.</p>
 
-      <p class="fade-in">It:</p>
-
-      <ul class="fade-in">
-        <li>ensures <code>verification.md</code> reflects the final validation evidence</li>
-        <li>keeps <code>review.md</code> only when it is justified</li>
-        <li>removes <code>state.yaml</code>, <code>notes.md</code>, and other transient scratch artifacts</li>
-        <li>leaves the durable record behind</li>
-      </ul>
-
-      <p class="fade-in">Closeout may happen in the final implementation commit or in an immediate follow-up cleanup commit.</p>
-
-      <!-- 7. No Repo-Level Active Index -->
-
-      <h3 class="fade-in">7. No Repo-Level Active Index</h3>
-
-      <p class="fade-in">The framework does not maintain a repo-level active-work index.</p>
-
-      <p class="fade-in">Open bundles are discovered from <code>docs/changes/*/state.yaml</code>. Final numbering is assigned only by <code>/agent-open-change</code>, which rechecks the filesystem at materialization time. This keeps the workflow simple and avoids coordination overhead or collision-prone shared indexes.</p>
-
-      <!-- 8. Extension Lifecycle -->
-
-      <h3 class="fade-in">8. Extension Lifecycle</h3>
-
-      <p class="fade-in">The framework separates adoption, growth, and learning:</p>
-
-      <ul class="fade-in">
-        <li><code>docs/agents/playbooks/adopt-framework.md</code> covers first-time repo onboarding</li>
-        <li><code>docs/agents/playbooks/add-capability.md</code> covers adding repo-local capabilities</li>
-        <li><code>docs/agents/playbooks/record-decision.md</code> covers provisioning Decision Records</li>
-      </ul>
-
-      <p class="fade-in">That distinction matters because those are different activities:</p>
-
-      <ul class="fade-in">
-        <li>adoption establishes the repo's local entrypoint</li>
-        <li>capability growth adds new repo-local rules or workflows</li>
-        <li>decision recording preserves rationale that future contributors would otherwise have to rediscover</li>
-      </ul>
-
-      <!-- 9. Command Model -->
-
-      <h3 class="fade-in">9. Command Model</h3>
-
-      <p class="fade-in">Framework commands live under <code>~/.claude/commands/</code> and use the reserved <code>agent-*</code> namespace.</p>
-
-      <p class="fade-in">The command surface is intentionally small:</p>
-
-      <table class="doc-types fade-in">
-        <thead>
-          <tr>
-            <th>Command</th>
-            <th>Phase</th>
-            <th>Purpose</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>/agent-plan-change</code></td>
-            <td>Plan</td>
-            <td>Produce the approved plan without writing to disk. Safe in Plan Mode.</td>
-          </tr>
-          <tr>
-            <td><code>/agent-open-change</code></td>
-            <td>Open</td>
-            <td>Materialize the bundle (<code>plan.md</code>, <code>state.yaml</code>, <code>verification.md</code>) and commit it.</td>
-          </tr>
-          <tr>
-            <td><code>/agent-implement-change</code></td>
-            <td>Implement</td>
-            <td>Load the frozen plan, implementation-phase docs, and domain playbooks. Set up the task structure.</td>
-          </tr>
-          <tr>
-            <td><code>/agent-close-change</code></td>
-            <td>Close</td>
-            <td>Remove transient artifacts, retain the durable record.</td>
-          </tr>
-          <tr>
-            <td><code>/agent-adopt</code></td>
-            <td>Explore</td>
-            <td>First-time repo onboarding to the framework.</td>
-          </tr>
-          <tr>
-            <td><code>/agent-add-capability</code></td>
-            <td>Explore</td>
-            <td>Wizard for adding a repo-local policy, playbook, reference, or command.</td>
-          </tr>
-          <tr>
-            <td><code>/agent-record-decision</code></td>
-            <td>Explore</td>
-            <td>Wizard for provisioning a Decision Record with durable rationale.</td>
-          </tr>
-          <tr>
-            <td><code>/agent-improve</code></td>
-            <td>Explore</td>
-            <td>Root-cause doc and routing friction repair.</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p class="fade-in">These commands are process-oriented. They load canonical docs and guide the workflow. They are not the place for hidden repo-specific standards or arbitrary scaffolding logic.</p>
-
-      <p class="fade-in">More specific commands should usually be repo-local.</p>
-
-      <!-- 10. Enterprise Distribution Model -->
-
-      <h3 class="fade-in">10. Enterprise Distribution Model</h3>
+      <h3 class="fade-in">7. Enterprise Distribution Model</h3>
 
       <p class="fade-in">For company-scale deployment, <code>~/.claude</code> should be treated as the runtime installation surface, not the authored source of truth.</p>
 
@@ -607,9 +502,9 @@ company-claude adopt-repo</code></pre>
 
       <p class="fade-in">The framework may also integrate with MCP for dynamic company services such as service-catalog lookup or policy workflows, but MCP should not be the primary distribution mechanism for the core process docs. The base framework should still arrive through installed memory files and commands so it remains stable, inspectable, and versioned.</p>
 
-      <!-- 11. Repo Capability Growth -->
+      <!-- 8. Repo Capability Growth -->
 
-      <h3 class="fade-in">11. Repo Capability Growth</h3>
+      <h3 class="fade-in">8. Repo Capability Growth</h3>
 
       <p class="fade-in"><code>/agent-add-capability</code> is the framework wizard for growing an already-adopted repo.</p>
 
@@ -624,9 +519,9 @@ company-claude adopt-repo</code></pre>
 
       <p class="fade-in">The framework should make the setup path concrete without inventing the repo's standards.</p>
 
-      <!-- 12. Decision Records As The Learning Loop -->
+      <!-- 9. Decision Records As The Learning Loop -->
 
-      <h3 class="fade-in">12. Decision Records As The Learning Loop</h3>
+      <h3 class="fade-in">9. Decision Records As The Learning Loop</h3>
 
       <p class="fade-in">Repos should use Decision Records to preserve durable rationale over time.</p>
 
