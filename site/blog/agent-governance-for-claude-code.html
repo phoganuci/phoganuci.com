@@ -280,48 +280,34 @@
       <table class="doc-types fade-in">
         <thead>
           <tr>
-            <th>Order</th>
             <th>Category</th>
             <th>Job</th>
-            <th>Example</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>1</td>
             <td><code>index/</code></td>
-            <td>Name-to-doc lookup. Maps a work description like "plan change" to its canonical doc.</td>
-            <td><code>index/workflows.md</code></td>
+            <td>Loaded first. Maps a work description like "plan change" to its canonical doc (<code>index/workflows.md</code>).</td>
           </tr>
           <tr>
-            <td>2</td>
             <td><code>router/</code></td>
-            <td>Phase and capability routing. Decides which policy and playbook to load based on what phase you are in and what kind of work you are doing.</td>
-            <td><code>router/phases.md</code>, <code>router/capability-map.md</code></td>
+            <td>Loaded next. Decides which policy and playbook to load based on the current phase and kind of work (<code>router/phases.md</code>, <code>router/capability-map.md</code>).</td>
           </tr>
           <tr>
-            <td>3</td>
             <td><code>policy/</code></td>
-            <td>Binding rules. Defines what must be true during this work. Loaded early and checked throughout.</td>
-            <td><code>policy/core.md</code>, <code>policy/agent-workflow.md</code></td>
+            <td>Loaded early, checked throughout. Defines binding rules for the current work (<code>policy/core.md</code>, <code>policy/agent-workflow.md</code>).</td>
           </tr>
           <tr>
-            <td>4</td>
             <td><code>playbooks/</code></td>
-            <td>Ordered workflows. Sequences the steps for the current phase and tells you what to do next.</td>
-            <td><code>playbooks/change-bundles.md</code>, <code>playbooks/verify.md</code></td>
+            <td>Sequences the steps for the current phase. Tells you what to do next (<code>playbooks/change-bundles.md</code>, <code>playbooks/verify.md</code>).</td>
           </tr>
           <tr>
-            <td>5</td>
             <td><code>reference/</code></td>
-            <td>Deep detail. Loaded only when the playbook or policy needs deeper material on a specific topic.</td>
-            <td><code>reference/review-triggers.md</code>, <code>reference/audit-eng.md</code></td>
+            <td>Loaded on demand when a playbook or policy needs deeper material on a specific topic (<code>reference/review-triggers.md</code>, <code>reference/audit-eng.md</code>).</td>
           </tr>
           <tr>
-            <td>6</td>
             <td><code>decisions/</code></td>
-            <td>Durable rationale. Consulted when questioning a past architectural or workflow choice. Not part of the normal flow; read on demand.</td>
-            <td><code>decisions/DR-001-agent-phase-workflow.md</code></td>
+            <td>Consulted when questioning a past architectural or workflow choice. Not part of the normal flow (<code>decisions/DR-001-agent-phase-workflow.md</code>).</td>
           </tr>
         </tbody>
       </table>
