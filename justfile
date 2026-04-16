@@ -1,6 +1,8 @@
 # phoganuci.com — personal site and blog
 
 export AWS_PROFILE := "phoganuci-com"
+export PULUMI_CONFIG_PASSPHRASE := ""
+export PULUMI_BACKEND_URL := "file://~/.pulumi-local"
 
 # Open the site locally in browser
 preview:
