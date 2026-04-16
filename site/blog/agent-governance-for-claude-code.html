@@ -263,11 +263,96 @@ The repo owns:
 
       <p class="fade-in">Commands stay thin for the same reason. A shared command should load canonical docs in the right order. It should not smuggle repo-specific policy into the global layer. That is why the shared namespace stays reserved as <code>agent-*</code>, and repo-local commands are expected to use repo-specific names rather than shadowing framework commands.</p>
 
+      <h3 class="fade-in">Minimum Viable File Skeletons</h3>
+
+      <p class="fade-in">Directory names are not enough for a zero-context implementer. The minimum viable system needs explicit starting shapes for the root contract, a typed doc, a command shim, and the repo entrypoint.</p>
+
+<pre class="fade-in"><code># ~/.claude/CLAUDE.md
+
+This file defines the shared process layer for Claude Code.
+
+## Path Convention
+- $CLAUDE_HOME always means ~/.claude
+- framework docs live under $CLAUDE_HOME/docs/agents/...
+- repo docs use repo-relative paths
+
+## Read This First
+- $CLAUDE_HOME/docs/agents/router/phases.md
+- $CLAUDE_HOME/docs/agents/router/capability-map.md
+- $CLAUDE_HOME/docs/agents/router/composition.md
+
+## Phase Contract
+- plan with /agent-plan-change
+- open with /agent-open-change before repo writes
+- close with /agent-close-change after verification
+
+## Command Surface
+- shared commands use the reserved agent-* namespace</code></pre>
+
+<pre class="fade-in"><code>---
+kind: router
+binding: false
+scope: repo
+phases: [explore, plan, implement, verify, commit]
+use_when:
+  - choosing which policy and playbook apply to a task
+avoid_when:
+  - looking for detailed implementation rules
+escalate_to:
+  - $CLAUDE_HOME/docs/agents/router/composition.md
+  - $CLAUDE_HOME/docs/agents/playbooks/docs-workflow.md
+source_of_truth: $CLAUDE_HOME/docs/agents/router/capability-map.md
+---
+
+# Capability Map
+
+## Planning / Review / Docs Workflow
+Load:
+- $CLAUDE_HOME/docs/agents/policy/agent-workflow.md
+- $CLAUDE_HOME/docs/agents/playbooks/change-bundles.md
+
+Escalate to:
+- repo ./CLAUDE.md
+- repo docs/agents/index/tasks.md</code></pre>
+
+<pre class="fade-in"><code>---
+description: Prepare a non-mutating implementation plan for a change bundle.
+---
+
+Use this command for non-trivial implementation work when you need an approved plan before any repo writes.
+
+Workflow:
+1. Load $CLAUDE_HOME/CLAUDE.md and the relevant router, policy, and playbook docs.
+2. Produce the exact plan body that will become plan.md.
+3. Propose a provisional bundle path and slug.
+4. Review the plan with the user.
+5. Hand off to /agent-open-change outside Plan Mode.
+
+Rules:
+- do not create files
+- do not commit
+- do not compress the approved plan</code></pre>
+
+<pre class="fade-in"><code># ./CLAUDE.md
+
+This repo composes with the shared framework in ~/.claude.
+
+## Load First
+- ~/.claude/CLAUDE.md
+- docs/agents/router/capability-map.md
+
+## Repo Routing
+- load repo policy docs for architecture, boundaries, and tests
+- load repo playbooks for repeated workflows
+
+## Repo Conventions
+- repo-specific naming, testing, and boundary rules live here or under docs/agents/...</code></pre>
+
       <h2 class="fade-in">Change Bundles: Plans That Survive Context Loss</h2>
 
       <p class="fade-in">The most important operational contract in the system is the change bundle. Non-trivial work gets one durable home under <code>docs/changes/NNNNNNN-short-name/</code>. The bundle spans planning, implementation, validation, and closeout, even when the work takes multiple commits.</p>
 
-      <p class="fade-in">That matters because the bundle is the handoff boundary between planning and execution, especially in agent-first workflows. The failure is rarely that code is missing. The failure is that the next agent cannot recover why existing code is the way it is, which constraints still matter, and which plan actually governs the change. Without a bundle, that rationale gets split across chat, scratch files, commit messages, and the implementer's memory. With a bundle, the frozen plan, active state, validation evidence, and approved deviations all have one durable home.</p>
+      <p class="fade-in">That matters because the bundle is the handoff boundary between planning and execution, especially in agent-first workflows. The failure is rarely that code is missing. The failure is that future agents operating in the codebase cannot recover why existing code is the way it is, which constraints still matter, and which plan actually governs the change. Without a bundle, that rationale gets split across chat, scratch files, commit messages, and the implementer's memory. With a bundle, the frozen plan, active state, validation evidence, and approved deviations all have one durable home.</p>
 
 <pre class="fade-in file-tree"><code>docs/changes/0000123-agent-governance/
 ├── <span class="tree-file">plan.md</span>                         <span class="tree-comment"># Exact approved plan, frozen after open</span>
@@ -283,6 +368,37 @@ slug: agent-governance
 status: open
 created_at: 2026-04-16T00:00:00Z
 updated_at: 2026-04-16T00:00:00Z</code></pre>
+
+      <h3 class="fade-in">Bundle File Skeletons</h3>
+
+      <p class="fade-in">The directory shape only matters if the key files are explicit enough for future agents to operate against the current code safely. In practice, that means <code>plan.md</code> and <code>verification.md</code> need stable, readable skeletons.</p>
+
+<pre class="fade-in"><code># plan.md
+
+## Summary
+Describe the exact body of work and the intended end state.
+
+## Planned Deltas
+- file paths to edit
+- public interfaces or schemas that change
+- config or migration steps
+- cleanup work that must happen before closeout
+
+## Acceptance Checks
+- tests to run
+- review gates to satisfy
+- user-visible outcomes that must be true</code></pre>
+
+<pre class="fade-in"><code># verification.md
+
+## Commands Run
+- just test
+- bazel test //...
+
+## Results
+- what passed
+- what failed and was fixed
+- residual gaps or intentionally deferred risk</code></pre>
 
       <blockquote class="fade-in">
         <p>It must include enough concrete context that an implementer with no prior repo knowledge can execute the phase without spelunking.</p>
@@ -384,7 +500,7 @@ company-claude adopt-repo</code></pre>
         <li>Use <code>/agent-add-capability</code> when the repo grows, and <code>/agent-record-decision</code> when the repo needs durable rationale for a lasting choice.</li>
       </ol>
 
-      <p class="fade-in">That is the utility of the model. A human can understand it quickly, and an implementer with zero context can execute it without spelunking through old chats or reverse-engineering somebody else's memory layout.</p>
+      <p class="fade-in">That is the utility of the model. A human can understand it quickly, and future agents operating in the repo can execute against the current codebase without spelunking through old chats or reverse-engineering somebody else's memory layout.</p>
 
     </div>
   </article>
