@@ -374,9 +374,49 @@
 
       <p class="fade-in">One bundle spans one body of work, not one commit. The same bundle can survive across multiple implementation commits until the work is closed.</p>
 
-      <!-- 6. Command Surface and Workflow Lifecycle -->
+      <!-- 6. Repo Capability Growth -->
 
-      <h3 class="fade-in">6. Command Surface and Workflow Lifecycle</h3>
+      <h3 class="fade-in">6. Repo Capability Growth</h3>
+
+      <p class="fade-in"><code>/agent-add-capability</code> is the framework wizard for growing an already-adopted repo.</p>
+
+      <p class="fade-in">It should:</p>
+
+      <ul class="fade-in">
+        <li>inspect the repo for <code>./CLAUDE.md</code>, repo <code>docs/agents/...</code>, and <code>.claude/commands/...</code></li>
+        <li>determine whether the capability needs a policy, playbook, reference, workflow entry, command, or directory <code>CLAUDE.md</code></li>
+        <li>produce a concrete repo-local checklist with exact file paths and required updates</li>
+        <li>redirect to <code>/agent-adopt</code> if the repo has not been integrated yet</li>
+      </ul>
+
+      <p class="fade-in">The framework should make the setup path concrete without inventing the repo's standards.</p>
+
+      <!-- 7. Decision Records As The Learning Loop -->
+
+      <h3 class="fade-in">7. Decision Records As The Learning Loop</h3>
+
+      <p class="fade-in">Repos should use Decision Records to preserve durable rationale over time.</p>
+
+      <p class="fade-in">In this system, Decision Records are how a repo learns. Policies say what must be true. Playbooks say how work proceeds. References explain the deeper topic. Decision Records explain why a lasting choice was made.</p>
+
+      <p class="fade-in">A repo should record a Decision Record when:</p>
+
+      <ul class="fade-in">
+        <li>a capability setup chooses one approach over meaningful alternatives</li>
+        <li>a new policy depends on non-obvious rationale</li>
+        <li>a workflow introduces a lasting boundary or contract</li>
+        <li>contributors would otherwise have to rediscover the same reasoning repeatedly</li>
+      </ul>
+
+      <p class="fade-in">A repo should not record a Decision Record for routine feature work or temporary implementation notes.</p>
+
+      <p class="fade-in"><code>/agent-record-decision</code> provisions these records deliberately by choosing the next <code>DR-NNN-*.md</code> path and surfacing the other repo docs that should point to that decision.</p>
+
+      <!-- ============================================================ -->
+      <!-- Usage                                                         -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Usage</h2>
 
       <p class="fade-in">Framework commands live under <code>~/.claude/commands/</code> and use the reserved <code>agent-*</code> namespace. The surface is intentionally small: eight commands covering the full lifecycle from exploration through implementation to long-term learning.</p>
 
@@ -440,10 +480,11 @@ graph TB
 
       <p class="fade-in"><code>/agent-record-decision</code> is the wizard for provisioning Decision Records. When a repo makes a lasting architectural or workflow choice, this command produces the record so future contributors don't have to rediscover the rationale.</p>
 
-      <!-- 7. Enterprise Distribution Model -->
+      <!-- ============================================================ -->
+      <!-- Extension                                                     -->
+      <!-- ============================================================ -->
 
-
-      <h3 class="fade-in">7. Enterprise Distribution Model</h3>
+      <h2 class="fade-in">Extension</h2>
 
       <p class="fade-in">For company-scale deployment, <code>~/.claude</code> should be treated as the runtime installation surface, not the authored source of truth.</p>
 
@@ -501,44 +542,6 @@ company-claude adopt-repo</code></pre>
       <p class="fade-in">That tool should install the chosen framework version, update the active shim target, verify the effective runtime surface, and optionally bootstrap the minimal repo-local adoption files.</p>
 
       <p class="fade-in">The framework may also integrate with MCP for dynamic company services such as service-catalog lookup or policy workflows, but MCP should not be the primary distribution mechanism for the core process docs. The base framework should still arrive through installed memory files and commands so it remains stable, inspectable, and versioned.</p>
-
-      <!-- 8. Repo Capability Growth -->
-
-      <h3 class="fade-in">8. Repo Capability Growth</h3>
-
-      <p class="fade-in"><code>/agent-add-capability</code> is the framework wizard for growing an already-adopted repo.</p>
-
-      <p class="fade-in">It should:</p>
-
-      <ul class="fade-in">
-        <li>inspect the repo for <code>./CLAUDE.md</code>, repo <code>docs/agents/...</code>, and <code>.claude/commands/...</code></li>
-        <li>determine whether the capability needs a policy, playbook, reference, workflow entry, command, or directory <code>CLAUDE.md</code></li>
-        <li>produce a concrete repo-local checklist with exact file paths and required updates</li>
-        <li>redirect to <code>/agent-adopt</code> if the repo has not been integrated yet</li>
-      </ul>
-
-      <p class="fade-in">The framework should make the setup path concrete without inventing the repo's standards.</p>
-
-      <!-- 9. Decision Records As The Learning Loop -->
-
-      <h3 class="fade-in">9. Decision Records As The Learning Loop</h3>
-
-      <p class="fade-in">Repos should use Decision Records to preserve durable rationale over time.</p>
-
-      <p class="fade-in">In this system, Decision Records are how a repo learns. Policies say what must be true. Playbooks say how work proceeds. References explain the deeper topic. Decision Records explain why a lasting choice was made.</p>
-
-      <p class="fade-in">A repo should record a Decision Record when:</p>
-
-      <ul class="fade-in">
-        <li>a capability setup chooses one approach over meaningful alternatives</li>
-        <li>a new policy depends on non-obvious rationale</li>
-        <li>a workflow introduces a lasting boundary or contract</li>
-        <li>contributors would otherwise have to rediscover the same reasoning repeatedly</li>
-      </ul>
-
-      <p class="fade-in">A repo should not record a Decision Record for routine feature work or temporary implementation notes.</p>
-
-      <p class="fade-in"><code>/agent-record-decision</code> provisions these records deliberately by choosing the next <code>DR-NNN-*.md</code> path and surfacing the other repo docs that should point to that decision.</p>
 
       <!-- ============================================================ -->
       <!-- Example                                                       -->
