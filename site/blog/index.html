@@ -43,10 +43,24 @@
     "blogPost": [
       {
         "@type": "BlogPosting",
-        "headline": "Agent Governance for Claude Code",
+        "headline": "Agent Governance for Claude Code, Part 1: Routing",
         "datePublished": "2026-04-16",
         "url": "https://phoganuci.com/blog/agent-governance-for-claude-code",
-        "description": "A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl."
+        "description": "A three-layer routing model for Claude Code: framework, personal, and repo. The framework installs into its own namespace so it never collides with Claude Code or the user's own files."
+      },
+      {
+        "@type": "BlogPosting",
+        "headline": "Agent Governance for Claude Code, Part 2: Change Rhythm",
+        "datePublished": "2026-04-16",
+        "url": "https://phoganuci.com/blog/change-rhythm-for-claude-code",
+        "description": "A lighter change rhythm for Claude Code: scratch plans outside the repo, commit messages as the primary narrative, and Decision Records as the only durable artifact."
+      },
+      {
+        "@type": "BlogPosting",
+        "headline": "Agent Governance for Claude Code, Part 3: Review and Verify",
+        "datePublished": "2026-04-16",
+        "url": "https://phoganuci.com/blog/review-and-verify-for-claude-code",
+        "description": "Auto-triggered self-review on every PR, a seven-dimension review matrix, verification gates, and deployment discipline for Claude Code."
       }
     ]
   }
@@ -290,6 +304,99 @@
       transform: translateX(4px);
     }
 
+    /* Series list: secondary parts of the featured series */
+    .series-section {
+      max-width: var(--max-width);
+      margin: 3rem auto 0;
+      padding: 0 2rem;
+    }
+
+    .series-section-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-tertiary);
+      margin-bottom: 1.25rem;
+      display: block;
+    }
+
+    .series-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .series-card {
+      display: block;
+      position: relative;
+      background: linear-gradient(145deg, var(--bg-surface) 0%, var(--bg-mid) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.75rem 1.75rem 2.5rem;
+      transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease),
+                  border-color 0.4s var(--ease);
+      color: inherit;
+      overflow: hidden;
+    }
+
+    .series-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-teal), var(--accent-gold));
+      opacity: 0.4;
+      transition: opacity 0.3s var(--ease);
+    }
+
+    .series-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+      border-color: rgba(78, 205, 196, 0.25);
+      color: inherit;
+    }
+
+    .series-card:hover::before {
+      opacity: 0.9;
+    }
+
+    .series-card-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-teal);
+      margin-bottom: 0.85rem;
+    }
+
+    .series-card h3 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      margin: 0 0 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .series-card p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin: 0 0 1.1rem;
+    }
+
+    .series-card-meta {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+      letter-spacing: 0.04em;
+    }
+
     /* More coming */
     .blog-more {
       max-width: var(--max-width);
@@ -301,6 +408,18 @@
     .blog-more p {
       font-size: 0.9rem;
       color: var(--text-tertiary);
+    }
+
+    @media (max-width: 768px) {
+      .series-section {
+        padding: 0 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .series-section {
+        padding: 0 1rem;
+      }
     }
 
     @media (max-width: 768px) {
@@ -393,19 +512,37 @@
 
     <div class="featured-section fade-in">
       <a href="agent-governance-for-claude-code.html" class="featured-card">
-        <div class="featured-eyebrow">RFC</div>
+        <div class="featured-eyebrow">RFC Series &middot; Part 1 of 3</div>
         <h2 class="featured-title">Agent Governance<br>for Claude Code</h2>
         <div class="featured-meta">
           <time>April 16, 2026</time>
           <span class="dot"></span>
-          <span>12 min read</span>
+          <span>3-part series</span>
         </div>
-        <p class="featured-excerpt">A shared process layer for Claude Code: typed docs, change bundles, repo-local truth, and enterprise distribution without global sprawl.</p>
+        <p class="featured-excerpt">A three-layer routing model for Claude Code: framework, personal, and repo. The framework installs into its own namespace so it never collides with Claude Code or the user's own files.</p>
         <div class="featured-read">
-          Read <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Start reading <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </div>
       </a>
     </div>
+
+    <section class="series-section fade-in">
+      <span class="series-section-label">Continue the series</span>
+      <div class="series-grid">
+        <a href="change-rhythm-for-claude-code.html" class="series-card">
+          <div class="series-card-eyebrow">Part 2 &middot; Change Rhythm</div>
+          <h3>A lighter change rhythm for Claude Code</h3>
+          <p>Scratch plans live outside the repo. Commit messages carry the narrative. Decision Records are the only durable artifact, and negative decisions are first-class.</p>
+          <div class="series-card-meta">12 min read</div>
+        </a>
+        <a href="review-and-verify-for-claude-code.html" class="series-card">
+          <div class="series-card-eyebrow">Part 3 &middot; Review and Verify</div>
+          <h3>Closing a change: review, verify, deploy</h3>
+          <p>Auto-triggered self-review on every PR, a seven-dimension review matrix, verification gates, and deployment as part of the same discipline.</p>
+          <div class="series-card-meta">16 min read</div>
+        </a>
+      </div>
+    </section>
 
     <section class="blog-more fade-in">
       <p>More essays are on the way.</p>

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Governance for Claude Code, Part 2: Change Rhythm | Patrick Hogan</title>
+  <meta name="description" content="A lighter change rhythm for Claude Code: scratch plans outside the repo, commit messages as the primary narrative, and Decision Records as the only durable artifact.">
+  <meta name="author" content="Patrick Hogan">
+  <link rel="canonical" href="https://phoganuci.com/blog/change-rhythm-for-claude-code">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Agent Governance for Claude Code, Part 2: Change Rhythm">
+  <meta property="og:description" content="A lighter change rhythm for Claude Code: scratch plans outside the repo, commit messages as the primary narrative, and Decision Records as the only durable artifact.">
+  <meta property="og:url" content="https://phoganuci.com/blog/change-rhythm-for-claude-code">
+  <meta property="og:image" content="https://phoganuci.com/assets/profile.jpeg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Agent Governance for Claude Code, Part 2: Change Rhythm">
+  <meta name="twitter:description" content="A lighter change rhythm for Claude Code: scratch plans outside the repo, commit messages as the primary narrative, and Decision Records as the only durable artifact.">
+  <meta name="twitter:image" content="https://phoganuci.com/assets/profile.jpeg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/style.css">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Agent Governance for Claude Code, Part 2: Change Rhythm",
+    "description": "A lighter change rhythm for Claude Code: scratch plans outside the repo, commit messages as the primary narrative, and Decision Records as the only durable artifact.",
+    "datePublished": "2026-04-16",
+    "author": {
+      "@type": "Person",
+      "name": "Patrick Hogan"
+    },
+    "url": "https://phoganuci.com/blog/change-rhythm-for-claude-code",
+    "publisher": {
+      "@type": "Person",
+      "name": "Patrick Hogan"
+    },
+    "isPartOf": {
+      "@type": "CreativeWorkSeries",
+      "name": "Agent Governance for Claude Code"
+    }
+  }
+  </script>
+
+  <style>
+    .doc-types td:first-child {
+      width: 24%;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .doc-types td:last-child {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .rfc-callout {
+      background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(78,205,196,0.04) 100%);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-teal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .rfc-callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .series-callout {
+      background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(232,168,73,0.04) 100%);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0 3rem;
+    }
+
+    .series-callout .series-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-gold);
+      margin-bottom: 0.75rem;
+    }
+
+    .series-callout ol {
+      margin: 0.5rem 0 0;
+      padding-left: 1.2rem;
+      line-height: 1.85;
+    }
+
+    .series-callout ol li::marker {
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .series-callout a {
+      color: var(--accent-teal);
+    }
+
+    .series-callout .current {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .post-body h4 {
+      margin-top: 2rem;
+    }
+
+    .post-body h4 code {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .doc-types td:first-child,
+      .doc-types td:last-child {
+        display: block;
+        width: 100%;
+      }
+
+      .doc-types td:first-child {
+        padding-bottom: 0.15rem;
+      }
+
+      .doc-types td:last-child {
+        padding-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">@phoganuci</a>
+      <div class="nav-links">
+        <a href="index.html">Blog</a>
+        <a href="https://github.com/phoganuci" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="post-header post-header--hero">
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
+    <div class="hero-content">
+      <span class="section-label fade-in">RFC &middot; Part 2 of 3</span>
+      <h1 class="fade-in">Change<br>Rhythm</h1>
+      <p class="hero-subtitle fade-in">A lighter change rhythm for Claude Code. Scratch plans live outside the repo. Commit messages carry the narrative. Decision Records are the only durable artifact, and negative decisions are first-class.</p>
+      <div class="post-meta fade-in">
+        <span>April 16, 2026</span>
+        <span class="separator"></span>
+        <span>12 min read</span>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </header>
+
+  <article>
+    <div class="post-body">
+
+      <!-- ============================================================ -->
+      <!-- Series Callout                                                -->
+      <!-- ============================================================ -->
+
+      <div class="series-callout fade-in">
+        <div class="series-eyebrow">Series &middot; Agent Governance for Claude Code</div>
+        <ol>
+          <li><a href="agent-governance-for-claude-code.html">Routing</a> &middot; how layers compose and how docs get loaded</li>
+          <li><span class="current">Change rhythm</span> &middot; this post &middot; scratch plans, phase discipline, and ADRs as the only durable artifact</li>
+          <li><a href="review-and-verify-for-claude-code.html">Review and verify</a> &middot; auto-triggered self-review on every PR, verification gates, and deployment</li>
+        </ol>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- Summary                                                       -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Summary</h2>
+
+      <p class="fade-in">This post defines how non-trivial work moves through the framework from intent to merge.</p>
+
+      <p class="fade-in">The change-rhythm layer standardizes:</p>
+
+      <ul class="fade-in">
+        <li>four phases (plan, open, implement, close) treated as workflow, not paperwork</li>
+        <li>scratch plans living outside the repo at <code>~/.claude/agent-governance-plans/</code></li>
+        <li>commit messages and PR history as the primary narrative layer</li>
+        <li>Decision Records as the only durable artifact, including negative and failed-approach decisions</li>
+        <li>five <code>agent-*</code> commands that automate the rhythm</li>
+      </ul>
+
+      <div class="rfc-callout fade-in">
+        <p>The core rule is simple. Scratch plans are throwaway. Commit messages carry the story. A Decision Record is written only when a change carries durable rationale that the commit message cannot hold on its own.</p>
+      </div>
+
+      <p class="fade-in">The <a href="change-rhythm-appendix.html">appendix</a> contains the command shims, the change-rhythm playbooks, and a sample Decision Record template. <a href="agent-governance-for-claude-code.html">Part 1</a> covered the routing layer this rhythm sits on top of. <a href="review-and-verify-for-claude-code.html">Part 3</a> covers review, verification, and deployment.</p>
+
+      <!-- ============================================================ -->
+      <!-- Problem                                                       -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Problem</h2>
+
+      <p class="fade-in">A common pattern for AI-assisted change management, and the one an earlier draft of this RFC proposed, is to require every non-trivial change to produce two committed artifacts: a <code>plan.md</code> written before the work starts, and a <code>review.md</code> written after. Both live under <code>docs/changes/NNNNNNN-slug/</code> and ship in the same commit as the code change.</p>
+
+      <p class="fade-in">That shape has four concrete problems.</p>
+
+      <h4 class="fade-in">It treats a transient artifact as if it were durable</h4>
+
+      <p class="fade-in">A plan written before a change is exploratory by nature. It becomes obsolete the moment implementation begins. Committing it into the repo freezes an early-stage document into version history, where it competes for attention with the actual result. Future readers encountering <code>docs/changes/0000042-migrate-auth/plan.md</code> cannot tell whether it still represents reality, and neither can the next agent loading it.</p>
+
+      <h4 class="fade-in">It duplicates git and PR history</h4>
+
+      <p class="fade-in">A <code>review.md</code> describing what was built, what changed from the plan, and what was learned is largely the same information already captured by the PR description, the commit sequence, and the PR review thread. Maintaining a separate committed file on top of that produces three competing narratives, each with slightly different content.</p>
+
+      <h4 class="fade-in">It applies polish pressure</h4>
+
+      <p class="fade-in">When an artifact is about to be committed into the repo, authors polish it. That is correct behavior for code and for durable docs. It is wasted effort for a plan that only needs to guide the next hour of work. The framework should not force polish onto throwaway material.</p>
+
+      <h4 class="fade-in">It fails negative decisions</h4>
+
+      <p class="fade-in">The most valuable durable records are the ones that prevent repeated mistakes: "we tried X, reverted, because Y," or "we considered X and rejected it because Z." In a plan-and-review model, a failed-and-reverted change produces only a revert commit, with no document that preserves the lesson. The rationale disappears with the branch.</p>
+
+      <p class="fade-in">All four problems share a root cause. The framework conflated "the process of changing the system" with "the durable record of decisions the system depends on." Those are different artifacts with different lifetimes and different audiences.</p>
+
+      <!-- ============================================================ -->
+      <!-- Goals                                                         -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Goals</h2>
+
+      <ul class="fade-in">
+        <li>Keep phase discipline (plan, open, implement, close) as the workflow spine.</li>
+        <li>Make the durable artifact distinct from the transient artifact.</li>
+        <li>Give negative and failed-approach decisions a first-class home.</li>
+        <li>Let commit messages and PR history do the narrative work they are already good at.</li>
+        <li>Keep the scratch-plan surface out of the repo so authors can write freely.</li>
+        <li>Provide a small command set that automates the rhythm without adding ceremony.</li>
+        <li>Hand cleanly off to the review and verify layer for what happens once a PR exists.</li>
+      </ul>
+
+      <!-- ============================================================ -->
+      <!-- Non-Goals                                                     -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Non-Goals</h2>
+
+      <ul class="fade-in">
+        <li>Replace git, GitHub, or any PR tool.</li>
+        <li>Prescribe a single Decision Record format for every repo.</li>
+        <li>Define the review, verify, or deployment discipline. Those live in part 3.</li>
+        <li>Force every change through the full rhythm. Trivial one-line fixes do not need a scratch plan.</li>
+        <li>Replace repo-local architecture or runbook docs with Decision Records.</li>
+      </ul>
+
+      <!-- ============================================================ -->
+      <!-- Proposed Design                                               -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Proposed Design</h2>
+
+      <!-- 1. Phases -->
+
+      <h3 class="fade-in">1. Phases as Rhythm</h3>
+
+      <p class="fade-in">Non-trivial work moves through four phases. Each phase has a clear output, and each output is a real artifact somewhere in the system, not a document written for the sake of process.</p>
+
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plan</td>
+            <td>A scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code>. Private, throwaway, outside the repo. The agent and the author reason freely here.</td>
+          </tr>
+          <tr>
+            <td>Open</td>
+            <td>A branch and a draft PR. The PR description is the first public summary of intent. From this point forward, the PR is the canonical working surface.</td>
+          </tr>
+          <tr>
+            <td>Implement</td>
+            <td>Small commits with clear messages. The commit sequence is the primary narrative. Each commit describes what changed and why, in the same message that shows up in <code>git log</code>.</td>
+          </tr>
+          <tr>
+            <td>Close</td>
+            <td>Merge. Discard the scratch plan. Write a Decision Record if and only if the change produced durable rationale that the commit messages cannot hold on their own.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="diagram-container fade-in">
+        <pre class="mermaid">
+graph LR
+    PLAN["Plan<br/><i>scratch file outside repo</i>"]:::routing
+    OPEN["Open<br/><i>branch + draft PR</i>"]:::api
+    IMPL["Implement<br/><i>small commits, clear messages</i>"]:::data
+    CLOSE["Close<br/><i>merge + optional ADR</i>"]:::onDemand
+
+    PLAN --> OPEN
+    OPEN --> IMPL
+    IMPL --> CLOSE
+
+    classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
+    classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
+    classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
+    classDef onDemand fill:#3A2054,stroke:#B07CD8,color:#fff,stroke-width:1.5px
+        </pre>
+      </div>
+
+      <p class="fade-in">The phases are rhythm, not paperwork. They describe the shape of work, not a set of documents that must be produced. Trivial changes (a one-line fix, a typo, a config tweak) can collapse plan and implement into a single commit and skip the rest. The discipline applies when the change is big enough to benefit from thinking first.</p>
+
+      <!-- 2. Scratch Plans -->
+
+      <h3 class="fade-in">2. Scratch Plans</h3>
+
+      <p class="fade-in">Scratch plans live at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code>. Three path properties matter:</p>
+
+      <ul class="fade-in">
+        <li><strong>Outside the repo.</strong> Plans never ship with the change. They exist to guide thinking, not to document history.</li>
+        <li><strong>Namespaced under <code>agent-governance-</code>.</strong> Not under <code>~/.claude/plans/</code>, which is Claude Code's native plans directory and may be used by the Plan Mode feature or future Claude Code facilities. Namespacing keeps the framework from colliding with the tool it runs on.</li>
+        <li><strong>Sibling of the framework install, not inside it.</strong> If it lived at <code>~/.claude/agent-governance/plans/</code>, a framework upgrade or reinstall could wipe in-flight plans. Keeping it at <code>~/.claude/agent-governance-plans/</code> means the install directory stays purely runtime code, and the plans directory stays purely user state.</li>
+      </ul>
+
+      <p class="fade-in">A typical scratch plan looks like this:</p>
+
+<pre class="fade-in"><code class="language-markdown"># Migrate auth to OIDC
+
+## Context
+
+Current auth stack stores sessions in Redis with a custom token format.
+Legal flagged it for new compliance requirements. Need to move to OIDC
+with a standard session token.
+
+## Approach
+
+1. Add OIDC provider config (Auth0 tenant already exists).
+2. Swap middleware: intercept on /auth/callback, exchange code for token.
+3. Migration: old sessions keep working for 24h, new logins go OIDC.
+4. Rip old Redis session code once zero old sessions remain.
+
+## Open
+
+- Do we keep the Redis cluster for rate limiting?
+- Rollback plan if OIDC provider is down at cutover?</code></pre>
+
+      <p class="fade-in">This file is not a deliverable. It is a working surface. The agent and the author can revise it freely as implementation reveals new information. When the change merges, the file is deleted. Nothing about it is committed to the repo.</p>
+
+      <!-- 3. Commit Messages -->
+
+      <h3 class="fade-in">3. Commit Messages as Primary Narrative</h3>
+
+      <p class="fade-in">Once a PR is open, the commit sequence is the primary narrative layer. A well-formed commit message does what a committed <code>review.md</code> used to do: it tells a future reader what the change is, what motivated it, and what was considered.</p>
+
+      <p class="fade-in">The framework's policy on commit messages is minimal and operational:</p>
+
+      <ul class="fade-in">
+        <li>Use Conventional Commits: <code>type(scope): short description</code> on the first line.</li>
+        <li>Keep commits small enough that one message covers them.</li>
+        <li>The body explains the why: constraints, alternatives rejected, and anything that is not obvious from the diff.</li>
+        <li>Reference external artifacts (issues, ADRs) by path or ID, not by prose.</li>
+      </ul>
+
+      <p class="fade-in">A commit message that matches this shape:</p>
+
+<pre class="fade-in"><code class="language-markdown">feat(auth): swap session middleware for OIDC exchange
+
+New logins go through the OIDC callback path. Old Redis-backed sessions
+keep working for 24h via a compatibility shim in SessionStore.lookup.
+
+Considered extending the existing custom token format to carry the OIDC
+claims, but the compliance review (see DR-014) required dropping the
+custom format entirely, not extending it.
+
+Follow-up: remove the compatibility shim once the 24h window closes.</code></pre>
+
+      <p class="fade-in">A reader in 18 months who runs <code>git blame</code> on the middleware gets the rationale without having to find a document that may or may not still exist. The diff shows what changed. The message shows why. If there was a durable architectural implication, a referenced Decision Record carries it.</p>
+
+      <!-- 4. ADRs -->
+
+      <h3 class="fade-in">4. Decision Records as the Only Durable Artifact</h3>
+
+      <p class="fade-in">A Decision Record is the durable record of a choice the system now depends on. It lives under <code>docs/agents/decisions/</code> in the repo, as a numbered file with a short, stable name:</p>
+
+<pre class="fade-in file-tree"><code>repo/
+└── <span class="tree-dir">docs/agents/decisions/</span>
+    ├── <span class="tree-file">DR-001-adopt-framework.md</span>
+    ├── <span class="tree-file">DR-013-drop-custom-session-tokens.md</span>
+    ├── <span class="tree-file">DR-014-oidc-over-custom-jwt.md</span>
+    └── <span class="tree-file">DR-022-reverted-shadow-db.md</span></code></pre>
+
+      <p class="fade-in">Decision Records are written on demand, not as a side effect of every change. The test for writing one is strict:</p>
+
+      <ul class="fade-in">
+        <li><strong>Architectural shift.</strong> A lasting change to how the system is structured.</li>
+        <li><strong>Rejected alternative.</strong> A credible option was considered and not taken. Future readers are likely to suggest it again.</li>
+        <li><strong>Failed or reverted approach.</strong> An attempt was made, did not work, was reverted. The record prevents the next agent from repeating it.</li>
+        <li><strong>Non-obvious constraint.</strong> A compliance requirement, a performance target, a legal obligation, or a business rule that shaped the decision.</li>
+        <li><strong>Cross-cutting trade-off.</strong> A decision that affects more than one subsystem, where the reasoning is harder to reconstruct from diffs.</li>
+      </ul>
+
+      <p class="fade-in">If none of those apply, no Decision Record is needed. The commit message is enough.</p>
+
+      <p class="fade-in">A minimal Decision Record format:</p>
+
+<pre class="fade-in"><code class="language-markdown">---
+id: DR-022
+title: Reverted shadow-database rollout
+status: superseded
+date: 2026-03-05
+---
+
+# DR-022 &middot; Reverted shadow-database rollout
+
+## Context
+
+We attempted a shadow-database rollout for the new reporting pipeline.
+Writes were mirrored to a parallel Postgres instance for three weeks.
+
+## Decision
+
+Reverted. The shadow cluster is decommissioned.
+
+## Consequences
+
+- Reporting pipeline continues on the primary.
+- The cost / operational overhead of maintaining two write paths exceeded
+  the verification value for this specific migration.
+- The technique is not invalidated in general, only for pipelines under
+  this write volume.
+
+## Alternatives considered
+
+- Keep the shadow cluster read-only: rejected, no value without writes.
+- Migrate via a blue/green cutover: chosen as follow-up (see DR-024).</code></pre>
+
+      <p class="fade-in">Two properties make this shape work as the only durable artifact:</p>
+
+      <ul class="fade-in">
+        <li>Negative decisions are first-class. A revert leaves a Decision Record behind. The lesson survives the branch.</li>
+        <li>Decision Records are small and focused. One decision per record. When a later decision supersedes an earlier one, the status line changes and the new record references the old one by ID.</li>
+      </ul>
+
+      <p class="fade-in">Decision Records are not a replacement for architecture docs, runbooks, or reference material. Those live under <code>docs/agents/reference/</code> and are allowed to be long, opinionated, and evergreen. A Decision Record is frozen to the moment of the decision and only updated by superseding records.</p>
+
+      <!-- 5. Docs Workflow -->
+
+      <h3 class="fade-in">5. Evergreen Docs in the Same Commit</h3>
+
+      <p class="fade-in">A change that affects evergreen documentation updates that documentation in the same commit as the code change. The evergreen docs are the ones that describe the current state of the system, not the history of how it got there:</p>
+
+      <ul class="fade-in">
+        <li><code>CLAUDE.md</code> at the repo root: routing, conventions, current workflow</li>
+        <li><code>README.md</code>: setup, commands, current shape</li>
+        <li><code>docs/agents/policy/*</code>: binding rules, updated when rules change</li>
+        <li><code>docs/agents/reference/*</code>: subsystem detail, updated when the subsystem changes</li>
+      </ul>
+
+      <p class="fade-in">This is the one documentation discipline that is not optional. Stale evergreen docs are worse than no docs: they mislead both humans and agents. If the change touches behavior that an evergreen doc describes, the doc update ships with the code.</p>
+
+      <!-- 6. Narrative After docs/changes -->
+
+      <h3 class="fade-in">6. What Replaces a Browsable <code>docs/changes/</code></h3>
+
+      <p class="fade-in">A committed <code>docs/changes/</code> directory does give one thing the new rhythm does not: a browsable "here is what has happened in this repo" view that does not require any tool beyond a file browser. That view is genuinely useful for onboarding and for quickly scanning recent activity.</p>
+
+      <p class="fade-in">The new rhythm replaces it with three sources that together cover the same ground:</p>
+
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>What it covers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>git log</code></td>
+            <td>Every change that shipped, with its message and diff. The commit sequence is the full narrative.</td>
+          </tr>
+          <tr>
+            <td>Merged PR list</td>
+            <td>Grouped, titled, discussed changes with external context. A GitHub PR list is the closest equivalent to the old <code>docs/changes/</code> browser.</td>
+          </tr>
+          <tr>
+            <td><code>docs/agents/decisions/</code></td>
+            <td>The durable architectural record. Fewer entries than a change log, higher signal per entry.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="fade-in">The trade is deliberate. The new rhythm loses a low-effort browse view in exchange for narratives that stay accurate, a decision catalog that is short and focused, and no dual-maintenance burden between code and process artifacts.</p>
+
+      <!-- ============================================================ -->
+      <!-- Capabilities                                                  -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Change-Rhythm Capabilities</h2>
+
+      <p class="fade-in">The rhythm is automated through five <code>agent-*</code> commands. Each command corresponds to a phase, except for <code>agent-record-decision</code>, which is callable standalone whenever a decision needs to be preserved.</p>
+
+      <h4 class="fade-in">Plan Change</h4>
+
+      <p class="fade-in"><code>/agent-plan-change</code> writes a scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code>. It does not touch the repo. It prompts for context, the approach, and the open questions, and leaves the file open for iteration. The slug is derived from the intent and can be passed explicitly.</p>
+
+      <h4 class="fade-in">Open Change</h4>
+
+      <p class="fade-in"><code>/agent-open-change</code> turns a scratch plan into a branch and a draft PR. It reads the plan, creates the branch, pushes an initial empty commit or a small scaffold, and opens the PR with a description derived from the plan. From this point, the PR is the working surface, not the scratch file.</p>
+
+      <h4 class="fade-in">Implement Change</h4>
+
+      <p class="fade-in"><code>/agent-implement-change</code> executes the plan in small commits with clear messages. It loads the scratch plan for reference, loads the framework policy on commit hygiene, and walks the change step by step. The plan can be revised during implementation; it is never the source of truth, the code is.</p>
+
+      <h4 class="fade-in">Close Change</h4>
+
+      <p class="fade-in"><code>/agent-close-change</code> runs at merge time. It verifies that evergreen docs have been updated, prompts the author on whether a Decision Record is warranted, and if so, invokes <code>/agent-record-decision</code>. Once the PR is merged, the scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code> is deleted.</p>
+
+      <h4 class="fade-in">Record Decision</h4>
+
+      <p class="fade-in"><code>/agent-record-decision</code> writes a Decision Record under <code>docs/agents/decisions/</code>. It can be called from <code>/agent-close-change</code> at merge time, or standalone at any point (for example, to record a rejected RFC, or to capture a lesson from an incident). It enforces the decision-record shape: a single decision, a status, a context, the alternatives considered, and the consequences.</p>
+
+      <!-- ============================================================ -->
+      <!-- Usage                                                         -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Usage</h2>
+
+      <p class="fade-in">The change-rhythm commands are installed alongside the routing commands from part 1, under <code>~/.claude/commands/</code>, using the reserved <code>agent-*</code> namespace.</p>
+
+      <div class="diagram-container fade-in">
+        <pre class="mermaid">
+graph LR
+  PLAN["/agent-plan-change<br/>scratch plan<br/>outside the repo"]:::routing
+  OPEN["/agent-open-change<br/>branch + draft PR"]:::api
+  IMPL["/agent-implement-change<br/>small commits"]:::data
+  CLOSE["/agent-close-change<br/>merge + optional ADR"]:::onDemand
+  DR["/agent-record-decision<br/>standalone ADR"]:::decision
+
+  PLAN --> OPEN
+  OPEN --> IMPL
+  IMPL --> CLOSE
+  CLOSE -.-> DR
+  DR -.-> CLOSE
+
+  classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
+  classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
+  classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
+  classDef onDemand fill:#3A2054,stroke:#B07CD8,color:#fff,stroke-width:1.5px
+  classDef decision fill:#4A1E3A,stroke:#E85D75,color:#fff,stroke-width:1.5px
+        </pre>
+      </div>
+
+      <p class="fade-in">The commands are process-oriented. They do not know anything about a specific repo's domain. Repo-specific change wizards (for example, <code>/frontend-change</code>) belong in the repo layer and can call these commands internally.</p>
+
+      <p class="fade-in">Part 3 begins where <code>/agent-open-change</code> ends. The draft PR it produces is the trigger point for the auto-triggered self-review described in the next post.</p>
+
+      <!-- ============================================================ -->
+      <!-- Example                                                       -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Example: a reverted migration</h2>
+
+      <p class="fade-in">Consider the shadow-database migration referenced above. The rhythm produces the following trail:</p>
+
+      <ol class="fade-in">
+        <li><code>/agent-plan-change shadow-db</code> writes <code>~/.claude/agent-governance-plans/shadow-db.md</code>. The file explains the goal, the mirroring approach, and the open questions.</li>
+        <li><code>/agent-open-change</code> creates a branch, opens a draft PR titled "Shadow-DB rollout for reporting pipeline," and uses the plan as the PR description.</li>
+        <li><code>/agent-implement-change</code> walks the change: add shadow writer, add comparison reporter, stage-deploy, observe.</li>
+        <li>The observation period exposes that mirrored writes are adding unacceptable latency to the primary path. The team decides to revert.</li>
+        <li><code>/agent-record-decision DR-022-reverted-shadow-db</code> writes the Decision Record (shown above) under <code>docs/agents/decisions/</code>.</li>
+        <li>The PR is force-closed with a revert commit. The scratch plan at <code>~/.claude/agent-governance-plans/shadow-db.md</code> is deleted.</li>
+      </ol>
+
+      <p class="fade-in">The durable record is one Decision Record plus the revert commit. The scratch plan never entered the repo. The team's next attempt (DR-024, blue/green cutover) can reference DR-022 and skip the failed path without rediscovering it the hard way.</p>
+
+      <!-- ============================================================ -->
+      <!-- Tradeoffs                                                     -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Tradeoffs</h2>
+
+      <h3 class="fade-in">Benefits</h3>
+
+      <ul class="fade-in">
+        <li>Plans stay private and cheap to revise, because they are not committed.</li>
+        <li>Commit messages and PR history do the narrative work they are already good at.</li>
+        <li>The Decision Record catalog is short and high-signal, because it is only written for durable rationale.</li>
+        <li>Negative and reverted decisions are first-class, so lessons survive branches.</li>
+        <li>Evergreen docs stay accurate, because they ship in the same commit as behavior changes.</li>
+        <li>The five-command surface is thin enough to live inside a repeatable rhythm.</li>
+      </ul>
+
+      <h3 class="fade-in">Costs</h3>
+
+      <ul class="fade-in">
+        <li>Authors must write better commit messages. The rhythm depends on them.</li>
+        <li>Deciding when to write a Decision Record is a judgment call; some teams will under-record and others over-record.</li>
+        <li>A browsable <code>docs/changes/</code> view goes away. Readers who want a quick scan rely on <code>git log</code>, the PR list, and the decision catalog instead.</li>
+        <li>Scratch plans living outside the repo means they do not participate in PR review. That is the point, but it means context that used to be in the plan has to move into the PR description or the commit messages.</li>
+      </ul>
+
+      <p class="fade-in">These costs are acceptable because they buy a cleaner split between transient and durable artifacts, a realistic home for negative decisions, and an end to the dual-maintenance burden between committed process docs and the code they describe.</p>
+
+      <!-- ============================================================ -->
+      <!-- Recommendation                                                -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Recommendation</h2>
+
+      <p class="fade-in">Adopt this rhythm once the routing layer from part 1 is in place:</p>
+
+      <ul class="fade-in">
+        <li>install the five <code>agent-*</code> commands under <code>~/.claude/commands/</code></li>
+        <li>keep scratch plans outside the repo at <code>~/.claude/agent-governance-plans/</code></li>
+        <li>retire any existing committed <code>plan.md</code> / <code>review.md</code> pattern</li>
+        <li>add <code>docs/agents/decisions/</code> to each repo and start numbering Decision Records</li>
+        <li>treat commit messages as the narrative, not a summary</li>
+        <li>update evergreen docs in the same commit as the change that invalidates them</li>
+      </ul>
+
+      <p class="fade-in">Part 3 completes the series with the discipline that sits on top of this rhythm: auto-triggered self-review on every PR, the review dimensions that structure it, verification gates, and deployment.</p>
+
+      <!-- ============================================================ -->
+      <!-- Appendix Link + Series Nav                                    -->
+      <!-- ============================================================ -->
+
+      <div class="rfc-callout fade-in">
+        <p><strong>Appendix:</strong> The change-rhythm command shims, playbooks, and a Decision Record template are available in the <a href="change-rhythm-appendix.html">implementation appendix</a>.</p>
+        <p><strong>Series:</strong> <a href="agent-governance-for-claude-code.html">Part 1 &middot; Routing</a> &middot; <a href="review-and-verify-for-claude-code.html">Part 3 &middot; Review and verify</a></p>
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="footer">
+    <p>Patrick Hogan &middot; 2026</p>
+  </footer>
+
+  <!-- Mermaid -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#1E2130',
+        primaryColor: '#5C3E14',
+        primaryTextColor: '#FFFFFF',
+        primaryBorderColor: '#E8A849',
+        secondaryColor: '#1B3D3A',
+        secondaryTextColor: '#FFFFFF',
+        secondaryBorderColor: '#4ECDC4',
+        tertiaryColor: '#2A3054',
+        tertiaryTextColor: '#FFFFFF',
+        tertiaryBorderColor: '#7B93DB',
+        lineColor: '#555',
+        fontSize: '14px'
+      }
+    });
+  </script>
+
+  <script>
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) nav.classList.add('nav-scrolled');
+      else nav.classList.remove('nav-scrolled');
+    }, { passive: true });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      (function() {
+        const canvas = document.getElementById('heroCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const PARTICLE_COUNT = 35;
+        const CONNECTION_DIST = 140;
+        let particles = [], nebulaBlobs = [];
+        const colors = [
+          { r: 232, g: 168, b: 73 },
+          { r: 78, g: 205, b: 196 },
+          { r: 232, g: 93, b: 117 },
+          { r: 123, g: 147, b: 219 },
+        ];
+
+        function resize() {
+          const rect = canvas.parentElement.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = rect.width * dpr;
+          canvas.height = rect.height * dpr;
+          canvas.style.width = rect.width + 'px';
+          canvas.style.height = rect.height + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          init(rect.width, rect.height);
+        }
+
+        function init(w, h) {
+          particles = [];
+          nebulaBlobs = [];
+          for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const c = colors[Math.floor(Math.random() * colors.length)];
+            particles.push({
+              x: Math.random() * w, y: Math.random() * h,
+              vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.18,
+              radius: Math.random() * 1.5 + 0.5, color: c,
+              alpha: Math.random() * 0.5 + 0.3, phase: Math.random() * Math.PI * 2,
+            });
+          }
+          for (let i = 0; i < 5; i++) {
+            const c = colors[i % colors.length];
+            nebulaBlobs.push({
+              x: Math.random() * w, y: Math.random() * h,
+              radius: Math.random() * 200 + 100, color: c,
+              alpha: Math.random() * 0.04 + 0.02,
+              vx: (Math.random() - 0.5) * 0.05, vy: (Math.random() - 0.5) * 0.04,
+              phase: Math.random() * Math.PI * 2
+            });
+          }
+        }
+
+        function draw() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const w = canvas.width / dpr, h = canvas.height / dpr;
+          ctx.clearRect(0, 0, w, h);
+
+          for (const b of nebulaBlobs) {
+            b.x += b.vx; b.y += b.vy; b.phase += 0.002;
+            if (b.x < -b.radius) b.x = w + b.radius;
+            if (b.x > w + b.radius) b.x = -b.radius;
+            if (b.y < -b.radius) b.y = h + b.radius;
+            if (b.y > h + b.radius) b.y = -b.radius;
+            const a = b.alpha + Math.sin(b.phase) * 0.008;
+            const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.radius);
+            g.addColorStop(0, `rgba(${b.color.r},${b.color.g},${b.color.b},${a})`);
+            g.addColorStop(0.5, `rgba(${b.color.r},${b.color.g},${b.color.b},${a * 0.3})`);
+            g.addColorStop(1, `rgba(${b.color.r},${b.color.g},${b.color.b},0)`);
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2); ctx.fill();
+          }
+
+          for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+              const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+              const d = Math.sqrt(dx * dx + dy * dy);
+              if (d < CONNECTION_DIST) {
+                ctx.strokeStyle = `rgba(255,255,255,${(1 - d / CONNECTION_DIST) * 0.1})`;
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          for (const p of particles) {
+            p.x += p.vx; p.y += p.vy; p.phase += 0.015;
+            if (p.x < 0) p.x = w;
+            if (p.x > w) p.x = 0;
+            if (p.y < 0) p.y = h;
+            if (p.y > h) p.y = 0;
+            const pulse = 0.7 + Math.sin(p.phase) * 0.3;
+            ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${p.alpha * pulse})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+          }
+
+          requestAnimationFrame(draw);
+        }
+
+        resize();
+        draw();
+
+        let timeoutId;
+        window.addEventListener('resize', () => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(resize, 150);
+        });
+      })();
+    }
+  </script>
+
+</body>
+</html>

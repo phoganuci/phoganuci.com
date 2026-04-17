@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Governance for Claude Code, Part 3: Review and Verify | Patrick Hogan</title>
+  <meta name="description" content="Auto-triggered self-review on every PR, a seven-dimension review matrix, verification gates, and deployment discipline for Claude Code.">
+  <meta name="author" content="Patrick Hogan">
+  <link rel="canonical" href="https://phoganuci.com/blog/review-and-verify-for-claude-code">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Agent Governance for Claude Code, Part 3: Review and Verify">
+  <meta property="og:description" content="Auto-triggered self-review on every PR, a seven-dimension review matrix, verification gates, and deployment discipline for Claude Code.">
+  <meta property="og:url" content="https://phoganuci.com/blog/review-and-verify-for-claude-code">
+  <meta property="og:image" content="https://phoganuci.com/assets/profile.jpeg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Agent Governance for Claude Code, Part 3: Review and Verify">
+  <meta name="twitter:description" content="Auto-triggered self-review on every PR, a seven-dimension review matrix, verification gates, and deployment discipline for Claude Code.">
+  <meta name="twitter:image" content="https://phoganuci.com/assets/profile.jpeg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/style.css">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Agent Governance for Claude Code, Part 3: Review and Verify",
+    "description": "Auto-triggered self-review on every PR, a seven-dimension review matrix, verification gates, and deployment discipline for Claude Code.",
+    "datePublished": "2026-04-16",
+    "author": {
+      "@type": "Person",
+      "name": "Patrick Hogan"
+    },
+    "url": "https://phoganuci.com/blog/review-and-verify-for-claude-code",
+    "publisher": {
+      "@type": "Person",
+      "name": "Patrick Hogan"
+    },
+    "isPartOf": {
+      "@type": "CreativeWorkSeries",
+      "name": "Agent Governance for Claude Code"
+    }
+  }
+  </script>
+
+  <style>
+    .doc-types td:first-child {
+      width: 24%;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .doc-types td:last-child {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .review-dims td:first-child {
+      width: 22%;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .review-dims td:last-child {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .rfc-callout {
+      background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(78,205,196,0.04) 100%);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-teal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .rfc-callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .series-callout {
+      background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(232,168,73,0.04) 100%);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0 3rem;
+    }
+
+    .series-callout .series-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-gold);
+      margin-bottom: 0.75rem;
+    }
+
+    .series-callout ol {
+      margin: 0.5rem 0 0;
+      padding-left: 1.2rem;
+      line-height: 1.85;
+    }
+
+    .series-callout ol li::marker {
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .series-callout a {
+      color: var(--accent-teal);
+    }
+
+    .series-callout .current {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .post-body h4 {
+      margin-top: 2rem;
+    }
+
+    .post-body h4 code {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .doc-types td:first-child,
+      .doc-types td:last-child,
+      .review-dims td:first-child,
+      .review-dims td:last-child {
+        display: block;
+        width: 100%;
+      }
+
+      .doc-types td:first-child,
+      .review-dims td:first-child {
+        padding-bottom: 0.15rem;
+      }
+
+      .doc-types td:last-child,
+      .review-dims td:last-child {
+        padding-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">@phoganuci</a>
+      <div class="nav-links">
+        <a href="index.html">Blog</a>
+        <a href="https://github.com/phoganuci" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="post-header post-header--hero">
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
+    <div class="hero-content">
+      <span class="section-label fade-in">RFC &middot; Part 3 of 3</span>
+      <h1 class="fade-in">Review,<br>Verify, Deploy</h1>
+      <p class="hero-subtitle fade-in">Closing a change without silent regressions. Auto-triggered self-review runs on every PR open and every push. Verification gates prove the change works. Deployment is part of the same discipline.</p>
+      <div class="post-meta fade-in">
+        <span>April 16, 2026</span>
+        <span class="separator"></span>
+        <span>16 min read</span>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </header>
+
+  <article>
+    <div class="post-body">
+
+      <!-- ============================================================ -->
+      <!-- Series Callout                                                -->
+      <!-- ============================================================ -->
+
+      <div class="series-callout fade-in">
+        <div class="series-eyebrow">Series &middot; Agent Governance for Claude Code</div>
+        <ol>
+          <li><a href="agent-governance-for-claude-code.html">Routing</a> &middot; how layers compose and how docs get loaded</li>
+          <li><a href="change-rhythm-for-claude-code.html">Change rhythm</a> &middot; scratch plans, phase discipline, and ADRs as the only durable artifact</li>
+          <li><span class="current">Review and verify</span> &middot; this post &middot; auto-triggered self-review on every PR, verification gates, and deployment</li>
+        </ol>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- Summary                                                       -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Summary</h2>
+
+      <p class="fade-in">This post defines how a change proves it is correct, safe, and ready to ship.</p>
+
+      <p class="fade-in">The review-and-verify layer standardizes:</p>
+
+      <ul class="fade-in">
+        <li>three kinds of review (self, AI-assisted, human) and when each applies</li>
+        <li>auto-triggered self-review that runs on every PR event, not on demand</li>
+        <li>seven review dimensions that structure what the review checks</li>
+        <li>explicit review gates that block progression when violated</li>
+        <li>verification discipline that proves the change actually works in production-like conditions</li>
+        <li>deployment as the final phase of the same discipline, including rollback and incident triage</li>
+      </ul>
+
+      <div class="rfc-callout fade-in">
+        <p>The core rule is simple. Every PR opens with an automated review. Every push updates it. Hard gates (tests failing, missing docs, security findings) block merge. Verification is not complete until the change is running in production under real load and has survived a smoke test.</p>
+      </div>
+
+      <p class="fade-in">The <a href="review-and-verify-appendix.html">appendix</a> contains the review command skeleton, the full review-dimensions reference, a sanitized GitHub Actions workflow that wires the auto-trigger, and a deployment playbook. <a href="agent-governance-for-claude-code.html">Part 1</a> defined the routing layer. <a href="change-rhythm-for-claude-code.html">Part 2</a> defined the change rhythm that produces the draft PR this layer reviews.</p>
+
+      <!-- ============================================================ -->
+      <!-- Problem                                                       -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Problem</h2>
+
+      <p class="fade-in">Implicit review is where changes silently regress. Four failure modes are common.</p>
+
+      <h4 class="fade-in">Review is treated as a human bottleneck</h4>
+
+      <p class="fade-in">When review lives entirely in a human reviewer's inbox, throughput is capped by that reviewer's availability. Worse, the review is opaque: a single "LGTM" at the bottom of a PR carries no record of what was actually checked. Reading the review a week later tells you the change was approved, not that any particular dimension was verified.</p>
+
+      <h4 class="fade-in">AI review is treated as a novelty</h4>
+
+      <p class="fade-in">Teams adopting Claude Code often run an AI review on demand ("hey, review this PR") and treat the output as an optional advisory. On-demand review misses the changes no one remembered to review. Optional advisories become noise.</p>
+
+      <h4 class="fade-in">Verify collapses into "tests pass"</h4>
+
+      <p class="fade-in">Tests passing is necessary, not sufficient. A green test suite says the change does not break anything the tests cover. It says nothing about whether the change works in production, under real load, with real data, against real dependencies. Without a separate verify discipline, "tests pass" becomes "ship it," and the gap between test environment and production absorbs the bugs.</p>
+
+      <h4 class="fade-in">Deployment is treated as out of scope for review</h4>
+
+      <p class="fade-in">A PR merging to main is not the end of the change. Rollout, post-deploy smoke, and rollback are part of the same change, and regressions most commonly surface there. Governance that stops at merge leaves the most expensive failures uncovered.</p>
+
+      <p class="fade-in">All four failures share one root cause. The discipline ends before it reaches the surface where changes actually break: production, running code, real load. Everything before that surface (tests, code review, CI) is a proxy. The framework needs to cover the proxies <em>and</em> extend to the surface itself.</p>
+
+      <!-- ============================================================ -->
+      <!-- Goals                                                         -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Goals</h2>
+
+      <ul class="fade-in">
+        <li>Make self-review automatic, not on-demand.</li>
+        <li>Structure review around explicit dimensions rather than reviewer discretion.</li>
+        <li>Block merge on hard-gate violations; allow advisories to be resolved in the PR thread.</li>
+        <li>Separate verify from tests. Verify proves the change works, not that it does not crash.</li>
+        <li>Treat deployment as part of the same change, with its own rollout, smoke, and rollback steps.</li>
+        <li>Feed review findings into Decision Records when they produce durable rationale.</li>
+        <li>Keep the command surface small: one review command, invoked automatically by CI.</li>
+      </ul>
+
+      <!-- ============================================================ -->
+      <!-- Non-Goals                                                     -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Non-Goals</h2>
+
+      <ul class="fade-in">
+        <li>Replace human review. AI review is the floor, not the ceiling.</li>
+        <li>Define a universal deploy pipeline. Rollout mechanisms vary; the discipline is what stays consistent.</li>
+        <li>Prescribe a specific test framework or coverage target.</li>
+        <li>Turn every PR into a multi-day verification exercise. Trivial changes still ship quickly.</li>
+        <li>Replace incident response or on-call process. Those are adjacent disciplines.</li>
+      </ul>
+
+      <!-- ============================================================ -->
+      <!-- Proposed Design                                               -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Proposed Design</h2>
+
+      <!-- 1. Review Model -->
+
+      <h3 class="fade-in">1. Review Model</h3>
+
+      <p class="fade-in">Three kinds of review exist. Each has a different cost, a different coverage profile, and a different trigger.</p>
+
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Kind</th>
+            <th>Trigger, cost, coverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Self-review</td>
+            <td>Author-initiated or auto-triggered. Cheap, consistent, and high-coverage because it runs on every PR. Catches the mechanical dimensions (tests, docs, conventions, basic security). Does not reason about subtle architectural issues.</td>
+          </tr>
+          <tr>
+            <td>AI-assisted review</td>
+            <td>Auto-triggered on PR events. Claude Code runs <code>/agent-review-change</code> against the diff and posts a structured comment. Higher reasoning quality than self-review, still cheap, still consistent. Catches subtle issues (missing error paths, incorrect invariants, unsafe SQL) that a checklist would not.</td>
+          </tr>
+          <tr>
+            <td>Human review</td>
+            <td>Requested explicitly. Expensive, inconsistent, but irreplaceable for design decisions, domain judgment, and accountability. Human reviewers spend their time on what the other two cannot cover.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="fade-in">The three kinds are additive, not alternative. Self-review and AI-assisted review run on every PR; human review is requested when the change warrants it. Human reviewers arrive at a PR that has already been through the first two, and their attention is freed for the parts only they can do.</p>
+
+      <!-- 2. Review Triggers -->
+
+      <h3 class="fade-in">2. Review Triggers</h3>
+
+      <p class="fade-in">Review runs at four trigger points. The first is the automated default, and the other three are supplementary:</p>
+
+      <ul class="fade-in">
+        <li><strong>PR opened, reopened, synchronized, or ready for review.</strong> This is the first-class trigger. Every draft PR (see part 2) fires a self-review run. Every subsequent push updates it.</li>
+        <li><strong>Phase completion.</strong> When a change transitions from implement to close, <code>/agent-close-change</code> can request a final review pass before merge.</li>
+        <li><strong>Pre-deploy.</strong> For changes that carry deployment risk (database migrations, breaking API changes, infra rewrites), an explicit pre-deploy review run checks deployment-specific dimensions.</li>
+        <li><strong>Post-incident.</strong> After an incident, the offending change is reviewed in reverse: the team runs <code>/agent-review-change</code> against the PR that caused the incident, captures the findings in a Decision Record, and feeds the lessons back into review dimensions.</li>
+      </ul>
+
+      <p class="fade-in">The auto-trigger on PR events is the only trigger that must be in place. The other three layer on top.</p>
+
+      <!-- 3. Automating Self-Review -->
+
+      <h3 class="fade-in">3. Automating Self-Review</h3>
+
+      <p class="fade-in">The mechanism matters as much as the principle. "Run self-review on every PR" only works if a CI workflow actually invokes <code>/agent-review-change</code> on every PR event. A sanitized GitHub Actions workflow that wires this:</p>
+
+<pre class="fade-in"><code class="language-yaml">name: agent-review
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run agent review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.AGENT_REVIEW_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          agent-review-change \
+            --diff-range "$BASE_SHA..$HEAD_SHA" \
+            --pr "$PR_NUMBER" \
+            --dimensions correctness,safety,docs,tests,compatibility,security,performance \
+            --output structured
+
+      - name: Post review
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const review = require('./agent-review-output.json');
+            // Update existing review comment in place, or create one.
+            // Escalate to a required check for any blocking gate.</code></pre>
+
+      <p class="fade-in">Five properties make this workflow work as the governance mechanism, not just a convenience:</p>
+
+      <ul class="fade-in">
+        <li><strong>Event coverage.</strong> <code>opened</code>, <code>reopened</code>, <code>synchronize</code>, and <code>ready_for_review</code> together mean that every state change that adds new code fires a new review. A stale review cannot hide behind a later push.</li>
+        <li><strong>Structured output.</strong> The review produces JSON that maps one-to-one to the seven review dimensions. A human reading the PR sees a table, not a wall of prose. A later script can query the output.</li>
+        <li><strong>Idempotent PR comment.</strong> The workflow updates a single review comment in place, rather than appending a new one each push. The PR stays readable.</li>
+        <li><strong>Blocking vs. advisory.</strong> Most findings post as advisory comments. Hard gates (tests failing, missing required docs, security violations) escalate to a required check that blocks merge.</li>
+        <li><strong>Timeout and retries.</strong> The job has a strict timeout (10 minutes) and a predictable retry policy, so a flaky review does not block a PR indefinitely.</li>
+      </ul>
+
+      <p class="fade-in">The workflow is sanitized to satisfy the public-repo security rules: no account IDs, no bucket names, no specific secret names beyond a placeholder. A real deployment substitutes the organization's own secret management and review runner.</p>
+
+      <!-- 4. Review Dimensions -->
+
+      <h3 class="fade-in">4. Review Dimensions</h3>
+
+      <p class="fade-in">Review is structured around seven dimensions. Each dimension answers a specific question. The output maps one finding per dimension per file, which keeps the review legible.</p>
+
+      <table class="review-dims fade-in">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Question</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Correctness</td>
+            <td>Does the change do what it says? Are invariants preserved? Are error paths handled?</td>
+          </tr>
+          <tr>
+            <td>Safety</td>
+            <td>Can this code corrupt data, destroy state, or break running systems? Are destructive operations gated appropriately?</td>
+          </tr>
+          <tr>
+            <td>Docs</td>
+            <td>Are evergreen docs updated in this PR? Is the commit message sufficient? Does any durable rationale need a Decision Record?</td>
+          </tr>
+          <tr>
+            <td>Tests</td>
+            <td>Does the change ship with tests? Do the tests test behavior, not just absence of panic? Are edge cases covered?</td>
+          </tr>
+          <tr>
+            <td>Compatibility</td>
+            <td>Does the change break API consumers, database schemas, serialized formats, or configuration contracts?</td>
+          </tr>
+          <tr>
+            <td>Security</td>
+            <td>Does the change introduce injection vectors, auth bypass, exposed secrets, unsafe deserialization, or permissioning issues?</td>
+          </tr>
+          <tr>
+            <td>Performance</td>
+            <td>Does the change regress hot paths? Are new N+1 queries, unbounded allocations, or blocking I/O introduced?</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="fade-in">Dimensions are orthogonal. A single finding should fall cleanly into one of them. When a finding spans two dimensions, it usually means the diagnosis is still shallow; splitting it into two findings makes the review sharper.</p>
+
+      <!-- 5. Review Gates -->
+
+      <h3 class="fade-in">5. Review Gates</h3>
+
+      <p class="fade-in">A review gate is a hard stop that blocks merge. The framework defines four default gates, and repos can add their own:</p>
+
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Gate</th>
+            <th>Blocks merge when</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tests</td>
+            <td>Any required test suite fails on the PR branch.</td>
+          </tr>
+          <tr>
+            <td>Docs</td>
+            <td>Behavior changed but an evergreen doc referenced by the changed area was not updated.</td>
+          </tr>
+          <tr>
+            <td>Security</td>
+            <td>A security finding above a configured severity threshold is open.</td>
+          </tr>
+          <tr>
+            <td>Compatibility</td>
+            <td>A breaking change is introduced without a Decision Record explaining the migration path.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="fade-in">All other findings from the seven-dimension review surface as advisory comments. Advisories are visible, addressable, and resolved in the PR thread; they do not block the merge button. This split keeps the gating discipline narrow enough that teams do not learn to ignore it.</p>
+
+      <!-- 6. Verify Discipline -->
+
+      <h3 class="fade-in">6. Verify Discipline</h3>
+
+      <p class="fade-in">Verify is distinct from review. Review reads the code; verify runs it. Four verify layers, in increasing cost and increasing realism:</p>
+
+      <table class="doc-types fade-in">
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>What it proves</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Unit tests</td>
+            <td>Isolated logic behaves correctly for documented inputs.</td>
+          </tr>
+          <tr>
+            <td>Integration tests</td>
+            <td>Components wire together. Real database, real HTTP client, real external API stubs where feasible.</td>
+          </tr>
+          <tr>
+            <td>Staging / canary</td>
+            <td>The change runs under production-like traffic, on production-like data, without affecting all users.</td>
+          </tr>
+          <tr>
+            <td>Observability check</td>
+            <td>Metrics, logs, and traces show the change working as expected in the running system. No new errors, no latency regressions, no unexpected resource use.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="fade-in">The first two layers are covered by standard CI. The third and fourth are where most teams lose discipline: a change passes CI and is declared "verified," but no one watched it run in a realistic environment. The framework's position is that "tests pass" is a gate, not a finish line. Verification is complete when the change has been observed running under real conditions without regression.</p>
+
+      <p class="fade-in">For UI changes this includes browser testing: the feature is exercised manually at 375 / 768 / 1200 px, console is checked, network requests are inspected, and the feature is used along a realistic path. Type checks and test suites verify code correctness, not feature correctness.</p>
+
+      <!-- 7. Deployment -->
+
+      <h3 class="fade-in">7. Deployment</h3>
+
+      <p class="fade-in">Deployment is part of verify, not a separate stage. A change that merges and breaks in production has not been verified, regardless of how green CI was. Three deployment concerns are first-class:</p>
+
+      <h4 class="fade-in">Rollout strategy</h4>
+
+      <p class="fade-in">The framework does not prescribe a specific rollout mechanism (canary, blue/green, progressive delivery, feature flags). It does require that the change's rollout strategy is explicit somewhere the review can see it. In most repos the right surface is the PR description or a linked runbook. For changes that carry lasting architectural implications (a new canary infrastructure, a new feature flag system), a Decision Record captures the rationale.</p>
+
+      <h4 class="fade-in">Post-deploy smoke</h4>
+
+      <p class="fade-in">Every change that alters behavior requires a post-deploy smoke step: a scripted or manual check that the feature works in production after rollout. A post-deploy smoke that only checks "service is healthy" is not sufficient; it must exercise the specific feature that changed. For trivial changes this can be a one-line curl. For larger changes it is a small suite.</p>
+
+      <h4 class="fade-in">Rollback discipline</h4>
+
+      <p class="fade-in">Every deployable change has a rollback path, and the rollback path is documented before merge, not discovered during incident. Rollback paths are not all symmetrical: a schema migration cannot be rolled back by reverting the deploy, for example. When the rollback is not a simple revert, the Decision Record for the change explains what the actual rollback procedure is.</p>
+
+      <h4 class="fade-in">Incident triage as review-in-reverse</h4>
+
+      <p class="fade-in">An incident is a review that runs too late. The discipline for recovering value from one is to run the review dimensions in reverse against the change that caused the incident: which dimension failed, why did the auto-review not catch it, and what should change in the review dimensions so it catches the next one. Findings that produce durable lessons become Decision Records. The change-rhythm and review-and-verify layers reinforce each other here: the incident's lesson is captured by the same Decision Record mechanism that captures architectural choices.</p>
+
+      <!-- 8. ADR Feedback -->
+
+      <h3 class="fade-in">8. Review Findings Feed Decision Records</h3>
+
+      <p class="fade-in">Most review findings are resolved in the PR and forgotten. A small subset surfaces durable rationale: a constraint the team did not know about, a trade-off that future reviews should respect, a class of bug that should be prevented at the policy level.</p>
+
+      <p class="fade-in">When a review finding crosses that threshold, it becomes a Decision Record through the same <code>/agent-record-decision</code> command introduced in part 2. Three common patterns:</p>
+
+      <ul class="fade-in">
+        <li>a security finding that reveals an architectural weakness becomes a DR that captures the mitigation approach</li>
+        <li>a compatibility finding that forces an API break becomes a DR that records the break and its migration path</li>
+        <li>a post-incident review that identifies a missing review dimension becomes a DR that proposes adding the dimension and updates the framework's dimension list accordingly</li>
+      </ul>
+
+      <p class="fade-in">This is the feedback loop that keeps the framework from calcifying. The review dimensions, the gates, and the policies all get updated by lessons surfaced in actual reviews and actual incidents, not by abstract reasoning.</p>
+
+      <!-- ============================================================ -->
+      <!-- Capabilities                                                  -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Review-and-Verify Capabilities</h2>
+
+      <p class="fade-in">This layer adds exactly one command to the framework's surface.</p>
+
+      <h4 class="fade-in">Review Change</h4>
+
+      <p class="fade-in"><code>/agent-review-change</code> is invoked by CI on PR events (<code>opened</code>, <code>reopened</code>, <code>synchronize</code>, <code>ready_for_review</code>). It can also be called by hand for phase completion, pre-deploy, or post-incident review. It loads the seven review dimensions and the gate definitions, runs them against the diff, and produces structured output suitable for a PR comment or a GitHub check.</p>
+
+      <p class="fade-in">The command is deliberately narrow. It does not plan changes, implement changes, or merge changes. Those are owned by the commands in parts 1 and 2. <code>/agent-review-change</code> reviews; everything else is out of scope.</p>
+
+      <!-- ============================================================ -->
+      <!-- Usage                                                         -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Usage</h2>
+
+      <p class="fade-in">The review-and-verify command lives under <code>~/.claude/commands/</code> alongside the routing and change-rhythm commands from parts 1 and 2, using the reserved <code>agent-*</code> namespace.</p>
+
+      <div class="diagram-container fade-in">
+        <pre class="mermaid">
+graph LR
+  PR["PR opened<br/>or synchronize"]:::routing
+  REVIEW["/agent-review-change<br/>auto-triggered"]:::api
+  GATES{"Hard gate<br/>violation?"}:::decision
+  COMMENT["Structured PR comment<br/>7 review dimensions"]:::data
+  BLOCK["Required check fails<br/>merge blocked"]:::onDemand
+  MERGE["Merge allowed"]:::data
+
+  PR --> REVIEW
+  REVIEW --> GATES
+  GATES -- "yes" --> BLOCK
+  GATES -- "no" --> COMMENT
+  COMMENT --> MERGE
+  BLOCK -.-> COMMENT
+
+  classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
+  classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
+  classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
+  classDef onDemand fill:#3A2054,stroke:#B07CD8,color:#fff,stroke-width:1.5px
+  classDef decision fill:#4A1E3A,stroke:#E85D75,color:#fff,stroke-width:1.5px
+        </pre>
+      </div>
+
+      <p class="fade-in">Repos that want a custom review dimension (for example, "accessibility" on a frontend-heavy repo) add it in repo-local docs at <code>docs/agents/reference/review-dimensions.md</code>. Repo gates add to the framework gates rather than replace them.</p>
+
+      <!-- ============================================================ -->
+      <!-- Example                                                       -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Example: an auto-triggered review that caught a regression</h2>
+
+      <p class="fade-in">A change adds a new endpoint that accepts a user-supplied filter and composes it into a database query. The PR passes CI. Tests are green. The change is one file, seven lines.</p>
+
+      <ol class="fade-in">
+        <li>PR opens. The GitHub Actions workflow fires <code>/agent-review-change</code>.</li>
+        <li>The review runs across the seven dimensions and posts a structured comment.</li>
+        <li>The <strong>security</strong> dimension flags the filter as a potential injection vector: the user-supplied value is string-concatenated into the SQL, not parameterized.</li>
+        <li>The finding triggers the <strong>security</strong> gate (severity above the configured threshold). The required check fails. Merge is blocked.</li>
+        <li>The author switches to a parameterized query, pushes a new commit.</li>
+        <li>The <code>synchronize</code> event fires. The review reruns. The security finding is gone. The required check passes.</li>
+        <li>The PR merges.</li>
+      </ol>
+
+      <p class="fade-in">Nothing about this example required a human reviewer. The auto-trigger, the dimension, and the gate did the work. Human review is still available; it simply is not the first line of defense anymore.</p>
+
+      <!-- ============================================================ -->
+      <!-- Tradeoffs                                                     -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Tradeoffs</h2>
+
+      <h3 class="fade-in">Benefits</h3>
+
+      <ul class="fade-in">
+        <li>Every PR gets reviewed, not just the ones someone remembered to tag.</li>
+        <li>Review output is structured and diffable across runs.</li>
+        <li>Gates keep the discipline narrow enough that authors do not learn to ignore it.</li>
+        <li>Verify is separate from tests, so "tests pass" stops being confused with "change works."</li>
+        <li>Deployment, rollback, and incident triage live in the same discipline, not adjacent to it.</li>
+        <li>The feedback loop into Decision Records keeps the framework grounded in real findings.</li>
+      </ul>
+
+      <h3 class="fade-in">Costs</h3>
+
+      <ul class="fade-in">
+        <li>CI cost per PR increases: every push runs a review.</li>
+        <li>Structured reviews can produce false positives that the author has to triage. The advisory vs. gate split mitigates this but does not eliminate it.</li>
+        <li>Rollback discipline requires work that is easy to skip. If a team does not enforce it, the benefit evaporates.</li>
+        <li>The seven-dimension matrix is a design opinion. A team with different priorities may need to adjust it.</li>
+      </ul>
+
+      <p class="fade-in">These costs are acceptable because they buy consistent review coverage, explicit gating, and a verification discipline that extends to the surface where changes actually break.</p>
+
+      <!-- ============================================================ -->
+      <!-- Recommendation                                                -->
+      <!-- ============================================================ -->
+
+      <h2 class="fade-in">Recommendation</h2>
+
+      <p class="fade-in">Adopt this layer once the routing (part 1) and change rhythm (part 2) are in place:</p>
+
+      <ul class="fade-in">
+        <li>install <code>/agent-review-change</code> under <code>~/.claude/commands/</code></li>
+        <li>wire the GitHub Actions workflow (or equivalent CI) to fire the command on PR events</li>
+        <li>adopt the seven review dimensions as the default; extend them per repo as needed</li>
+        <li>enforce the four default gates; add repo-local gates only when a repeated failure class justifies one</li>
+        <li>treat staging, canary, and observability checks as part of verify, not optional</li>
+        <li>document rollback before merge for any change that carries deployment risk</li>
+        <li>feed durable findings from reviews and incidents back into Decision Records</li>
+      </ul>
+
+      <p class="fade-in">This completes the three-layer governance framework. Routing decides what gets loaded, rhythm decides how the change moves, and review-and-verify decides when the change is ready to run in front of real users. Each layer is independently useful, and together they form a complete cycle from intent to production.</p>
+
+      <!-- ============================================================ -->
+      <!-- Appendix Link + Series Nav                                    -->
+      <!-- ============================================================ -->
+
+      <div class="rfc-callout fade-in">
+        <p><strong>Appendix:</strong> The review command shim, the review-dimensions reference, the sanitized GHA workflow, and the deployment playbook are available in the <a href="review-and-verify-appendix.html">implementation appendix</a>.</p>
+        <p><strong>Series:</strong> <a href="agent-governance-for-claude-code.html">Part 1 &middot; Routing</a> &middot; <a href="change-rhythm-for-claude-code.html">Part 2 &middot; Change rhythm</a></p>
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="footer">
+    <p>Patrick Hogan &middot; 2026</p>
+  </footer>
+
+  <!-- Mermaid -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#1E2130',
+        primaryColor: '#5C3E14',
+        primaryTextColor: '#FFFFFF',
+        primaryBorderColor: '#E8A849',
+        secondaryColor: '#1B3D3A',
+        secondaryTextColor: '#FFFFFF',
+        secondaryBorderColor: '#4ECDC4',
+        tertiaryColor: '#2A3054',
+        tertiaryTextColor: '#FFFFFF',
+        tertiaryBorderColor: '#7B93DB',
+        lineColor: '#555',
+        fontSize: '14px'
+      }
+    });
+  </script>
+
+  <script>
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) nav.classList.add('nav-scrolled');
+      else nav.classList.remove('nav-scrolled');
+    }, { passive: true });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      (function() {
+        const canvas = document.getElementById('heroCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const PARTICLE_COUNT = 35;
+        const CONNECTION_DIST = 140;
+        let particles = [], nebulaBlobs = [];
+        const colors = [
+          { r: 232, g: 168, b: 73 },
+          { r: 78, g: 205, b: 196 },
+          { r: 232, g: 93, b: 117 },
+          { r: 123, g: 147, b: 219 },
+        ];
+
+        function resize() {
+          const rect = canvas.parentElement.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = rect.width * dpr;
+          canvas.height = rect.height * dpr;
+          canvas.style.width = rect.width + 'px';
+          canvas.style.height = rect.height + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          init(rect.width, rect.height);
+        }
+
+        function init(w, h) {
+          particles = [];
+          nebulaBlobs = [];
+          for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const c = colors[Math.floor(Math.random() * colors.length)];
+            particles.push({
+              x: Math.random() * w, y: Math.random() * h,
+              vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.18,
+              radius: Math.random() * 1.5 + 0.5, color: c,
+              alpha: Math.random() * 0.5 + 0.3, phase: Math.random() * Math.PI * 2,
+            });
+          }
+          for (let i = 0; i < 5; i++) {
+            const c = colors[i % colors.length];
+            nebulaBlobs.push({
+              x: Math.random() * w, y: Math.random() * h,
+              radius: Math.random() * 200 + 100, color: c,
+              alpha: Math.random() * 0.04 + 0.02,
+              vx: (Math.random() - 0.5) * 0.05, vy: (Math.random() - 0.5) * 0.04,
+              phase: Math.random() * Math.PI * 2
+            });
+          }
+        }
+
+        function draw() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const w = canvas.width / dpr, h = canvas.height / dpr;
+          ctx.clearRect(0, 0, w, h);
+
+          for (const b of nebulaBlobs) {
+            b.x += b.vx; b.y += b.vy; b.phase += 0.002;
+            if (b.x < -b.radius) b.x = w + b.radius;
+            if (b.x > w + b.radius) b.x = -b.radius;
+            if (b.y < -b.radius) b.y = h + b.radius;
+            if (b.y > h + b.radius) b.y = -b.radius;
+            const a = b.alpha + Math.sin(b.phase) * 0.008;
+            const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.radius);
+            g.addColorStop(0, `rgba(${b.color.r},${b.color.g},${b.color.b},${a})`);
+            g.addColorStop(0.5, `rgba(${b.color.r},${b.color.g},${b.color.b},${a * 0.3})`);
+            g.addColorStop(1, `rgba(${b.color.r},${b.color.g},${b.color.b},0)`);
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2); ctx.fill();
+          }
+
+          for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+              const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+              const d = Math.sqrt(dx * dx + dy * dy);
+              if (d < CONNECTION_DIST) {
+                ctx.strokeStyle = `rgba(255,255,255,${(1 - d / CONNECTION_DIST) * 0.1})`;
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          for (const p of particles) {
+            p.x += p.vx; p.y += p.vy; p.phase += 0.015;
+            if (p.x < 0) p.x = w;
+            if (p.x > w) p.x = 0;
+            if (p.y < 0) p.y = h;
+            if (p.y > h) p.y = 0;
+            const pulse = 0.7 + Math.sin(p.phase) * 0.3;
+            ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${p.alpha * pulse})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
+          }
+
+          requestAnimationFrame(draw);
+        }
+
+        resize();
+        draw();
+
+        let timeoutId;
+        window.addEventListener('resize', () => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(resize, 150);
+        });
+      })();
+    }
+  </script>
+
+</body>
+</html>

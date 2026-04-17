@@ -28,29 +28,30 @@ Author: Patrick Hogan — staff engineer, builds production systems with AI.
 
 ## Documentation Workflow
 
-**Documentation is part of every change, not an afterthought.** Every commit that changes behavior must also update the relevant docs. This is not optional — stale docs are worse than no docs.
+**Documentation is part of every change, not an afterthought.** Every commit that changes behavior must also update the relevant docs. Stale docs are worse than no docs.
 
 **Two document categories:**
 
-**Immutable**: `docs/changes/` — change plans and reviews. Once committed, never edited.
+**Durable rationale (ADRs)**: `docs/agents/decisions/` contains Decision Records. Written when a change produces durable rationale that the commit message cannot hold on its own: architectural shifts, rejected alternatives, failed or reverted approaches, non-obvious constraints, cross-cutting trade-offs. One decision per record. Numbered sequentially (`DR-001`, `DR-002`, ...).
 
-**Evergreen**: `CLAUDE.md`, `docs/PLAN.md`, `README.md` — living documents. Updated as the project evolves.
+**Evergreen**: `CLAUDE.md`, `docs/PLAN.md`, `README.md` are living documents. Updated in the same commit as the behavior change that invalidates them.
 
 **The commit process for every significant change:**
 
-1. **Plan**: Write `docs/changes/NNNNNNN-short-name/plan.md` — context, decisions, what will change
-2. **Implement**: Do the work
-3. **Review**: Write `docs/changes/NNNNNNN-short-name/review.md` — deviations, additional changes, learnings
-4. **Update evergreen docs**: Update `CLAUDE.md`, `docs/PLAN.md`, `README.md` to reflect the new state
-5. **Commit**: All of the above in the same commit
+1. **Plan**: Write a scratch plan at `~/.claude/agent-governance-plans/<slug>.md`. Outside the repo. Private. Throwaway.
+2. **Open**: Create a branch and a draft PR derived from the plan.
+3. **Implement**: Small commits with Conventional Commits headers and why-focused bodies. Update evergreen docs in the same commit as the behavior change.
+4. **Close**: If the change produced durable rationale, invoke `/agent-record-decision` to write an ADR under `docs/agents/decisions/`. Merge. Delete the scratch plan.
 
-`plan.md` is immutable once written. Deviations go in `review.md`.
+**Do not commit plans or reviews into the repo.** The scratch plan guides implementation, then is discarded. The commit sequence and the PR discussion are the narrative record. ADRs carry the durable rationale.
 
 **Always update evergreen docs when:**
-- A technology decision changes or a new one is made → update CLAUDE.md tech decisions table
-- A work queue item is completed or status changes → update PLAN.md
-- A new command, prerequisite, or workflow is added → update README.md and CLAUDE.md
-- Infrastructure changes → update CLAUDE.md infrastructure section
+- A technology decision changes or a new one is made: update CLAUDE.md tech decisions table
+- A work queue item is completed or status changes: update PLAN.md
+- A new command, prerequisite, or workflow is added: update README.md and CLAUDE.md
+- Infrastructure changes: update CLAUDE.md infrastructure section
+
+**Historical note:** Changes prior to 2026-04-16 used a `docs/changes/NNNNNNN-*/plan.md` + `review.md` pattern. That directory is preserved for history but is no longer the workflow. See the three-part RFC series at `/blog/agent-governance-for-claude-code` for the rationale.
 
 ## Technology Decisions
 

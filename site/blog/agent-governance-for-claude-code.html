@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RFC: Claude Agents Framework | Patrick Hogan</title>
-  <meta name="description" content="An RFC defining a reusable Claude Code framework installed at ~/.claude. The global layer owns process; the repo layer owns local truth.">
+  <title>Agent Governance for Claude Code, Part 1: Routing | Patrick Hogan</title>
+  <meta name="description" content="A three-layer routing model for Claude Code: framework, personal, and repo. The framework installs into its own namespace so it never collides with Claude Code or the user's own files.">
   <meta name="author" content="Patrick Hogan">
   <link rel="canonical" href="https://phoganuci.com/blog/agent-governance-for-claude-code">
 
   <!-- Open Graph -->
   <meta property="og:type" content="article">
-  <meta property="og:title" content="RFC: Claude Agents Framework">
-  <meta property="og:description" content="An RFC defining a reusable Claude Code framework installed at ~/.claude. The global layer owns process; the repo layer owns local truth.">
+  <meta property="og:title" content="Agent Governance for Claude Code, Part 1: Routing">
+  <meta property="og:description" content="A three-layer routing model for Claude Code: framework, personal, and repo. The framework installs into its own namespace so it never collides with Claude Code or the user's own files.">
   <meta property="og:url" content="https://phoganuci.com/blog/agent-governance-for-claude-code">
   <meta property="og:image" content="https://phoganuci.com/assets/profile.jpeg">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="RFC: Claude Agents Framework">
-  <meta name="twitter:description" content="An RFC defining a reusable Claude Code framework installed at ~/.claude. The global layer owns process; the repo layer owns local truth.">
+  <meta name="twitter:title" content="Agent Governance for Claude Code, Part 1: Routing">
+  <meta name="twitter:description" content="A three-layer routing model for Claude Code: framework, personal, and repo. The framework installs into its own namespace so it never collides with Claude Code or the user's own files.">
   <meta name="twitter:image" content="https://phoganuci.com/assets/profile.jpeg">
 
   <!-- Fonts -->
@@ -40,8 +40,8 @@
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "RFC: Claude Agents Framework",
-    "description": "An RFC defining a reusable Claude Code framework installed at ~/.claude. The global layer owns process; the repo layer owns local truth.",
+    "headline": "Agent Governance for Claude Code, Part 1: Routing",
+    "description": "A three-layer routing model for Claude Code: framework, personal, and repo. The framework installs into its own namespace so it never collides with Claude Code or the user's own files.",
     "datePublished": "2026-04-16",
     "author": {
       "@type": "Person",
@@ -51,6 +51,10 @@
     "publisher": {
       "@type": "Person",
       "name": "Patrick Hogan"
+    },
+    "isPartOf": {
+      "@type": "CreativeWorkSeries",
+      "name": "Agent Governance for Claude Code"
     }
   }
   </script>
@@ -79,6 +83,45 @@
 
     .rfc-callout p:last-child {
       margin-bottom: 0;
+    }
+
+    .series-callout {
+      background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(232,168,73,0.04) 100%);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0 3rem;
+    }
+
+    .series-callout .series-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-gold);
+      margin-bottom: 0.75rem;
+    }
+
+    .series-callout ol {
+      margin: 0.5rem 0 0;
+      padding-left: 1.2rem;
+      line-height: 1.85;
+    }
+
+    .series-callout ol li::marker {
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .series-callout a {
+      color: var(--accent-teal);
+    }
+
+    .series-callout .current {
+      color: var(--text-primary);
+      font-weight: 500;
     }
 
     .post-body h4 {
@@ -121,13 +164,13 @@
   <header class="post-header post-header--hero">
     <canvas class="hero-canvas" id="heroCanvas"></canvas>
     <div class="hero-content">
-      <span class="section-label fade-in">RFC</span>
-      <h1 class="fade-in">Claude Agents<br>Framework</h1>
-      <p class="hero-subtitle fade-in">A reusable Claude Code framework installed at <code>~/.claude</code>. The global layer owns process; the repo layer owns local truth.</p>
+      <span class="section-label fade-in">RFC &middot; Part 1 of 3</span>
+      <h1 class="fade-in">Routing<br>Claude Code</h1>
+      <p class="hero-subtitle fade-in">A three-layer model for Claude Code governance: framework, personal, and repo. The framework installs into its own namespace so it never collides with Claude Code itself or with the user's own files.</p>
       <div class="post-meta fade-in">
         <span>April 16, 2026</span>
         <span class="separator"></span>
-        <span>18 min read</span>
+        <span>14 min read</span>
       </div>
     </div>
     <div class="scroll-indicator">
@@ -140,28 +183,41 @@
     <div class="post-body">
 
       <!-- ============================================================ -->
+      <!-- Series Callout                                                -->
+      <!-- ============================================================ -->
+
+      <div class="series-callout fade-in">
+        <div class="series-eyebrow">Series &middot; Agent Governance for Claude Code</div>
+        <ol>
+          <li><span class="current">Routing</span> &middot; this post &middot; how layers compose and how docs get loaded</li>
+          <li><a href="change-rhythm-for-claude-code.html">Change rhythm</a> &middot; scratch plans, phase discipline, and ADRs as the only durable artifact</li>
+          <li><a href="review-and-verify-for-claude-code.html">Review and verify</a> &middot; auto-triggered self-review on every PR, verification gates, and deployment</li>
+        </ol>
+      </div>
+
+      <!-- ============================================================ -->
       <!-- Summary                                                       -->
       <!-- ============================================================ -->
 
       <h2 class="fade-in">Summary</h2>
 
-      <p class="fade-in">This RFC defines a reusable Claude Code framework installed at <code>~/.claude</code>.</p>
+      <p class="fade-in">This post defines the routing layer of a reusable Claude Code framework.</p>
 
       <p class="fade-in">The framework is the shared process layer. It standardizes:</p>
 
       <ul class="fade-in">
-        <li>the root contract in <code>CLAUDE.md</code></li>
-        <li>the typed documentation tree for routing, policy, playbooks, references, indexes, and decisions</li>
-        <li>the global <code>agent-*</code> command surface</li>
-        <li>the lifecycle for non-trivial implementation work through change bundles in <code>docs/changes/*</code></li>
-        <li>the extension model that lets repos add their own local standards without moving repo truth into the global layer</li>
+        <li>a three-layer hierarchy: framework, personal, and repo</li>
+        <li>a root contract that composes the three layers</li>
+        <li>a typed documentation tree for routing, policy, playbooks, references, and decisions</li>
+        <li>an authority order for resolving conflicts between layers</li>
+        <li>a small <code>agent-*</code> command surface for extending the system</li>
       </ul>
 
       <div class="rfc-callout fade-in">
-        <p>The core rule is simple: the global layer owns process; the repo layer owns local truth.</p>
+        <p>The core rule is simple: the framework owns process, the personal layer owns a user's cross-repo preferences, and the repo layer owns local truth. The framework installs into its own namespace so none of those layers collide.</p>
       </div>
 
-      <p class="fade-in">The <a href="agent-governance-appendix.html">appendix</a> contains the complete file skeletons for every file in the framework. An implementer should be able to produce the full working system from this document alone.</p>
+      <p class="fade-in">The <a href="agent-governance-appendix.html">appendix</a> contains the complete file skeletons for the routing layer. <a href="change-rhythm-for-claude-code.html">Part 2</a> covers the change-rhythm layer. <a href="review-and-verify-for-claude-code.html">Part 3</a> covers review, verification, and deployment.</p>
 
       <!-- ============================================================ -->
       <!-- Problem                                                       -->
@@ -176,17 +232,25 @@
         <li>an untyped pile of docs and commands with no clear boundary between shared process and repo-local behavior</li>
       </ul>
 
-      <p class="fade-in">That creates predictable failures:</p>
+      <p class="fade-in">An earlier draft of this RFC proposed a two-layer split (global framework vs repo) with the framework's files planted directly under <code>~/.claude/</code>. That shape had two concrete flaws.</p>
+
+      <h4 class="fade-in">Flaw 1: the framework squats on Claude Code's own directory</h4>
+
+      <p class="fade-in">Claude Code natively uses <code>~/.claude/</code> for its own state: <code>CLAUDE.md</code> as user memory, <code>commands/</code>, <code>skills/</code>, <code>agents/</code>, <code>hooks/</code>, <code>settings.json</code>, <code>projects/</code>, <code>plans/</code>, and <code>keybindings.json</code>. Planting framework-owned files at <code>~/.claude/CLAUDE.md</code> and <code>~/.claude/docs/agents/</code> invites three kinds of breakage:</p>
 
       <ul class="fade-in">
-        <li>process guidance and repo-specific conventions get mixed together</li>
-        <li>commands drift into hidden policy instead of acting as thin entrypoints</li>
-        <li>repos duplicate the same workflow guidance or invent incompatible local structures</li>
-        <li>it becomes unclear where durable rationale should live</li>
-        <li>planning and implementation artifacts accumulate inconsistently across commits</li>
+        <li>a Claude Code release that starts using <code>~/.claude/docs/</code> (or any other top-level directory) silently collides with the framework</li>
+        <li>a user who wants to install a second framework alongside has no safe path to do it</li>
+        <li>a framework upgrade or reinstall can clobber the user's own <code>CLAUDE.md</code> content</li>
       </ul>
 
-      <p class="fade-in">The framework needs to solve those problems without becoming a global dumping ground for frontend, backend, or infrastructure standards that only make sense inside a specific repo.</p>
+      <h4 class="fade-in">Flaw 2: no user-level extension point</h4>
+
+      <p class="fade-in">In a strict global-vs-repo model, a user who wants a preference that applies across all their repos has no place to put it. "Always prefer tabs over spaces in Go," or "no emoji in code comments," or "when writing commit messages, avoid marketing tone" are legitimate personal rules. With only two layers, the user must either edit the framework's own files (which breaks at enterprise scale where the framework is centrally managed) or copy the rule into every repo.</p>
+
+      <p class="fade-in">Both flaws share one root cause: the framework conflates user scope with framework scope. Namespacing the framework fixes both at once, because once <code>~/.claude/CLAUDE.md</code> is no longer framework-owned, the user has somewhere to put personal preferences.</p>
+
+      <p class="fade-in">The framework also needs to avoid becoming a global dumping ground for frontend, backend, or infrastructure standards that only make sense inside a specific repo.</p>
 
       <!-- ============================================================ -->
       <!-- Goals                                                         -->
@@ -195,11 +259,12 @@
       <h2 class="fade-in">Goals</h2>
 
       <ul class="fade-in">
-        <li>Provide a reusable process layer that can be installed once in <code>~/.claude</code>.</li>
-        <li>Make the boundary between the global framework and repo-local extensions explicit.</li>
-        <li>Keep docs typed so routing, policy, playbooks, references, indexes, and decisions each have a clear job.</li>
+        <li>Provide a reusable process layer that can be installed once per machine.</li>
+        <li>Make the boundary between framework, personal, and repo layers explicit.</li>
+        <li>Keep framework-owned files in a namespaced subdirectory so they never collide with Claude Code or with other frameworks.</li>
+        <li>Give the user a first-class place to express cross-repo personal preferences.</li>
+        <li>Keep docs typed so routing, policy, playbooks, references, and decisions each have a clear job.</li>
         <li>Support Claude Code Plan Mode without requiring writes during planning.</li>
-        <li>Make non-trivial implementation work legible across multiple commits through a consistent bundle model.</li>
         <li>Keep the global command surface small, namespaced, and process-oriented.</li>
         <li>Give repos a clean path to add local standards, workflows, and durable rationale.</li>
       </ul>
@@ -211,11 +276,11 @@
       <h2 class="fade-in">Non-Goals</h2>
 
       <ul class="fade-in">
-        <li>Define universal frontend, backend, or infrastructure standards in the global framework.</li>
+        <li>Define universal frontend, backend, or infrastructure standards in the framework layer.</li>
         <li>Replace repo-local architecture docs with global abstractions.</li>
         <li>Provide a global command for every domain or team workflow.</li>
-        <li>Maintain a repo-level active-work index for change bundles.</li>
         <li>Turn the framework into a repo scaffolding engine for arbitrary project structure.</li>
+        <li>Define the change lifecycle or review workflow here. Those are scoped to parts 2 and 3.</li>
       </ul>
 
       <!-- ============================================================ -->
@@ -224,38 +289,47 @@
 
       <h2 class="fade-in">Proposed Design</h2>
 
-      <!-- 1. Two-Level Hierarchy -->
+      <!-- 1. Three-Layer Hierarchy -->
 
-      <h3 class="fade-in">1. Two-Level Hierarchy</h3>
+      <h3 class="fade-in">1. Three-Layer Hierarchy</h3>
 
-      <p class="fade-in">The system has two layers:</p>
+      <p class="fade-in">The system has three layers:</p>
 
       <ul class="fade-in">
-        <li>Global layer in <code>~/.claude</code></li>
-        <li>Repo layer inside the active repository</li>
+        <li><strong>Framework</strong> in <code>~/.claude/agent-governance/</code> owns shared process</li>
+        <li><strong>Personal</strong> in <code>~/.claude/CLAUDE.md</code> and <code>~/.claude/personal/docs/agents/</code> owns one user's cross-repo preferences</li>
+        <li><strong>Repo</strong> inside the active repository owns local truth</li>
       </ul>
 
-      <p class="fade-in">The global layer contains the shared process contract:</p>
+      <p class="fade-in">The framework layer installs into its own namespaced subdirectory:</p>
 
 <pre class="fade-in file-tree"><code>~/.claude/
-├── <span class="tree-file">CLAUDE.md</span>
+├── <span class="tree-file">CLAUDE.md</span>                      <span class="tree-comment"># USER-owned. Imports framework + adds personal preferences.</span>
 ├── <span class="tree-dir">commands/</span>
-│   ├── <span class="tree-file">agent-plan-change.md</span>
-│   ├── <span class="tree-file">agent-open-change.md</span>
-│   ├── <span class="tree-file">agent-implement-change.md</span>
-│   ├── <span class="tree-file">agent-close-change.md</span>
-│   ├── <span class="tree-file">agent-adopt.md</span>
-│   ├── <span class="tree-file">agent-add-capability.md</span>
-│   ├── <span class="tree-file">agent-record-decision.md</span>
-│   └── <span class="tree-file">agent-improve.md</span>
-└── <span class="tree-dir">docs/agents/</span>
-    ├── <span class="tree-dir">router/</span>
-    ├── <span class="tree-dir">policy/</span>
-    ├── <span class="tree-dir">playbooks/</span>
-    ├── <span class="tree-dir">reference/</span>
-    └── <span class="tree-dir">decisions/</span></code></pre>
+│   └── <span class="tree-file">agent-*.md</span>                  <span class="tree-comment"># framework command shims. Claude Code's native commands dir.</span>
+├── <span class="tree-dir">personal/</span>                      <span class="tree-comment"># optional: user's cross-repo docs tree</span>
+│   └── <span class="tree-dir">docs/agents/</span>
+│       ├── <span class="tree-dir">policy/</span>
+│       ├── <span class="tree-dir">playbooks/</span>
+│       ├── <span class="tree-dir">reference/</span>
+│       └── <span class="tree-dir">decisions/</span>
+└── <span class="tree-dir">agent-governance/</span>              <span class="tree-comment"># framework-owned install</span>
+    ├── <span class="tree-file">CLAUDE.md</span>                  <span class="tree-comment"># framework root contract</span>
+    └── <span class="tree-dir">docs/agents/</span>
+        ├── <span class="tree-dir">router/</span>
+        ├── <span class="tree-dir">policy/</span>
+        ├── <span class="tree-dir">playbooks/</span>
+        ├── <span class="tree-dir">reference/</span>
+        └── <span class="tree-dir">decisions/</span></code></pre>
 
-      <p class="fade-in">Each repo extends that with local docs and optional local commands:</p>
+      <p class="fade-in">Two boundaries make this layout work:</p>
+
+      <ul class="fade-in">
+        <li><strong>Framework content lives under <code>agent-governance/</code>, not directly under <code>~/.claude/</code>.</strong> Claude Code can add new top-level directories without conflict. A user can install a second framework alongside by giving it its own sibling directory. A framework upgrade or reinstall touches only <code>~/.claude/agent-governance/</code>.</li>
+        <li><strong>Commands stay at <code>~/.claude/commands/</code>.</strong> That is Claude Code's native location for user-installed commands, and moving them out would break how Claude Code loads them. The reserved <code>agent-*</code> prefix namespaces the framework's commands so they never shadow a user's own.</li>
+      </ul>
+
+      <p class="fade-in">Each repo extends the upper layers with local docs and optional local commands:</p>
 
 <pre class="fade-in file-tree"><code>repo/
 ├── <span class="tree-file">CLAUDE.md</span>
@@ -267,23 +341,32 @@
     ├── <span class="tree-dir">reference/</span>
     └── <span class="tree-dir">decisions/</span></code></pre>
 
-      <p class="fade-in">The global layer explains how work should happen. The repo layer explains how that codebase works.</p>
+      <p class="fade-in">The framework layer explains how work should happen. The personal layer carries one user's cross-repo preferences. The repo layer explains how that codebase works.</p>
 
       <!-- 2. Root Contract -->
 
       <h3 class="fade-in">2. Root Contract</h3>
 
-      <p class="fade-in"><code>~/.claude/CLAUDE.md</code> is the root contract. It defines:</p>
+      <p class="fade-in">Two files form the root contract, with a deliberate separation of ownership:</p>
 
       <ul class="fade-in">
-        <li>the meaning of <code>$CLAUDE_HOME</code></li>
-        <li>the authority order</li>
-        <li>the phase contract</li>
-        <li>the command-surface rules</li>
-        <li>the high-level capability summary</li>
+        <li><code>~/.claude/agent-governance/CLAUDE.md</code> is the framework root contract. It defines the meaning of <code>$CLAUDE_HOME</code>, the authority order, the typed docs tree, and the command-surface rules. It is owned by the framework release and should be treated as read-only by users.</li>
+        <li><code>~/.claude/CLAUDE.md</code> is the user's personal memory file. Claude Code loads it natively. The recommended shape is a thin composition: import the framework contract, then add personal preferences.</li>
       </ul>
 
-      <p class="fade-in">That file is the shared entrypoint Claude Code loads as user memory.</p>
+      <p class="fade-in">A minimal user <code>~/.claude/CLAUDE.md</code> looks like this:</p>
+
+<pre class="fade-in"><code class="language-markdown">@agent-governance/CLAUDE.md
+
+## Personal preferences
+
+- Prefer tabs over spaces in Go.
+- No emoji in code comments.
+- When suggesting commit messages, avoid marketing tone.</code></pre>
+
+      <p class="fade-in">The <code>@</code> prefix is Claude Code's native import syntax for <code>CLAUDE.md</code>. The framework contract loads first and establishes the shared process layer; personal preferences follow and override framework defaults where they conflict, subject to the authority order below.</p>
+
+      <p class="fade-in"><code>$CLAUDE_HOME</code> is the framework install directory. By default that is <code>~/.claude/agent-governance/</code>. Every reference to <code>$CLAUDE_HOME/docs/agents/...</code> in framework docs or repo docs resolves under that path.</p>
 
       <!-- 3. Components -->
 
@@ -301,7 +384,7 @@
         <tbody>
           <tr>
             <td><code>router/</code></td>
-            <td>Phase, capability, and workflow routing. Given a work description like "plan change" or "verify changes", the capability map resolves it to the canonical doc. The router also decides which policy and playbook to load based on the current phase and work type, and which layer (global framework vs repo) owns a given rule.</td>
+            <td>Phase, capability, and workflow routing. Given a work description like "plan change" or "verify changes", the capability map resolves it to the canonical doc. The router also decides which policy and playbook to load based on the current phase and work type, and which layer owns a given rule.</td>
           </tr>
           <tr>
             <td><code>policy/</code></td>
@@ -317,7 +400,7 @@
           </tr>
           <tr>
             <td><code>decisions/</code></td>
-            <td>Durable rationale. Decision Records explain why a lasting architectural or workflow choice was made. They are not part of the normal flow; consulted on demand when a past decision is questioned.</td>
+            <td>Durable rationale. Decision Records explain why a lasting architectural or workflow choice was made. They are not part of the normal flow; consulted on demand when a past decision is questioned. Part 2 defines when to write one.</td>
           </tr>
         </tbody>
       </table>
@@ -327,22 +410,25 @@
       <div class="diagram-container fade-in">
         <pre class="mermaid">
 graph TD
-    entry["CLAUDE.md<br/><i>entrypoint · authority order</i>"]:::routing
+    entry["~/.claude/CLAUDE.md<br/><i>user composition · imports framework + personal prefs</i>"]:::routing
 
-    subgraph router ["router/"]
-      phases["phases.md<br/><i>what phase am I in?</i>"]:::api
-      capmap["capability-map.md<br/><i>what work am I doing?</i>"]:::api
-      composition["composition.md<br/><i>global vs repo?</i>"]:::api
+    subgraph framework ["$CLAUDE_HOME (framework)"]
+      fcontract["CLAUDE.md<br/><i>framework root contract</i>"]:::routing
+      subgraph router ["router/"]
+        phases["phases.md"]:::api
+        capmap["capability-map.md"]:::api
+        composition["composition.md"]:::api
+      end
+      policy["policy/*<br/><i>binding rules</i>"]:::data
+      playbooks["playbooks/*<br/><i>ordered workflows</i>"]:::data
+      reference["reference/*<br/><i>deep detail</i>"]:::onDemand
+      decisions["decisions/*<br/><i>durable rationale</i>"]:::onDemand
     end
 
-    policy["policy/*<br/><i>binding rules</i>"]:::data
-    playbooks["playbooks/*<br/><i>ordered workflows</i>"]:::data
-    reference["reference/*<br/><i>deep detail · on demand</i>"]:::onDemand
-    decisions["decisions/*<br/><i>durable rationale · on demand</i>"]:::onDemand
-
-    entry --> phases
-    entry --> capmap
-    entry --> composition
+    entry --> fcontract
+    fcontract --> phases
+    fcontract --> capmap
+    fcontract --> composition
 
     phases --> policy
     capmap --> policy
@@ -361,77 +447,64 @@ graph TD
 
       <p class="fade-in">This avoids the common failure mode where one document mixes routing, rules, examples, and rationale without clear boundaries.</p>
 
-      <!-- Capabilities -->
+      <!-- 4. Authority Order -->
 
-      <h3 class="fade-in">Capabilities</h3>
+      <h3 class="fade-in">4. Authority Order</h3>
 
-      <h4 class="fade-in">Change Bundles</h4>
+      <p class="fade-in">Three layers plus direct instruction create a resolution order. When sources conflict, higher beats lower:</p>
 
-      <p class="fade-in">Non-trivial implementation work is recorded as a change bundle under <code>docs/changes/NNNNNNN-short-name/</code>.</p>
+      <ol class="fade-in">
+        <li>Direct user instructions for the current task</li>
+        <li>Repo <code>./CLAUDE.md</code> and repo <code>docs/agents/*</code></li>
+        <li>Personal <code>~/.claude/CLAUDE.md</code> and <code>~/.claude/personal/docs/agents/*</code></li>
+        <li>Framework <code>$CLAUDE_HOME/CLAUDE.md</code> and <code>$CLAUDE_HOME/docs/agents/*</code></li>
+        <li>Code and tests</li>
+        <li>External memory or prior-session context</li>
+      </ol>
 
-      <p class="fade-in">Canonical shape:</p>
+      <p class="fade-in">The order is intentional. Personal preferences sit <em>above</em> framework defaults because a user's own rules should win over shared defaults. But personal preferences sit <em>below</em> the repo layer because a codebase's own conventions are more specific than any individual's personal style.</p>
 
-<pre class="fade-in file-tree"><code>docs/changes/0000123-frontend-boundaries/
-├── <span class="tree-file">plan.md</span>
-├── <span class="tree-file">state.yaml</span>
-├── <span class="tree-file">verification.md</span>
-├── <span class="tree-file">review.md</span>      <span class="tree-comment"># optional</span>
-└── <span class="tree-file">notes.md</span>       <span class="tree-comment"># optional, removed at close</span></code></pre>
+      <p class="fade-in">Within each layer, the typed categories resolve in their own order: repo-specific policy beats repo-specific playbook, personal policy beats personal playbook, framework policy beats framework playbook, and so on.</p>
 
-      <p class="fade-in">Bundle semantics:</p>
+      <!-- 5. Composition Contract -->
 
-      <ul class="fade-in">
-        <li><code>plan.md</code> is the exact approved plan and freezes once the bundle is opened.</li>
-        <li><code>state.yaml</code> marks the bundle as active while work is in progress.</li>
-        <li><code>verification.md</code> captures the validation record and remains after closeout.</li>
-        <li><code>review.md</code> exists only for approved deviations from the frozen plan or meaningful learnings worth preserving.</li>
-        <li><code>notes.md</code> is disposable scratch space and is removed during closeout.</li>
-      </ul>
+      <h3 class="fade-in">5. Composition Contract</h3>
 
-      <p class="fade-in">One bundle spans one body of work, not one commit. The same bundle can survive across multiple implementation commits until the work is closed.</p>
-
-      <p class="fade-in"><strong>After <code>/agent-open-change</code></strong> — the initial bundle commit contains only these artifacts:</p>
-
-<pre class="fade-in file-tree"><code>docs/changes/0000123-frontend-boundaries/
-├── <span class="tree-file">plan.md</span>            <span class="tree-comment"># frozen approved plan</span>
-├── <span class="tree-file">state.yaml</span>         <span class="tree-comment"># marks bundle as active</span>
-└── <span class="tree-file">verification.md</span>    <span class="tree-comment"># initial skeleton</span></code></pre>
-
-      <p class="fade-in"><strong>Mid-implementation</strong> — scratch and verification accumulate as work progresses:</p>
-
-<pre class="fade-in file-tree"><code>docs/changes/0000123-frontend-boundaries/
-├── <span class="tree-file">plan.md</span>            <span class="tree-comment"># frozen, unchanged</span>
-├── <span class="tree-file">state.yaml</span>         <span class="tree-comment"># still active</span>
-├── <span class="tree-file">verification.md</span>    <span class="tree-comment"># updated with test results and checks</span>
-└── <span class="tree-file">notes.md</span>           <span class="tree-comment"># scratch (optional)</span></code></pre>
-
-      <p class="fade-in"><strong>After <code>/agent-close-change</code></strong> — transient artifacts are removed, durable record remains:</p>
-
-<pre class="fade-in file-tree"><code>docs/changes/0000123-frontend-boundaries/
-├── <span class="tree-file">plan.md</span>            <span class="tree-comment"># frozen record of what was planned</span>
-├── <span class="tree-file">verification.md</span>    <span class="tree-comment"># final validation evidence</span>
-└── <span class="tree-file">review.md</span>          <span class="tree-comment"># only if deviations or learnings (optional)</span></code></pre>
-
-      <h4 class="fade-in">Verification and Review</h4>
-
-      <p class="fade-in">Every implementation commit must pass verification before it is considered complete. The framework provides a structured quality system:</p>
+      <p class="fade-in">Ownership is strict:</p>
 
       <ul class="fade-in">
-        <li><code>playbooks/verify.md</code> defines the verification workflow: what checks to run, how to record results, and when verification is sufficient</li>
-        <li><code>playbooks/review.md</code> defines the phase-completion review, a structured check at phase boundaries before work advances</li>
-        <li><code>reference/review-model.md</code> describes the review model itself</li>
-        <li><code>reference/review-triggers.md</code> lists the conditions that require review</li>
-        <li><code>reference/review-dimensions.md</code> defines the axes a review evaluates (correctness, completeness, consistency, risk)</li>
-        <li><code>reference/review-gates.md</code> defines the pass/fail criteria at each gate</li>
+        <li><strong>Framework owns</strong>: <code>~/.claude/agent-governance/CLAUDE.md</code>, <code>~/.claude/agent-governance/docs/agents/*</code>, and the <code>agent-*</code> namespace within <code>~/.claude/commands/</code>.</li>
+        <li><strong>User owns</strong>: <code>~/.claude/CLAUDE.md</code>, <code>~/.claude/personal/docs/agents/*</code>, and any non-<code>agent-*</code> commands under <code>~/.claude/commands/</code>.</li>
+        <li><strong>Repo owns</strong>: <code>./CLAUDE.md</code>, optional directory entrypoints, repo <code>docs/agents/*</code>, and repo <code>.claude/commands/*</code>.</li>
       </ul>
 
-      <p class="fade-in">Verification results accumulate in the bundle's <code>verification.md</code>. The review system is not a human code-review proxy. It is a structured self-check that the agent applies at phase boundaries to catch drift, incompleteness, and unintended scope changes before they compound.</p>
+      <p class="fade-in">Rules:</p>
 
-      <h4 class="fade-in">Repo Capability Growth</h4>
+      <ol class="fade-in">
+        <li><code>$CLAUDE_HOME</code> always means <code>~/.claude/agent-governance/</code>. It does not mean <code>~/.claude</code>, and it does not mean the repo root.</li>
+        <li>Repo docs use repo-relative paths such as <code>./CLAUDE.md</code>, <code>docs/agents/...</code>, and <code>.claude/commands/...</code>.</li>
+        <li>Personal docs use <code>~/.claude/personal/docs/agents/...</code>.</li>
+        <li>The user's <code>~/.claude/CLAUDE.md</code> begins with <code>@agent-governance/CLAUDE.md</code> (or equivalent import), then adds personal preferences.</li>
+        <li>Repos extend with their own capability map for repo-specific routing and workflow names.</li>
+        <li>Repo commands use distinct names, not <code>agent-*</code> shadowing.</li>
+        <li>Commands in every layer stay process-oriented.</li>
+      </ol>
 
-      <p class="fade-in"><code>/agent-add-capability</code> is the framework wizard for growing an already-adopted repo.</p>
+      <!-- ============================================================ -->
+      <!-- Capabilities                                                  -->
+      <!-- ============================================================ -->
 
-      <p class="fade-in">It should:</p>
+      <h2 class="fade-in">Routing Capabilities</h2>
+
+      <p class="fade-in">The routing layer has three capabilities of its own: adopting the framework in a new repo, growing a repo's local routing, and repairing routing friction. Everything else (change bundles, verify, review, deploy) is scoped to parts 2 and 3.</p>
+
+      <h4 class="fade-in">Adopt</h4>
+
+      <p class="fade-in"><code>/agent-adopt</code> is first-time repo onboarding. It reads the framework composition contract and produces the repo's local entrypoint, capability map, and initial <code>docs/agents/</code> tree. It does not invent the repo's standards; it sets up the shape into which repo-specific policy, playbooks, and reference docs are later added.</p>
+
+      <h4 class="fade-in">Add Capability</h4>
+
+      <p class="fade-in"><code>/agent-add-capability</code> is the wizard for growing an already-adopted repo. It should:</p>
 
       <ul class="fade-in">
         <li>inspect the repo for <code>./CLAUDE.md</code>, repo <code>docs/agents/...</code>, and <code>.claude/commands/...</code></li>
@@ -440,26 +513,15 @@ graph TD
         <li>redirect to <code>/agent-adopt</code> if the repo has not been integrated yet</li>
       </ul>
 
-      <p class="fade-in">The framework should make the setup path concrete without inventing the repo's standards.</p>
+      <p class="fade-in">The same wizard can grow the personal layer: invoked with <code>--scope=personal</code>, it writes under <code>~/.claude/personal/docs/agents/</code> instead of a repo-relative path.</p>
 
-      <h4 class="fade-in">Decision Records</h4>
+      <h4 class="fade-in">Improve</h4>
 
-      <p class="fade-in">Repos should use Decision Records to preserve durable rationale over time.</p>
+      <p class="fade-in"><code>/agent-improve</code> is for root-cause routing repair. When the framework routes to the wrong doc, or a playbook is unclear, or a user hits the same friction twice, this command diagnoses the underlying issue and patches the canonical typed docs. It is not a general-purpose refactor tool. Its job is to fix routing, not to rewrite opinions.</p>
 
-      <p class="fade-in">In this system, Decision Records are how a repo learns. Policies say what must be true. Playbooks say how work proceeds. References explain the deeper topic. Decision Records explain why a lasting choice was made.</p>
+      <h4 class="fade-in">Decision Records as a doc category</h4>
 
-      <p class="fade-in">A repo should record a Decision Record when:</p>
-
-      <ul class="fade-in">
-        <li>a capability setup chooses one approach over meaningful alternatives</li>
-        <li>a new policy depends on non-obvious rationale</li>
-        <li>a workflow introduces a lasting boundary or contract</li>
-        <li>contributors would otherwise have to rediscover the same reasoning repeatedly</li>
-      </ul>
-
-      <p class="fade-in">A repo should not record a Decision Record for routine feature work or temporary implementation notes.</p>
-
-      <p class="fade-in"><code>/agent-record-decision</code> provisions these records deliberately by choosing the next <code>DR-NNN-*.md</code> path and surfacing the other repo docs that should point to that decision.</p>
+      <p class="fade-in"><code>decisions/</code> is a routing category, but the discipline around writing Decision Records lives in <a href="change-rhythm-for-claude-code.html">part 2</a>, because a Decision Record is the durable artifact that a change produces. From the routing perspective all you need to know is that every layer has a <code>decisions/</code> directory and that a Decision Record is consulted on demand, not preloaded.</p>
 
       <!-- ============================================================ -->
       <!-- Usage                                                         -->
@@ -467,67 +529,25 @@ graph TD
 
       <h2 class="fade-in">Usage</h2>
 
-      <p class="fade-in">Framework commands live under <code>~/.claude/commands/</code> and use the reserved <code>agent-*</code> namespace. The surface is intentionally small: eight commands covering the full lifecycle from exploration through implementation to long-term learning.</p>
+      <p class="fade-in">Framework commands live under <code>~/.claude/commands/</code> and use the reserved <code>agent-*</code> namespace. This post covers the routing subset: three commands for exploring, adopting, and extending.</p>
 
       <div class="diagram-container fade-in">
         <pre class="mermaid">
-graph TB
-  subgraph explore ["Explore"]
-    ADOPT["/agent-adopt<br/>first-time repo onboarding"]:::routing
-    ADDCAP["/agent-add-capability<br/>add repo-local policy,<br/>playbook, reference, or command"]:::routing
-    IMPROVE["/agent-improve<br/>root-cause doc and<br/>routing friction repair"]:::routing
-  end
+graph LR
+  ADOPT["/agent-adopt<br/>first-time repo onboarding"]:::routing
+  ADDCAP["/agent-add-capability<br/>extend repo or personal<br/>policy, playbook, reference"]:::routing
+  IMPROVE["/agent-improve<br/>root-cause routing repair"]:::routing
 
-  subgraph change ["Non-trivial Change Lifecycle"]
-    direction LR
-    PLAN["/agent-plan-change<br/>exact approved plan<br/>no writes"]:::api --> OPEN["/agent-open-change<br/>materialize bundle<br/>bundle-only commit"]:::api
-    OPEN --> IMPLEMENT["/agent-implement-change<br/>load plan and phase docs"]:::data
-    IMPLEMENT --> CLOSE["/agent-close-change<br/>remove transient state<br/>keep durable record"]:::api
-  end
-
-  subgraph learn ["Learn"]
-    RECORD["/agent-record-decision<br/>preserve durable rationale"]:::decision
-  end
-
-  explore --> change
-  change --> learn
+  ADOPT --> ADDCAP
+  ADDCAP --> IMPROVE
 
   classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
-  classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
-  classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
-  classDef decision fill:#3A2054,stroke:#B07CD8,color:#fff,stroke-width:1.5px
         </pre>
       </div>
 
       <p class="fade-in">These commands are process-oriented. They load canonical docs and guide the workflow. They are not the place for hidden repo-specific standards or arbitrary scaffolding logic. More specific commands should be repo-local.</p>
 
-      <h4 class="fade-in">Explore Phase</h4>
-
-      <p class="fade-in">Before any non-trivial change, a repo needs to be integrated with the framework. Three commands handle different exploration activities:</p>
-
-      <p class="fade-in"><code>/agent-adopt</code> covers first-time repo onboarding: it reads the framework composition contract and produces the repo's local entrypoint, capability map, and initial docs.</p>
-
-      <p class="fade-in"><code>/agent-add-capability</code> is the wizard for growing a repo's local layer: adding a new policy, playbook, reference, workflow entry, or command. It inspects what already exists and produces a concrete setup checklist.</p>
-
-      <p class="fade-in"><code>/agent-improve</code> is for root-cause doc and routing friction repair. When the framework routes to the wrong doc or a playbook is unclear, this command diagnoses and fixes the underlying issue.</p>
-
-      <h4 class="fade-in">Change Lifecycle: Plan / Open / Implement / Close</h4>
-
-      <p class="fade-in">Non-trivial implementation work follows a four-phase lifecycle:</p>
-
-      <p class="fade-in"><code>/agent-plan-change</code> is the planning entrypoint. It inspects the repo, loads the relevant global and repo-local docs, and produces the exact approved plan content that will become <code>plan.md</code>. It proposes a provisional bundle path and slug but does not write to disk, assign the final number, or commit anything. This makes it safe for Claude Code Plan Mode.</p>
-
-      <p class="fade-in"><code>/agent-open-change</code> runs after planning is approved and outside Plan Mode. It rechecks <code>docs/changes/</code>, assigns the final next available number, writes <code>plan.md</code>, <code>state.yaml</code>, and <code>verification.md</code>, and creates the initial bundle commit. That commit contains only the bundle artifacts, not implementation edits.</p>
-
-      <p class="fade-in"><code>/agent-implement-change</code> runs after the bundle is open and before making implementation edits. It finds the open bundle, loads the frozen plan and implementation-phase docs, queues verify and review docs for later phases, and establishes the implementation task structure with an explicit checkpoint before commit. The plan is treated as the best understanding at planning time, not as infallible instruction. If the plan conflicts with the actual codebase, the implementation should do the right thing and note deviations for <code>review.md</code>.</p>
-
-      <p class="fade-in"><code>/agent-close-change</code> runs after implementation and final verification are complete. It ensures <code>verification.md</code> reflects the final validation evidence, keeps <code>review.md</code> only when justified, removes transient artifacts (<code>state.yaml</code>, <code>notes.md</code>), and leaves the durable record behind.</p>
-
-      <p class="fade-in">Open bundles are discovered from <code>docs/changes/*/state.yaml</code>. Final numbering is assigned only by <code>/agent-open-change</code>, which rechecks the filesystem at materialization time. No repo-level active-work index is needed.</p>
-
-      <h4 class="fade-in">Learn Phase</h4>
-
-      <p class="fade-in"><code>/agent-record-decision</code> is the wizard for provisioning Decision Records. When a repo makes a lasting architectural or workflow choice, this command produces the record so future contributors don't have to rediscover the rationale.</p>
+      <p class="fade-in">Change lifecycle commands (<code>/agent-plan-change</code>, <code>/agent-open-change</code>, <code>/agent-implement-change</code>, <code>/agent-close-change</code>, <code>/agent-record-decision</code>) are defined in <a href="change-rhythm-for-claude-code.html">part 2</a>. The auto-triggered review command (<code>/agent-review-change</code>) is defined in <a href="review-and-verify-for-claude-code.html">part 3</a>.</p>
 
       <!-- ============================================================ -->
       <!-- Extension                                                     -->
@@ -535,31 +555,31 @@ graph TB
 
       <h2 class="fade-in">Extension</h2>
 
-      <p class="fade-in">For company-scale deployment, <code>~/.claude</code> should be treated as the runtime installation surface, not the authored source of truth.</p>
+      <p class="fade-in">Because the framework lives in its own namespaced subdirectory, the same install pattern works at every scale: solo, team, or enterprise. <code>~/.claude</code> is the user's surface. <code>~/.claude/agent-governance/</code> is the install surface. The difference between scales is only who authors the install and how it is distributed.</p>
 
-      <p class="fade-in">The framework should be owned in a versioned internal source repository or package and then installed onto developer machines in a stable vendor path.</p>
+      <h3 class="fade-in">Personal install</h3>
 
-      <p class="fade-in">Recommended shape:</p>
+      <p class="fade-in">A solo user can clone or download the framework into <code>~/.claude/agent-governance/</code> directly, then add a thin <code>~/.claude/CLAUDE.md</code> that imports the framework contract and adds personal preferences. No version manager is required, but the directory-per-install pattern means they can keep multiple versions around during a migration.</p>
+
+      <h3 class="fade-in">Team or enterprise install</h3>
+
+      <p class="fade-in">For larger deployments, the framework should be owned in a versioned internal source repository or package and installed onto developer machines via a version manager that maintains a <code>current</code> pointer:</p>
 
 <pre class="fade-in file-tree"><code>~/.claude/
-├── <span class="tree-file">CLAUDE.md</span>
+├── <span class="tree-file">CLAUDE.md</span>                              <span class="tree-comment"># user composition</span>
 ├── <span class="tree-dir">commands/</span>
-│   ├── <span class="tree-file">agent-plan-change.md</span>
-│   ├── <span class="tree-file">agent-open-change.md</span>
-│   ├── <span class="tree-file">agent-implement-change.md</span>
-│   ├── <span class="tree-file">agent-close-change.md</span>
-│   └── <span class="tree-file">...</span>
-└── <span class="tree-dir">vendor/company-framework/</span>
-    ├── <span class="tree-file">current</span>
+│   └── <span class="tree-file">agent-*.md</span>                          <span class="tree-comment"># thin shims, resolve against current</span>
+└── <span class="tree-dir">agent-governance/</span>
+    ├── <span class="tree-file">current</span>                             <span class="tree-comment"># symlink to the active version</span>
     ├── <span class="tree-dir">1.4.0/</span>
     └── <span class="tree-dir">1.5.0/</span></code></pre>
 
       <p class="fade-in">In this model:</p>
 
       <ul class="fade-in">
-        <li><code>~/.claude/CLAUDE.md</code> is a thin shim that imports the current installed framework version</li>
-        <li><code>~/.claude/commands/</code> contains thin command shims in the reserved <code>agent-*</code> namespace</li>
-        <li><code>vendor/company-framework/&lt;version&gt;/</code> contains the actual framework release</li>
+        <li><code>~/.claude/CLAUDE.md</code> imports <code>@agent-governance/current/CLAUDE.md</code> so users get whatever version is installed</li>
+        <li><code>~/.claude/commands/agent-*.md</code> are thin shims that resolve against <code>current</code></li>
+        <li><code>agent-governance/&lt;version&gt;/</code> contains each framework release</li>
         <li>repos continue to own repo-local architecture and workflow truth in checked-in docs</li>
       </ul>
 
@@ -567,28 +587,29 @@ graph TB
 
       <ul class="fade-in">
         <li>controlled rollout of framework versions</li>
-        <li>fast rollback by switching the active version</li>
-        <li>a clear distinction between installed runtime files and authored source</li>
-        <li>a stable global command surface that does not require every repo to vendor a copy</li>
+        <li>fast rollback by switching the <code>current</code> pointer</li>
+        <li>a clear distinction between installed runtime files, personal preferences, and repo-owned truth</li>
+        <li>a stable command surface that does not require every repo to vendor a copy</li>
       </ul>
 
-      <p class="fade-in">The enterprise rollout should use four layers:</p>
+      <p class="fade-in">The enterprise rollout should use five layers:</p>
 
-      <ul class="fade-in">
+      <ol class="fade-in">
         <li>enterprise policy memory for hard company-wide instructions</li>
         <li>enterprise managed settings for enforced permissions and configuration</li>
-        <li>user install at <code>~/.claude</code> for the shared framework runtime</li>
+        <li>framework install at <code>~/.claude/agent-governance/</code> for the shared process runtime</li>
+        <li>personal at <code>~/.claude/CLAUDE.md</code> and <code>~/.claude/personal/docs/agents/</code> for one user's cross-repo preferences</li>
         <li>repo-local docs and commands for project-specific behavior</li>
-      </ul>
+      </ol>
 
-      <p class="fade-in">The framework should not rely on manual file copying at scale. It should be shipped through an internal installer or manager, for example:</p>
+      <p class="fade-in">The framework should not rely on manual file copying at scale. Ship it through an internal installer or manager, for example:</p>
 
 <pre class="fade-in"><code class="language-bash">company-claude install
 company-claude update
 company-claude doctor
 company-claude adopt-repo</code></pre>
 
-      <p class="fade-in">That tool should install the chosen framework version, update the active shim target, verify the effective runtime surface, and optionally bootstrap the minimal repo-local adoption files.</p>
+      <p class="fade-in">That tool installs the chosen framework version into <code>~/.claude/agent-governance/&lt;version&gt;/</code>, updates the <code>current</code> pointer, verifies the effective runtime surface, and optionally bootstraps the minimal repo-local adoption files.</p>
 
       <p class="fade-in">The framework may also integrate with MCP for dynamic company services such as service-catalog lookup or policy workflows, but MCP should not be the primary distribution mechanism for the core process docs. The base framework should still arrive through installed memory files and commands so it remains stable, inspectable, and versioned.</p>
 
@@ -598,7 +619,7 @@ company-claude adopt-repo</code></pre>
 
       <h2 class="fade-in">Example: Frontend Best Practices</h2>
 
-      <p class="fade-in">If a repo wants frontend best practices, those rules belong in the repo layer, not in the global framework.</p>
+      <p class="fade-in">If a repo wants frontend best practices, those rules belong in the repo layer, not in the framework.</p>
 
       <p class="fade-in">A typical repo-local addition would look like this:</p>
 
@@ -626,7 +647,9 @@ company-claude adopt-repo</code></pre>
         <li><code>DR-002-frontend-boundaries.md</code> preserves the durable rationale behind lasting frontend boundaries</li>
       </ul>
 
-      <p class="fade-in">The framework owns the process for adding this capability. The repo owns the actual frontend standards.</p>
+      <p class="fade-in">If the same user also wants a cross-repo rule such as "always scope new React state to the nearest route boundary," that belongs in the personal layer at <code>~/.claude/personal/docs/agents/policy/frontend.md</code>, not in any repo and not in the framework. The personal rule applies everywhere unless a specific repo overrides it.</p>
+
+      <p class="fade-in">The framework owns the process for adding capabilities. The personal layer owns a user's cross-repo preferences. The repo owns the actual standards.</p>
 
       <!-- ============================================================ -->
       <!-- Tradeoffs                                                     -->
@@ -637,13 +660,13 @@ company-claude adopt-repo</code></pre>
       <h3 class="fade-in">Benefits</h3>
 
       <ul class="fade-in">
-        <li>Shared process is centralized and reusable.</li>
+        <li>Shared process is centralized, reusable, and upgradeable in place.</li>
+        <li>The framework namespace isolates it from Claude Code's own directory layout.</li>
+        <li>Personal preferences have a first-class home without being baked into repos or into the framework.</li>
         <li>Repo-specific standards stay local to the repo.</li>
-        <li>The docs tree is easier to reason about because each type has a clear job.</li>
-        <li>The bundle model makes multi-commit work legible without overloading commits themselves.</li>
-        <li>Plan Mode has a clean non-mutating story.</li>
-        <li>The command surface stays safe because it does not claim generic repo-local names globally.</li>
-        <li>Enterprise rollout can be versioned, audited, and rolled back cleanly.</li>
+        <li>The typed docs tree makes routing decisions legible: each doc has one job.</li>
+        <li>The command surface stays safe because the <code>agent-*</code> namespace does not claim generic repo-local names.</li>
+        <li>Enterprise rollout can be versioned, audited, and rolled back by flipping a <code>current</code> pointer.</li>
       </ul>
 
       <h3 class="fade-in">Costs</h3>
@@ -651,36 +674,37 @@ company-claude adopt-repo</code></pre>
       <ul class="fade-in">
         <li>The system introduces more files than a single monolithic <code>CLAUDE.md</code>.</li>
         <li>Authors need to understand the difference between routing, policy, playbooks, references, and decisions.</li>
-        <li>Non-trivial work now has explicit open and close steps instead of an informal planning note.</li>
-        <li>Organizations need a lightweight installer or management mechanism instead of relying on manual setup.</li>
+        <li>Users need a <code>~/.claude/CLAUDE.md</code> that does the composition, rather than relying on a single framework-owned file. That file is one line plus any personal preferences, but it is still a thing the user has to create.</li>
+        <li>Organizations need a lightweight installer or manager instead of relying on manual setup.</li>
       </ul>
 
-      <p class="fade-in">These costs are acceptable because they buy a clearer separation of concerns, a better Plan Mode story, and a much cleaner long-term extension path.</p>
+      <p class="fade-in">These costs are acceptable because they buy a clearer separation of concerns, a safe install path that coexists with Claude Code's own evolution, and a first-class home for personal preferences that every engineer wants.</p>
 
       <!-- ============================================================ -->
-      <!-- Decision                                                      -->
+      <!-- Recommendation                                                -->
       <!-- ============================================================ -->
 
       <h2 class="fade-in">Recommendation</h2>
 
-      <p class="fade-in">If your team uses Claude Code across multiple repositories and you want agents to follow a consistent, auditable process, this framework shape fits that use case:</p>
+      <p class="fade-in">If your team uses Claude Code across multiple repositories and you want agents to follow a consistent, auditable process, adopt the routing layer described here:</p>
 
       <ul class="fade-in">
-        <li>global shared process installed in <code>~/.claude</code></li>
-        <li>repo-local architecture and domain guidance kept in the repo</li>
-        <li>typed documentation categories</li>
-        <li>a small namespaced global command surface</li>
-        <li>explicit <code>plan -> open -> implement -> close</code> lifecycle for non-trivial work</li>
-        <li>change bundles under <code>docs/changes/*</code> as the durable work record</li>
-        <li>explicit onboarding, capability-growth, and decision-record workflows</li>
+        <li>install the framework at <code>~/.claude/agent-governance/</code></li>
+        <li>keep <code>~/.claude/CLAUDE.md</code> as the user's composition file, importing the framework contract and adding personal preferences</li>
+        <li>keep repo-local architecture and domain guidance in the repo</li>
+        <li>use the typed documentation categories</li>
+        <li>keep the global command surface small and namespaced</li>
       </ul>
 
+      <p class="fade-in">Parts 2 and 3 of this series cover the change lifecycle and the review/verify/deploy discipline that sit on top of this routing layer.</p>
+
       <!-- ============================================================ -->
-      <!-- Appendix Link                                                 -->
+      <!-- Appendix Link + Series Nav                                    -->
       <!-- ============================================================ -->
 
       <div class="rfc-callout fade-in">
-        <p><strong>Appendix:</strong> The complete file skeletons for every file in the framework are available in the <a href="agent-governance-appendix.html">implementation appendix</a>. An implementer can produce the full working system from that reference alone.</p>
+        <p><strong>Appendix:</strong> The complete routing-layer file skeletons are available in the <a href="agent-governance-appendix.html">implementation appendix</a>.</p>
+        <p><strong>Series:</strong> <a href="change-rhythm-for-claude-code.html">Part 2 &middot; Change rhythm</a> &middot; <a href="review-and-verify-for-claude-code.html">Part 3 &middot; Review and verify</a></p>
       </div>
 
     </div>

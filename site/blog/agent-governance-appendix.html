@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Appendix: Claude Agents Framework File Skeletons | Patrick Hogan</title>
-  <meta name="description" content="Complete file skeletons for every file in the Claude Agents Framework. An implementer can produce the full working system from this reference alone.">
+  <title>Appendix: Routing Layer File Skeletons | Patrick Hogan</title>
+  <meta name="description" content="File skeletons for the routing layer of the Claude Code governance framework: root contract, router docs, core policy, and routing commands.">
   <meta name="author" content="Patrick Hogan">
   <link rel="canonical" href="https://phoganuci.com/blog/agent-governance-appendix">
 
   <!-- Open Graph -->
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Appendix: Claude Agents Framework File Skeletons">
-  <meta property="og:description" content="Complete file skeletons for every file in the Claude Agents Framework.">
+  <meta property="og:title" content="Appendix: Routing Layer File Skeletons">
+  <meta property="og:description" content="File skeletons for the routing layer of the Claude Code governance framework.">
   <meta property="og:url" content="https://phoganuci.com/blog/agent-governance-appendix">
   <meta property="og:image" content="https://phoganuci.com/assets/profile.jpeg">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Appendix: Claude Agents Framework File Skeletons">
-  <meta name="twitter:description" content="Complete file skeletons for every file in the Claude Agents Framework.">
+  <meta name="twitter:title" content="Appendix: Routing Layer File Skeletons">
+  <meta name="twitter:description" content="File skeletons for the routing layer of the Claude Code governance framework.">
   <meta name="twitter:image" content="https://phoganuci.com/assets/profile.jpeg">
 
   <!-- Fonts -->
@@ -40,8 +40,8 @@
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Appendix: Claude Agents Framework File Skeletons",
-    "description": "Complete file skeletons for every file in the Claude Agents Framework.",
+    "headline": "Appendix: Routing Layer File Skeletons",
+    "description": "File skeletons for the routing layer of the Claude Code governance framework.",
     "datePublished": "2026-04-16",
     "author": { "@type": "Person", "name": "Patrick Hogan" },
     "url": "https://phoganuci.com/blog/agent-governance-appendix",
@@ -124,9 +124,9 @@
   </nav>
 
   <header class="post-header">
-    <span class="section-label">Appendix</span>
-    <h1>Claude Agents Framework<br>File Skeletons</h1>
-    <p class="hero-subtitle">Complete file skeletons for every file in the framework. Click any file to expand its skeleton.</p>
+    <span class="section-label">Appendix &middot; Part 1</span>
+    <h1>Routing Layer<br>File Skeletons</h1>
+    <p class="hero-subtitle">File skeletons for the routing layer. Click any file to expand its skeleton. Change-rhythm and review/verify skeletons live in the appendixes to parts 2 and 3.</p>
     <div class="post-meta">
       <span>April 16, 2026</span>
     </div>
@@ -135,7 +135,7 @@
   <article>
     <div class="post-body">
 
-      <a href="agent-governance-for-claude-code.html" class="back-link">&larr; Back to RFC</a>
+      <a href="agent-governance-for-claude-code.html" class="back-link">&larr; Back to Part 1: Routing</a>
 
       <!-- ============================================================ -->
       <!-- Root Contract                                                 -->
@@ -144,194 +144,89 @@
       <h2>Root Contract</h2>
 
       <details>
-        <summary>CLAUDE.md <span class="file-desc">Root contract, authority order, phase boundaries</span></summary>
-<pre><code class="language-markdown"># Agent Framework
+        <summary>agent-governance/CLAUDE.md <span class="file-desc">Framework root contract, authority order, composition rules</span></summary>
+<pre><code class="language-markdown"># Agent Governance Framework
 
-This file is intended to live at `~/.claude/CLAUDE.md`. It defines the shared process layer for Claude Code: phase workflow, change-bundle lifecycle, verification and review discipline, and the typed routing docs that repos can adopt and extend.
+This file lives at `~/.claude/agent-governance/CLAUDE.md`. It is the shared process layer for Claude Code: the three-layer hierarchy, the authority order, and the typed routing docs that repos and personal layers adopt and extend.
+
+It is imported from the user's own `~/.claude/CLAUDE.md` via `@agent-governance/CLAUDE.md`.
 
 ## Path Convention
 
-- `$CLAUDE_HOME` always means `~/.claude`.
+- `$CLAUDE_HOME` always means `~/.claude/agent-governance/` (the framework install directory). It is not `~/.claude` and it is not the repo root.
 - Framework docs live under `$CLAUDE_HOME/docs/agents/...`.
+- Personal docs live under `~/.claude/personal/docs/agents/...`.
 - Repo docs use repo-relative paths such as `./CLAUDE.md`, `docs/agents/...`, and `.claude/commands/...`.
-- Do not use `$CLAUDE_HOME` to mean the repo root. Keep the global framework and repo-local docs explicit.
 
 ## Read This First
 
 Use the typed docs tree for routing and composition detail:
-- `$CLAUDE_HOME/docs/agents/router/phases.md`
-- `$CLAUDE_HOME/docs/agents/router/capability-map.md`
 - `$CLAUDE_HOME/docs/agents/router/composition.md`
+- `$CLAUDE_HOME/docs/agents/router/capability-map.md`
 - `$CLAUDE_HOME/docs/agents/router/authority-order.md` when you need interpretation notes beyond the precedence guidance below
 
 The typed docs tree is the routing layer. Load only the docs that match the current phase and capability.
 
 ## Authority Order
 
-Use `$CLAUDE_HOME/docs/agents/router/composition.md` first to decide whether a rule belongs to the shared framework or the current repo.
+Use `$CLAUDE_HOME/docs/agents/router/composition.md` first to decide whether a rule belongs to the framework, the personal layer, or the current repo.
 
 When sources still conflict after that split, use this order:
 - direct user instructions for the current task
 - repo `./CLAUDE.md` and nearest directory `CLAUDE.md` files for repo-specific routing and conventions
 - repo-specific `docs/agents/policy/*` for repo architecture, boundaries, naming, and testing rules
-- `$CLAUDE_HOME/docs/agents/policy/*` for shared workflow, review, verification, and documentation discipline
-- repo-specific `docs/agents/playbooks/*`, then `$CLAUDE_HOME/docs/agents/playbooks/*`
-- repo-specific `docs/agents/reference/*`, `facts/*`, `gotchas/*`, `decisions/*`, then `$CLAUDE_HOME/docs/agents/reference/*` and `$CLAUDE_HOME/docs/agents/decisions/*`
+- repo-specific `docs/agents/playbooks/*`, then repo `reference/*`, `facts/*`, `gotchas/*`, `decisions/*`
+- personal `~/.claude/CLAUDE.md` and nearest personal `docs/agents/` files
+- personal `docs/agents/policy/*`, then personal `playbooks/*`, then personal `reference/*` and `decisions/*`
+- framework `$CLAUDE_HOME/docs/agents/policy/*` for shared workflow and documentation discipline
+- framework `$CLAUDE_HOME/docs/agents/playbooks/*`, then framework `reference/*` and `decisions/*`
 - code and tests
-- `docs/changes/*`
 - external memory or prior-session context
 
 External memory is advisory only. Reload canonical docs at phase boundaries instead of relying on memory.
 
-## Phase Contract
-
-- **Explore**: read this file first, then inspect code, tests, configs, or index docs directly.
-- **Plan**: for non-trivial implementation work, use `/agent-plan-change` or an equivalent non-mutating planning flow to produce the exact approved plan that will become `docs/changes/NNNNNNN-short-name/plan.md`.
-- **Planning checkpoint**: review the approved plan for completeness and ask the user before opening the change.
-- **Open**: before any evergreen-doc or implementation edit, run `/agent-open-change` outside Plan Mode. It materializes the change bundle, writes `plan.md`, `state.yaml`, and `verification.md`, and commits the initial bundle only.
-- **Implement**: keep the frozen `plan.md` loaded and limit implementation to the enumerated deltas. One change bundle may span multiple implementation commits. Keep `verification.md` current, and use `notes.md` only as disposable scratch.
-- **Replan rule**: if additional repo-tracked edits become necessary, pause and return to planning. Do not rewrite `plan.md`; capture approved deviations or meaningful learnings in the bundle's `review.md`.
-- **Implementation checkpoint**: review the implementation and validation, then ask the user before closing the bundle or making the final commit.
-- **Cleanup loop**: iterate until the phase is clean. Pause only for blockers, scope changes, or material tradeoffs that need user input.
-- **Close**: run `/agent-close-change` at finalization. Remove transient artifacts such as `state.yaml` and `notes.md`, and retain the durable record: `plan.md`, `verification.md`, and `review.md` when it exists.
-- **Freeze rule**: after the open-change commit, `plan.md` is immutable. Later deviations or meaningful learnings belong in the bundle's `review.md`, not ad hoc plan edits.
-- **Active bundle discovery**: do not maintain a repo-level active index. Open bundles are discovered from `docs/changes/*/state.yaml`, and `/agent-open-change` must recheck numbering on disk before assigning the final path.
-- **Verify and commit**: every implementation commit must get normal verification. The open-change commit contains only initial bundle artifacts. The phase-closing commit carries the approved implementation diff and bundle cleanup.
-
 ## Capability Summary
 
 - **repo composition / adoption / capability growth**: use `$CLAUDE_HOME/docs/agents/router/composition.md`, then the relevant adoption or extension playbook.
+- **personal extension**: the same `add-capability` playbook applies; invoke it with `--scope=personal` to target `~/.claude/personal/docs/agents/`.
 - **domain work**: use the repo's capability map when it has one; otherwise start with the shared capability map.
-- **planning / review / doc sweep**: load the relevant policy, playbook, and verification docs as the phase requires.
-- **troubleshooting**: load `$CLAUDE_HOME/docs/agents/playbooks/troubleshoot.md`, then escalate to repo reference docs.
+- **routing friction repair**: load `$CLAUDE_HOME/docs/agents/playbooks/improve-docs.md`.
+
+Change-lifecycle capabilities (plan, open, implement, close, record-decision) are defined in the change-rhythm layer. Review, verify, and deploy capabilities are defined in the review-and-verify layer.
 
 ## Command Surface
 
 - Framework commands installed under `~/.claude/commands/` must use the reserved `agent-*` namespace.
 - Repo commands installed under `.claude/commands/` should use distinct repo-local names.
+- Personal commands (non-`agent-*`) may also live under `~/.claude/commands/` if the user wants a custom shortcut, but they must not shadow framework command names.
 - Keep framework commands process-oriented. Repo-specific scaffolding belongs in repo-local commands.</code></pre>
+      </details>
+
+      <details>
+        <summary>~/.claude/CLAUDE.md <span class="file-desc">User composition file &middot; imports framework, adds personal prefs</span></summary>
+<pre><code class="language-markdown"># Personal Claude Code memory
+
+@agent-governance/CLAUDE.md
+
+## Personal preferences
+
+- Prefer tabs over spaces in Go.
+- No emoji in code comments.
+- When suggesting commit messages, avoid marketing tone.
+
+## Personal docs
+
+- Cross-repo policies: `~/.claude/personal/docs/agents/policy/*`
+- Cross-repo playbooks: `~/.claude/personal/docs/agents/playbooks/*`
+
+These are loaded after repo-specific docs and before framework defaults, per the authority order.</code></pre>
       </details>
 
       <!-- ============================================================ -->
       <!-- Commands                                                      -->
       <!-- ============================================================ -->
 
-      <h2>Commands</h2>
-
-      <details>
-        <summary>commands/agent-plan-change.md <span class="file-desc">Non-mutating implementation plan</span></summary>
-<pre><code class="language-markdown">---
-description: Prepare a non-mutating implementation plan for a change bundle.
----
-
-Use this command for non-trivial implementation work when you need an approved plan before any repo writes.
-
-Workflow:
-1. Inspect the repo and load these docs in order:
-   - `$CLAUDE_HOME/CLAUDE.md`
-   - `$CLAUDE_HOME/docs/agents/router/phases.md`
-   - `$CLAUDE_HOME/docs/agents/policy/agent-workflow.md`
-   - `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md`
-   - `$CLAUDE_HOME/docs/agents/playbooks/agent-phase-workflow.md`
-   - repo-local policy and playbook docs required for the change
-2. Produce the exact approved plan body that will become `docs/changes/NNNNNNN-short-name/plan.md`.
-3. Propose a provisional bundle path and slug, but do not write files or assign a final number.
-4. Review the plan with the user before any implementation work starts.
-5. Instruct the next execution step to run `/agent-open-change` outside Plan Mode.
-
-Rules:
-- Safe in Plan Mode because it is non-mutating.
-- Do not create `docs/changes/*`, edit code, edit evergreen docs, or commit anything.
-- Do not compress or rewrite the approved plan when handing it off.
-
-Pass any `$ARGUMENTS` through to the planning flow.</code></pre>
-      </details>
-
-      <details>
-        <summary>commands/agent-open-change.md <span class="file-desc">Materialize bundle, commit</span></summary>
-<pre><code class="language-markdown">---
-description: Materialize an approved change bundle and commit the initial bundle only.
----
-
-Use this command after planning is approved and outside Plan Mode.
-
-Workflow:
-1. Confirm that an approved plan already exists in chat or other approved task context.
-2. Load relevant docs in order.
-3. Re-scan `docs/changes/` and choose the final next available change number.
-4. Create the bundle directory and write `plan.md`, `state.yaml`, `verification.md`.
-5. Commit the initial bundle. That commit must contain only the bundle artifacts.
-6. Stop after the bundle commit. Do not make implementation edits.
-
-Rules:
-- This command is the only step that materializes the initial bundle.
-- If the approved work already has an open bundle, resume it.
-- Do not edit code or evergreen docs here.
-
-Pass any `$ARGUMENTS` through to the bundle-opening flow.</code></pre>
-      </details>
-
-      <details>
-        <summary>commands/agent-implement-change.md <span class="file-desc">Load implementation phase</span></summary>
-<pre><code class="language-markdown">---
-description: Load the implementation phase for an open change bundle.
----
-
-Use this command after `/agent-open-change` has committed the initial bundle and before making implementation edits.
-
-Workflow:
-1. Find the open bundle by scanning `docs/changes/*/state.yaml`.
-2. Load the frozen `plan.md` from that bundle.
-3. Load these docs in order:
-   - `$CLAUDE_HOME/CLAUDE.md`
-   - `$CLAUDE_HOME/docs/agents/policy/agent-workflow.md`
-   - `$CLAUDE_HOME/docs/agents/playbooks/agent-phase-workflow.md`
-   - `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md`
-   - repo-local domain policy and change playbook for the work area
-4. Queue these docs for later phases:
-   - `$CLAUDE_HOME/docs/agents/playbooks/verify.md` at verify
-   - `$CLAUDE_HOME/docs/agents/playbooks/review.md` at commit
-   - `$CLAUDE_HOME/docs/agents/playbooks/docs-workflow.md` at commit
-5. Set up the implementation task structure:
-   - Load implementation docs
-   - Domain-specific implementation tasks from the plan
-   - Verify: run baseline checks, then domain-specific verification
-   - Implementation checkpoint: review against plan, check for shortcuts, ask the user
-   - Commit: load review docs, write `review.md` if deviations exist, commit
-
-Rules:
-- The plan is the best understanding at planning time. It is not infallible.
-- If the plan specifies something that does not match the actual codebase, fix it rather than blindly following.
-- Look for opportunities to make the code cleaner and the architecture more consistent with existing patterns.
-- If a plan detail is wrong or incomplete, implement the right thing and note the deviation for `review.md`.
-- No shortcuts or hacks. "The plan is fallible" is not license to skip work. If doing the right thing requires effort the plan did not anticipate, do the effort.
-- Ask the user before finalizing.
-
-Pass any `$ARGUMENTS` through to the implementation flow.</code></pre>
-      </details>
-
-      <details>
-        <summary>commands/agent-close-change.md <span class="file-desc">Close bundle, clean up</span></summary>
-<pre><code class="language-markdown">---
-description: Close an open change bundle and clean up transient bundle artifacts.
----
-
-Use this command after implementation and final verification are complete.
-
-Workflow:
-1. Inspect the open bundle and the final implementation state.
-2. Load relevant docs in order.
-3. Ensure `verification.md` records the final validation evidence.
-4. Ensure bundle `review.md` exists only when justified.
-5. Remove transient artifacts: `state.yaml`, `notes.md`, other scratch files.
-6. Close the bundle in the final commit or an immediate follow-up.
-
-Rules:
-- Do not rewrite `plan.md` during closeout.
-- Retain `plan.md`, `verification.md`, and bundle `review.md` when it exists.
-
-Pass any `$ARGUMENTS` through to the bundle-closing flow.</code></pre>
-      </details>
+      <h2>Routing Commands</h2>
 
       <details>
         <summary>commands/agent-adopt.md <span class="file-desc">First-time repo onboarding</span></summary>
@@ -348,50 +243,42 @@ Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
       </details>
 
       <details>
-        <summary>commands/agent-add-capability.md <span class="file-desc">Repo extension wizard</span></summary>
+        <summary>commands/agent-add-capability.md <span class="file-desc">Repo or personal extension wizard</span></summary>
 <pre><code class="language-markdown">---
-description: Run the repo capability-setup wizard for an adopted repo.
+description: Run the capability-setup wizard for an adopted repo or the personal layer.
 ---
 
 Workflow:
-1. Inspect the repo for `./CLAUDE.md`, repo `docs/agents/...`, and `.claude/commands/...`.
-2. Load composition, add-capability playbook, and capability-map.
-3. Determine whether the capability needs a policy, playbook, reference, workflow entry, command, or directory `CLAUDE.md`.
-4. Produce a concrete repo-local setup checklist with exact file paths and required updates.
-5. If the repo is not yet adopted, stop and redirect to `/agent-adopt`.
+1. Determine scope from `$ARGUMENTS`. Default is repo-local; `--scope=personal` targets `~/.claude/personal/docs/agents/`.
+2. Inspect the target scope:
+   - repo: `./CLAUDE.md`, repo `docs/agents/...`, `.claude/commands/...`
+   - personal: `~/.claude/CLAUDE.md`, `~/.claude/personal/docs/agents/...`
+3. Load composition, add-capability playbook, and capability-map.
+4. Determine whether the capability needs a policy, playbook, reference, workflow entry, command, or directory `CLAUDE.md`.
+5. Produce a concrete setup checklist with exact file paths and required updates.
+6. If repo-scope and the repo is not yet adopted, stop and redirect to `/agent-adopt`.
 
 Pass any `$ARGUMENTS` through to the wizard flow.</code></pre>
       </details>
 
       <details>
-        <summary>commands/agent-record-decision.md <span class="file-desc">Decision Record wizard</span></summary>
+        <summary>commands/agent-improve.md <span class="file-desc">Root-cause routing repair</span></summary>
 <pre><code class="language-markdown">---
-description: Run the repo Decision Record setup wizard.
----
-
-Workflow:
-1. Inspect the repo for `docs/agents/decisions/` and existing `DR-NNN-*.md` files.
-2. Load composition, record-decision playbook, and capability-map.
-3. Determine whether the decision is durable enough to justify a Decision Record.
-4. Choose the next DR number and a slug.
-5. Produce a concrete repo-local checklist.
-6. If the repo is not yet adopted, stop and redirect to `/agent-adopt`.
-
-Pass any `$ARGUMENTS` through to the wizard flow.</code></pre>
-      </details>
-
-      <details>
-        <summary>commands/agent-improve.md <span class="file-desc">Root-cause doc improvement</span></summary>
-<pre><code class="language-markdown">---
-description: Run the framework root-cause improvement workflow.
+description: Run the framework root-cause routing improvement workflow.
 ---
 
 Load these docs in order:
-1. `$CLAUDE_HOME/docs/agents/policy/docs.md`
+1. `$CLAUDE_HOME/docs/agents/policy/core.md`
 2. `$CLAUDE_HOME/docs/agents/playbooks/improve-docs.md`
+
+Use this when routing sends Claude to the wrong doc, a playbook is unclear, or the same friction recurs. Patch the canonical typed docs, not the symptom.
 
 Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
       </details>
+
+      <div class="rfc-callout">
+        <p>The change-lifecycle commands (<code>agent-plan-change</code>, <code>agent-open-change</code>, <code>agent-implement-change</code>, <code>agent-close-change</code>, <code>agent-record-decision</code>) are defined in the <a href="change-rhythm-appendix.html">part 2 appendix</a>. The auto-triggered review command (<code>agent-review-change</code>) is defined in the <a href="review-and-verify-appendix.html">part 3 appendix</a>.</p>
+      </div>
 
       <!-- ============================================================ -->
       <!-- Router Docs                                                   -->
@@ -400,65 +287,39 @@ Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
       <h2>Router Docs</h2>
 
       <details>
-        <summary>docs/agents/router/phases.md <span class="file-desc">Phase-based routing</span></summary>
+        <summary>docs/agents/router/composition.md <span class="file-desc">Framework / personal / repo ownership</span></summary>
 <pre><code class="language-markdown">---
 kind: router
 binding: false
-scope: repo
-phases: [explore, plan, implement, verify, commit]
-source_of_truth: $CLAUDE_HOME/docs/agents/router/phases.md
----
-
-# Phase Routing
-
-## Explore
-Load: `CLAUDE.md`, `capability-map.md` when the work is framed as a named workflow.
-Then inspect code, tests, configs, or indexes directly.
-
-## Plan
-Load: core policy, agent-workflow policy, relevant domain policy and playbook, docs-workflow, change-bundles, agent-phase-workflow.
-Reload canonical docs fresh. `/agent-plan-change` is safe here.
-
-## Implement
-Load: agent-workflow, change-bundles, relevant domain policy and playbook, agent-phase-workflow.
-Escalate to reference docs only for the subsystem being changed.
-
-## Verify
-Load: verify playbook, agent-workflow, change-bundles, agent-phase-workflow, relevant testing reference docs.
-Reload instead of assuming plan-phase guidance is enough.
-
-## Commit
-Load: agent-workflow, change-bundles, agent-phase-workflow, review playbook, docs-workflow.
-Required reload point even within the same session.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/router/composition.md <span class="file-desc">Global vs repo boundary</span></summary>
-<pre><code class="language-markdown">---
-kind: router
-binding: false
-scope: repo
+scope: framework
 phases: [explore, plan, implement, verify, commit]
 source_of_truth: $CLAUDE_HOME/docs/agents/router/composition.md
 ---
 
 # Composition Contract
 
-The framework owns: `~/.claude/CLAUDE.md`, `~/.claude/commands/*.md`, shared policy, playbooks, reference, and decisions.
+## Ownership
 
-The repo owns: `./CLAUDE.md`, optional directory entrypoints, repo `docs/agents/...`, repo `.claude/commands/*.md`.
+- **Framework** owns: `$CLAUDE_HOME/CLAUDE.md`, `$CLAUDE_HOME/docs/agents/*`, and the `agent-*` namespace within `~/.claude/commands/`.
+- **User** owns: `~/.claude/CLAUDE.md`, `~/.claude/personal/docs/agents/*`, and any non-`agent-*` commands under `~/.claude/commands/`.
+- **Repo** owns: `./CLAUDE.md`, optional directory entrypoints, repo `docs/agents/*`, and repo `.claude/commands/*`.
 
 ## Composition Rules
-1. `$CLAUDE_HOME` always means `~/.claude`.
+
+1. `$CLAUDE_HOME` always means `~/.claude/agent-governance/`. It does not mean `~/.claude` and it does not mean the repo root.
 2. Repo docs use repo-relative paths.
-3. Repo `./CLAUDE.md` points to framework docs it relies on, then adds repo-specific routing.
-4. Repos extend with their own capability-map for repo-specific routing and workflow names.
-5. Repo-specific docs own repo behavior. Framework docs own shared workflow.
-6. Repo commands use distinct names, not same-name shadowing.
-7. Commands stay process-oriented.
+3. Personal docs use `~/.claude/personal/docs/agents/...`.
+4. The user's `~/.claude/CLAUDE.md` begins with `@agent-governance/CLAUDE.md` (or equivalent import), then adds personal preferences.
+5. Repo `./CLAUDE.md` points to framework docs it relies on, then adds repo-specific routing.
+6. Repos extend with their own capability-map for repo-specific routing and workflow names.
+7. Personal docs own one user's cross-repo preferences. Repo docs own repo-specific behavior. Framework docs own shared workflow.
+8. Repo commands use distinct repo-local names, not `agent-*` shadowing.
+9. Commands in every layer stay process-oriented.
 
 ## Recommended Adoption Shape
-Start small: `./CLAUDE.md`, one policy, one playbook. Add more only when needed.</code></pre>
+
+- Personal: start with `~/.claude/CLAUDE.md` containing the framework import and any preferences. Add `~/.claude/personal/docs/agents/` only when preferences outgrow the single file.
+- Repo: start with `./CLAUDE.md`, one policy, one playbook. Add more only when needed.</code></pre>
       </details>
 
       <details>
@@ -466,50 +327,31 @@ Start small: `./CLAUDE.md`, one policy, one playbook. Add more only when needed.
 <pre><code class="language-markdown">---
 kind: router
 binding: false
-scope: repo
+scope: framework
 phases: [explore, plan, implement, verify, commit]
 source_of_truth: $CLAUDE_HOME/docs/agents/router/capability-map.md
 ---
 
 # Capability Map
 
-Covers framework-provided capabilities only. Repos add their own capability-map for repo-specific domains.
+Covers framework-provided capabilities only. Repos add their own capability-map for repo-specific domains. Personal docs may add a `~/.claude/personal/docs/agents/router/capability-map.md` for cross-repo workflow names.
 
-## Workflow Lookup
+## Routing Workflows
 
 | Workflow | Canonical doc |
 |----------|---------------|
 | adopt framework | `$CLAUDE_HOME/docs/agents/playbooks/adopt-framework.md` |
 | add capability | `$CLAUDE_HOME/docs/agents/playbooks/add-capability.md` |
-| record decision | `$CLAUDE_HOME/docs/agents/playbooks/record-decision.md` |
-| change bundle lifecycle | `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md` |
-| plan change | `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md` |
-| open change | `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md` |
-| implement change | `$CLAUDE_HOME/docs/agents/playbooks/agent-phase-workflow.md` |
-| close change | `$CLAUDE_HOME/docs/agents/playbooks/change-bundles.md` |
-| agent phase workflow | `$CLAUDE_HOME/docs/agents/playbooks/agent-phase-workflow.md` |
-| docs workflow | `$CLAUDE_HOME/docs/agents/playbooks/docs-workflow.md` |
-| verify changes | `$CLAUDE_HOME/docs/agents/playbooks/verify.md` |
-| phase-completion review | `$CLAUDE_HOME/docs/agents/playbooks/review.md` |
 | improve docs | `$CLAUDE_HOME/docs/agents/playbooks/improve-docs.md` |
-| review model | `$CLAUDE_HOME/docs/agents/reference/review-model.md` |
-| review triggers | `$CLAUDE_HOME/docs/agents/reference/review-triggers.md` |
-| review dimensions | `$CLAUDE_HOME/docs/agents/reference/review-dimensions.md` |
-| review gates | `$CLAUDE_HOME/docs/agents/reference/review-gates.md` |
-| troubleshoot | `$CLAUDE_HOME/docs/agents/playbooks/troubleshoot.md` |
 
-Repos add repo-specific workflow names to their own `docs/agents/router/capability-map.md`.
+## Change and Review Workflows
 
-## Planning / Review / Docs Workflow
-Load: docs policy, agent-workflow, change-bundles, agent-phase-workflow, docs-workflow, review, verify.
-Escalate to: review-model, review-triggers, review-dimensions, review-gates.
+These are defined outside the routing layer. The part 2 and part 3 appendixes carry the canonical list:
 
-## Framework Composition / Repo Adoption / Capability Growth
-Load: composition, adopt-framework or add-capability or record-decision playbooks.
-Escalate to: repo CLAUDE.md, repo capability-map, repo decisions.
+- change-lifecycle, record-decision: see the change-rhythm layer (part 2)
+- verify, review, deploy: see the review-and-verify layer (part 3)
 
-## Troubleshooting
-Load: troubleshoot playbook. Escalate to repo-specific references.</code></pre>
+Repos add repo-specific workflow names to their own `docs/agents/router/capability-map.md`.</code></pre>
       </details>
 
       <details>
@@ -517,7 +359,7 @@ Load: troubleshoot playbook. Escalate to repo-specific references.</code></pre>
 <pre><code class="language-markdown">---
 kind: router
 binding: false
-scope: repo
+scope: framework
 phases: [explore, plan, implement, verify, commit]
 source_of_truth: $CLAUDE_HOME/docs/agents/router/authority-order.md
 ---
@@ -527,12 +369,13 @@ source_of_truth: $CLAUDE_HOME/docs/agents/router/authority-order.md
 The canonical precedence guidance lives in `$CLAUDE_HOME/CLAUDE.md`.
 
 Interpretation notes:
-- Use composition.md first to decide framework vs repo ownership.
-- Repo docs own repo-specific architecture, domain rules, terminology.
-- Framework policy owns shared phase workflow, review, verification, documentation discipline.
-- Policy defines binding rules. Playbooks define sequencing. Reference explains systems.
+- Use composition.md first to decide framework vs personal vs repo ownership.
+- Repo docs own repo-specific architecture, domain rules, and terminology.
+- Personal docs own one user's cross-repo preferences. They sit above framework defaults (user preferences beat framework defaults) and below repo docs (project-specific beats personal).
+- Framework policy owns shared process, not domain rules.
+- Policy defines binding rules. Playbooks define sequencing. Reference explains systems. Decisions explain why.
 - Code and tests show reality when docs are stale, but do not override binding workflow policy.
-- Historical change docs are context, not live convention.
+- Historical change records are context, not live convention.
 - External memory is advisory only.
 - Reload canonical docs at every phase boundary.</code></pre>
       </details>
@@ -548,7 +391,7 @@ Interpretation notes:
 <pre><code class="language-markdown">---
 kind: policy
 binding: true
-scope: repo
+scope: framework
 phases: [plan, implement, verify, commit]
 source_of_truth: $CLAUDE_HOME/docs/agents/policy/core.md
 ---
@@ -556,95 +399,38 @@ source_of_truth: $CLAUDE_HOME/docs/agents/policy/core.md
 # Core Policy
 
 ## Non-negotiables
+
 - Proactively flag improvements when producing weak results.
 - Tests must test behavior, not merely prove code does not panic.
 - New code ships with tests in the same commit.
 - Fix pre-existing gaps in the touched area.
 - Extract duplicated patterns when the shared abstraction is clear.
 - Ask instead of guessing on unclear architecture choices.
-- Research 3-5 best-in-class implementations for user-facing features.
 - Main is evergreen. Do not leave broken tests, stale docs, or weak implementations.
 - Fix holistically, not just the first symptom.
 - Use repo-supported mechanisms over workarounds.
 - Do not treat prior plans as scripture.
 - Do not use bare literals for domain concepts.
 
-## Verification and Review
-- Run verification before committing.
-- Run engineering review for phase completion, not every intermediate commit.
-- Missing a phase artifact or clean review is a workflow failure.
-- Show all findings to the user.
-- Honest self-check for shortcuts before finalizing.
+## Layering
 
-## Documentation
-- Follow the repo-wide phase artifact contract.
-- Evergreen doc edits follow the same workflow as code changes.
-- Update docs in the same commit when behavior changes.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/policy/agent-workflow.md <span class="file-desc">Phase checkpoint rules</span></summary>
-<pre><code class="language-markdown">---
-kind: policy
-binding: true
-scope: repo
-phases: [plan, implement, verify, commit]
-source_of_truth: $CLAUDE_HOME/docs/agents/policy/agent-workflow.md
----
-
-# Agent Workflow Policy
-
-## General Rules
-- All phase artifacts go to the change-bundle directory, never /tmp.
-- No repo-level active index. Open work discovered from bundle-local state.yaml.
-- Do not silently filter review findings.
-- Ask the user before moving past either checkpoint.
-
-## Written Spec Rules
-- The governing spec is on-disk plan.md inside docs/changes/NNNNNNN-short-name/.
-- Must be verbatim, lossless copy of the approved plan.
-- Must enumerate every planned delta.
-- Must include enough context for a zero-context implementer.
-- Missing deltas or "discover during implementation" are planning failures.
-
-## Phase Checkpoint Rules
-- Planning checkpoint verifies "Sufficient implementation context" and "Zero-context implementable".
-- Implementation checkpoint verifies "Plan deltas applied" and "Validation coverage".
-- Skipping the review or user prompt at either checkpoint is a workflow failure.
-- After open-change commit, the written spec is frozen.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/policy/docs.md <span class="file-desc">Documentation rules</span></summary>
-<pre><code class="language-markdown">---
-kind: policy
-binding: true
-scope: docs
-phases: [plan, implement, verify, commit]
-source_of_truth: $CLAUDE_HOME/docs/agents/policy/docs.md
----
-
-# Documentation Policy
-
-- docs/changes/* is the change-bundle record. Open bundles identified by bundle-local state.yaml.
-- Evergreen doc edits count as implementation edits. No bypass of written-spec requirement.
-- Canonical guidance lives in exactly one place.
-- Agent-facing docs declare kind, scope, and loading boundaries in front matter.
-- Diagrams use Mermaid rather than ASCII art.</code></pre>
+- Routing is a framework concern. Do not duplicate routing rules inside repo or personal docs; extend the routing categories instead.
+- Personal docs can override framework defaults for a single user. They must not contain binding rules meant for shared workflow.
+- Repo docs can override personal preferences. They must not claim framework-wide authority.</code></pre>
       </details>
 
       <!-- ============================================================ -->
       <!-- Playbooks                                                     -->
       <!-- ============================================================ -->
 
-      <h2>Playbooks</h2>
+      <h2>Routing Playbooks</h2>
 
       <details>
         <summary>docs/agents/playbooks/adopt-framework.md <span class="file-desc">First-time repo onboarding</span></summary>
 <pre><code class="language-markdown">---
 kind: playbook
 binding: false
-scope: repo
+scope: framework
 phases: [explore]
 source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/adopt-framework.md
 ---
@@ -652,7 +438,8 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/adopt-framework.md
 # Adopt Framework Playbook
 
 ## Adoption Steps
-1. Read composition.md and decide what stays global vs repo-local.
+
+1. Read composition.md and decide what stays framework vs personal vs repo-local.
 2. Create or update repo `./CLAUDE.md`.
 3. Add repo capability-map if needed.
 4. Fold workflow entries into the repo capability-map if named recurring workflows exist.
@@ -660,416 +447,75 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/adopt-framework.md
 6. Add repo commands only for repeated workflows.
 
 ## Minimal Shape
+
 Small repo: `./CLAUDE.md`, one policy, one playbook.
 Larger repo: add capability-map with workflow entries, multiple domain policies, directory entrypoints.
 
 ## Rules
+
 - Do not copy framework docs into the repo.
-- Put repo architecture in repo docs, not the global framework.
-- Prefer explicit references to `~/.claude/...`.</code></pre>
+- Put repo architecture in repo docs, not the framework.
+- Prefer explicit references to `$CLAUDE_HOME/...` (resolves to `~/.claude/agent-governance/`).</code></pre>
       </details>
 
       <details>
-        <summary>docs/agents/playbooks/change-bundles.md <span class="file-desc">Bundle lifecycle</span></summary>
-<pre><code class="language-markdown">---
-kind: playbook
-binding: true
-scope: repo
-phases: [plan, implement, verify, commit]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/change-bundles.md
----
-
-# Change Bundles Playbook
-
-Bundle shape: plan.md (required, frozen), state.yaml (required while open), verification.md (required), review.md (optional), notes.md (optional scratch, removed at close).
-
-## Lifecycle
-1. Plan with /agent-plan-change.
-2. Open with /agent-open-change before any implementation edit.
-3. Keep frozen plan.md loaded.
-4. One bundle may span multiple commits.
-5. Keep verification.md current.
-6. Replan if scope changes materially.
-7. Close with /agent-close-change.
-
-## Numbering
-- /agent-plan-change proposes provisional paths.
-- /agent-open-change assigns the final number at materialization time.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/playbooks/agent-phase-workflow.md <span class="file-desc">Plan/open/implement/close</span></summary>
-<pre><code class="language-markdown">---
-kind: playbook
-binding: true
-scope: repo
-phases: [plan, implement, verify, commit]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/agent-phase-workflow.md
----
-
-# Agent Phase Workflow
-
-## Planning
-1. Decide if work needs a change bundle.
-2. Use /agent-plan-change in Plan Mode.
-3. Draft lossless, self-contained implementation contract.
-4. Review plan and ask user before starting.
-5. Run /agent-open-change outside Plan Mode.
-
-## Implementation
-1. Start only after bundle is open.
-2. Keep written spec loaded.
-3. Implement only enumerated deltas.
-4. Keep verification.md current.
-5. Stop and replan if additional edits are needed.
-
-## Closeout
-1. Finalize verification.md.
-2. Run phase-completion review.
-3. Run /agent-close-change.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/playbooks/add-capability.md <span class="file-desc">Repo extension</span></summary>
+        <summary>docs/agents/playbooks/add-capability.md <span class="file-desc">Repo or personal extension</span></summary>
 <pre><code class="language-markdown">---
 kind: playbook
 binding: false
-scope: repo
+scope: framework
 phases: [explore]
 source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/add-capability.md
 ---
 
 # Add Capability Playbook
 
+## Scope
+
+- Repo scope: grow a repo's local routing. Default.
+- Personal scope: grow the user's cross-repo preferences under `~/.claude/personal/docs/agents/`. Invoked with `--scope=personal`.
+
 ## Choose The Right Doc Type
+
 - policy: binding domain rules
 - playbook: ordered recurring workflow
 - reference: deep subsystem detail
-- Decision Record: durable rationale
-- repo command: only when invoked repeatedly
+- Decision Record: durable rationale (see change-rhythm layer for when to write one)
+- repo or personal command: only when invoked repeatedly
 
 ## Growth Steps
+
 1. Decide if new domain, workflow, or reference topic.
-2. Add minimal repo-local doc(s).
-3. Update repo capability-map.
-4. Update capability-map with workflow entry if named workflow.
-5. Update ./CLAUDE.md if routing changes.
-6. Add directory CLAUDE.md only if startup routing matters.</code></pre>
+2. Add minimal local doc(s) in the chosen scope.
+3. Update the scope's capability-map.
+4. Update the capability-map with a workflow entry if a named workflow is being added.
+5. Update the scope's entrypoint (`./CLAUDE.md` or `~/.claude/CLAUDE.md`) only if routing changes.
+6. Add a directory-level `CLAUDE.md` only if startup routing in a subtree matters.</code></pre>
       </details>
 
       <details>
-        <summary>docs/agents/playbooks/record-decision.md <span class="file-desc">Decision Record provisioning</span></summary>
-<pre><code class="language-markdown">---
-kind: playbook
-binding: false
-scope: repo
-phases: [explore]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/record-decision.md
----
-
-# Record Decision Playbook
-
-## When To Record
-Record when: durable pattern, non-obvious rationale, lasting boundary, reasoning that would be rediscovered.
-Do not record for: routine features, temporary notes, obvious decisions.
-
-## Content
-Each record captures: title, status, context, decision, alternatives, consequences, linked docs.
-
-## Steps
-1. List existing DR-NNN-*.md files.
-2. Choose next available number.
-3. Create stable slug.
-4. Draft with enough context for future readers.
-5. Update affected repo docs.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/playbooks/docs-workflow.md <span class="file-desc">Documentation workflow</span></summary>
+        <summary>docs/agents/playbooks/improve-docs.md <span class="file-desc">Root-cause routing repair</span></summary>
 <pre><code class="language-markdown">---
 kind: playbook
 binding: true
-scope: docs
-phases: [plan, implement, commit]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/docs-workflow.md
----
-
-# Docs Workflow Playbook
-
-1. Follow the repo-wide phase contract, bundle contract, and ordered handoff.
-2. Evergreen doc edits count as implementation edits.
-3. Written spec must be verbatim, lossless copy of the approved plan.
-4. Update evergreen docs in same commit when behavior changes.
-5. Consistency pass and user prompt before moving between phases.
-
-Change-doc rules: one bundle per non-trivial work item. state.yaml marks active bundles.
-Evergreen-doc sweep: sweep affected docs before committing.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/playbooks/verify.md <span class="file-desc">Verification workflow</span></summary>
-<pre><code class="language-markdown">---
-kind: playbook
-binding: true
-scope: repo
-phases: [verify, commit]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/verify.md
----
-
-# Verify Playbook
-
-Gates provide direct proof (tests, lint, typecheck, runtime checks).
-Audits cover triggered dimensions requiring judgment.
-
-Run repo baseline first, then domain-specific checks.
-
-Workflow gates: missing approved plan or insufficient context is a verification failure. Closing a bundle without current verification.md is a failure.
-
-Run gates first, then use review-triggers.md for audit references.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/playbooks/review.md <span class="file-desc">Phase-completion review</span></summary>
-<pre><code class="language-markdown">---
-kind: playbook
-binding: true
-scope: repo
-phases: [commit]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/review.md
----
-
-# Review Playbook
-
-Before finalizing a phase:
-1. Classify the change using review-triggers.md.
-2. Identify required review dimensions.
-3. Run required gates first.
-4. Load audit references for triggered dimensions.
-5. Show all findings to the user.
-6. Fix findings holistically.
-7. Honest self-check for shortcuts.
-8. Confirm evergreen-doc updates are included.
-9. Ask the user before finalizing.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/playbooks/improve-docs.md <span class="file-desc">Root-cause doc repair</span></summary>
-<pre><code class="language-markdown">---
-kind: playbook
-binding: true
-scope: docs
+scope: framework
 phases: [explore, implement, verify]
 source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/improve-docs.md
 ---
 
 # Improve Docs Playbook
 
-1. Classify the friction.
+1. Classify the friction (wrong route, unclear playbook, missing reference, stale entry).
 2. Patch the canonical typed docs first.
 3. Update entrypoints, adapters, or checks if routing caused the failure.
 4. Leave compatibility docs as redirects only.
-5. Re-read the new route and confirm it answers the problem directly.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/playbooks/troubleshoot.md <span class="file-desc">Debugging workflow</span></summary>
-<pre><code class="language-markdown">---
-kind: playbook
-binding: false
-scope: repo
-phases: [explore, verify]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/troubleshoot.md
----
-
-# Troubleshoot Playbook
-
-1. Narrow the failing subsystem first.
-2. Read the smallest relevant policy and playbook set.
-3. Load facts and gotchas only after the failure surface is clear.
-4. Prefer concrete reproduction over remembered fixes.
-5. Use symptom-specific reference for diagnostic commands.</code></pre>
-      </details>
-
-      <!-- ============================================================ -->
-      <!-- Reference Docs                                                -->
-      <!-- ============================================================ -->
-
-      <h2>Reference Docs</h2>
-
-      <details>
-        <summary>docs/agents/reference/review-model.md <span class="file-desc">Quality system primitives</span></summary>
-<pre><code class="language-markdown">---
-kind: reference
-binding: false
-scope: repo
-source_of_truth: $CLAUDE_HOME/docs/agents/reference/review-model.md
----
-
-# Review Model Reference
-
-Primitives: policy, playbook, trigger, review dimension, gate, audit reference.
-
-Order: classify change, apply triggers, run gates, load audit references, show findings and fix holistically.
-
-Audits wrap dimensions that cannot be fully enforced by playbooks and gates.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/reference/review-triggers.md <span class="file-desc">Change classification</span></summary>
-<pre><code class="language-markdown">---
-kind: reference
-binding: false
-scope: repo
-source_of_truth: $CLAUDE_HOME/docs/agents/reference/review-triggers.md
----
-
-# Review Triggers Reference
-
-Backend API/schema/persistence/client/worker: correctness, testing, architecture, docs. Audit reference: audit-eng.md.
-
-Route/layout/shared UI/styling/SSR/mobile: correctness, testing, design, docs. Audit references: audit-eng.md, audit-design.md.
-
-Auth/session/secrets/uploads/public endpoints: security, correctness, docs. Audit references: audit-security.md, audit-eng.md.
-
-Roadmap feature/major user-journey/product-flow: product, design, correctness, docs. Audit references: audit-product.md, audit-design.md, audit-eng.md.
-
-Docs architecture/workflow: docs, architecture. No audit reference by default.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/reference/review-dimensions.md <span class="file-desc">Quality lenses</span></summary>
-<pre><code class="language-markdown">---
-kind: reference
-binding: false
-scope: repo
-source_of_truth: $CLAUDE_HOME/docs/agents/reference/review-dimensions.md
----
-
-# Review Dimensions Reference
-
-Correctness and safety: failure modes, state corruption, error leakage, incorrect behavior.
-Testing and verification: theater tests, edge coverage, integration coverage, runtime validation.
-Architecture and conventions: boundary violations, undocumented patterns, duplicated abstractions.
-Design and UX: design-system drift, inconsistent interactions, accessibility, responsive coverage.
-Product and spec alignment: journey gaps, feature incompleteness, roadmap mismatch.
-Security and trust boundaries: trust-boundary gaps, dev-mode exposure, secret handling.
-Docs and staleness: stale entrypoints, missing updates, routing drift.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/reference/review-gates.md <span class="file-desc">Automated checks</span></summary>
-<pre><code class="language-markdown">---
-kind: reference
-binding: false
-scope: repo
-source_of_truth: $CLAUDE_HOME/docs/agents/reference/review-gates.md
----
-
-# Review Gates Reference
-
-Repo baseline: standard test and lint commands.
-Frontend gates: test suite, typecheck, Storybook smoke tests, runtime verification.
-Backend gates: test targets, integration coverage, generated-code verification.
-Docs gates: agent-doc validation, change-bundle validation.
-
-Passing gates does not eliminate triggered design, product, or security review.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/reference/audit-eng.md <span class="file-desc">Engineering audit reference</span></summary>
-<pre><code class="language-markdown">---
-kind: reference
-binding: false
-scope: repo
-source_of_truth: $CLAUDE_HOME/docs/agents/reference/audit-eng.md
----
-
-# Audit Engineering Reference
-
-Dimensions: correctness, testing, architecture, docs and convention gaps.
-Reporting: critical, convention violations, missing conventions, improvement proposals.
-Action: show all findings, fix holistically, patch typed docs first when the gap is in docs or routing.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/reference/audit-design.md <span class="file-desc">Design audit reference</span></summary>
-<pre><code class="language-markdown">---
-kind: reference
-binding: false
-scope: frontend
-source_of_truth: $CLAUDE_HOME/docs/agents/reference/audit-design.md
----
-
-# Audit Design Reference
-
-Dimensions: design/UX, accessibility, design-system drift, missing visual patterns.
-Checks: color/token usage, typography, transitions, images, mobile-first, spacing, icons, elevation, focus/keyboard, print, story/state coverage, user-flow polish.
-Reporting: file/location, user impact, violation reason, remediation direction, severity.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/reference/audit-product.md <span class="file-desc">Product audit reference</span></summary>
-<pre><code class="language-markdown">---
-kind: reference
-binding: false
-scope: product
-source_of_truth: $CLAUDE_HOME/docs/agents/reference/audit-product.md
----
-
-# Audit Product Reference
-
-Dimensions: user journeys, feature completeness, UX issues, content quality, mobile experience, perceived performance, missing product gaps.
-Context: product baseline, current spec/roadmap, real seed data, real routes and features.
-Reporting: critical, important, opportunity, questions.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/reference/audit-security.md <span class="file-desc">Security audit reference</span></summary>
-<pre><code class="language-markdown">---
-kind: reference
-binding: false
-scope: repo
-source_of_truth: $CLAUDE_HOME/docs/agents/reference/audit-security.md
----
-
-# Audit Security Reference
-
-Dimensions: auth/authz, input validation/injection, API security, secrets/config, data protection, infra/deployment, frontend security.
-Review: map trust boundaries, look for accidental prod exposure of dev-only modes, treat secret handling and error leakage as first-class.
-Reporting: critical, important, hardening, questions.</code></pre>
-      </details>
-
-      <!-- ============================================================ -->
-      <!-- Decisions                                                     -->
-      <!-- ============================================================ -->
-
-      <h2>Decisions</h2>
-
-      <details>
-        <summary>docs/agents/decisions/DR-001-agent-phase-workflow.md <span class="file-desc">Policy-first workflow rationale</span></summary>
-<pre><code class="language-markdown">---
-kind: decision
-binding: false
-scope: docs
-source_of_truth: $CLAUDE_HOME/docs/agents/decisions/DR-001-agent-phase-workflow.md
----
-
-# DR-001 Agent Phase Workflow
-
-The repo adopts a policy-first agent phase workflow for implementation work.
-
-Rationale:
-- CLAUDE.md and the typed docs tree are the shared entrypoint for Claude.
-- Strong repo policy is easier to inspect, maintain, and teach in one shared docs tree.
-- The agent reviews its own work at each checkpoint and asks the user before moving past it.
-
-Consequence:
-- Workflow is strongly guided and auditable.
-- Users can still violate policy by bypassing the workflow, but that violation is explicit.</code></pre>
+5. Re-read the new route and confirm it answers the problem directly.
+6. If the friction is specific to one user, patch the personal layer instead of the framework.</code></pre>
       </details>
 
       <div class="rfc-callout">
-        <p><a href="agent-governance-for-claude-code.html">&larr; Back to RFC</a></p>
+        <p><a href="agent-governance-for-claude-code.html">&larr; Back to Part 1: Routing</a></p>
+        <p><strong>Series:</strong> <a href="change-rhythm-appendix.html">Part 2 appendix &middot; Change rhythm</a> &middot; <a href="review-and-verify-appendix.html">Part 3 appendix &middot; Review and verify</a></p>
       </div>
 
     </div>

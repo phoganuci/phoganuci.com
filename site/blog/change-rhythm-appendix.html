@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appendix: Change-Rhythm File Skeletons | Patrick Hogan</title>
+  <meta name="description" content="File skeletons for the change-rhythm layer: commands, playbooks, the change-rhythm policy, and a Decision Record template.">
+  <meta name="author" content="Patrick Hogan">
+  <link rel="canonical" href="https://phoganuci.com/blog/change-rhythm-appendix">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Appendix: Change-Rhythm File Skeletons">
+  <meta property="og:description" content="File skeletons for the change-rhythm layer of the Claude Code governance framework.">
+  <meta property="og:url" content="https://phoganuci.com/blog/change-rhythm-appendix">
+  <meta property="og:image" content="https://phoganuci.com/assets/profile.jpeg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Appendix: Change-Rhythm File Skeletons">
+  <meta name="twitter:description" content="File skeletons for the change-rhythm layer of the Claude Code governance framework.">
+  <meta name="twitter:image" content="https://phoganuci.com/assets/profile.jpeg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/style.css">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markdown.min.js"></script>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Appendix: Change-Rhythm File Skeletons",
+    "description": "File skeletons for the change-rhythm layer of the Claude Code governance framework.",
+    "datePublished": "2026-04-16",
+    "author": { "@type": "Person", "name": "Patrick Hogan" },
+    "url": "https://phoganuci.com/blog/change-rhythm-appendix",
+    "publisher": { "@type": "Person", "name": "Patrick Hogan" }
+  }
+  </script>
+
+  <style>
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      color: var(--accent-teal);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    details {
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      background: var(--bg-surface);
+    }
+    details[open] {
+      padding-bottom: 1rem;
+    }
+    details summary {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--accent-gold);
+      font-weight: 500;
+      list-style: none;
+    }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::before {
+      content: "\25B6\00a0";
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      transition: transform 0.15s;
+      display: inline-block;
+    }
+    details[open] summary::before {
+      transform: rotate(90deg);
+    }
+    details summary .file-desc {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-left: 0.5rem;
+    }
+    details pre {
+      margin: 0 1rem;
+      font-size: 0.82rem;
+    }
+
+    .rfc-callout {
+      background: linear-gradient(145deg, var(--bg-surface) 0%, rgba(78,205,196,0.04) 100%);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-teal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    .rfc-callout p:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">@phoganuci</a>
+      <div class="nav-links">
+        <a href="index.html">Blog</a>
+        <a href="https://github.com/phoganuci" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="post-header">
+    <span class="section-label">Appendix &middot; Part 2</span>
+    <h1>Change-Rhythm<br>File Skeletons</h1>
+    <p class="hero-subtitle">Commands, playbooks, change-rhythm policy, and a Decision Record template. Click any file to expand its skeleton.</p>
+    <div class="post-meta">
+      <span>April 16, 2026</span>
+    </div>
+  </header>
+
+  <article>
+    <div class="post-body">
+
+      <a href="change-rhythm-for-claude-code.html" class="back-link">&larr; Back to Part 2: Change rhythm</a>
+
+      <!-- ============================================================ -->
+      <!-- Commands                                                      -->
+      <!-- ============================================================ -->
+
+      <h2>Change-Rhythm Commands</h2>
+
+      <details>
+        <summary>commands/agent-plan-change.md <span class="file-desc">Write a scratch plan outside the repo</span></summary>
+<pre><code class="language-markdown">---
+description: Write a scratch plan to ~/.claude/agent-governance-plans/&lt;slug&gt;.md.
+---
+
+Workflow:
+1. Derive a slug from `$ARGUMENTS`, or ask for one if not provided.
+2. Create (or overwrite) `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+3. Load `$CLAUDE_HOME/docs/agents/playbooks/plan-change.md`.
+4. Prompt for context, approach, and open questions. Fill the file.
+5. Do not touch the repo. Do not stage or commit anything.
+6. Print the full path of the scratch plan for the author to iterate on.
+
+The scratch plan is private working state. It is discarded on merge.
+
+Pass any `$ARGUMENTS` through to the planning flow.</code></pre>
+      </details>
+
+      <details>
+        <summary>commands/agent-open-change.md <span class="file-desc">Turn a scratch plan into a branch + draft PR</span></summary>
+<pre><code class="language-markdown">---
+description: Create a branch and a draft PR from a scratch plan.
+---
+
+Workflow:
+1. Resolve the scratch plan at `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+   Slug comes from `$ARGUMENTS` or is inferred from the current context.
+2. Load `$CLAUDE_HOME/docs/agents/playbooks/open-change.md`.
+3. Create a branch named after the slug.
+4. Produce a PR description derived from the plan.
+5. Open a draft PR against the repo's default base branch.
+6. Leave the scratch plan in place. It continues to guide implementation.
+
+The draft PR is the trigger point for Part 3's auto-triggered self-review.
+
+Pass any `$ARGUMENTS` through.</code></pre>
+      </details>
+
+      <details>
+        <summary>commands/agent-implement-change.md <span class="file-desc">Execute the plan in small commits</span></summary>
+<pre><code class="language-markdown">---
+description: Execute the current plan in small, well-messaged commits.
+---
+
+Workflow:
+1. Load the scratch plan at `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+2. Load `$CLAUDE_HOME/docs/agents/policy/change-rhythm.md` for commit hygiene.
+3. Load `$CLAUDE_HOME/docs/agents/playbooks/implement-change.md`.
+4. Walk the plan step by step. Revise it as implementation reveals new info.
+5. Produce commits with Conventional Commits headers and why-focused bodies.
+6. Update evergreen docs (CLAUDE.md, README.md, architecture docs) in the
+   same commit as the behavior change that invalidates them.
+
+The plan is not the source of truth. The code is. Revise the plan freely.
+
+Pass any `$ARGUMENTS` through.</code></pre>
+      </details>
+
+      <details>
+        <summary>commands/agent-close-change.md <span class="file-desc">Merge, optional ADR, discard the scratch plan</span></summary>
+<pre><code class="language-markdown">---
+description: Close out a change. Verify docs. Maybe record a decision. Discard the scratch plan.
+---
+
+Workflow:
+1. Load `$CLAUDE_HOME/docs/agents/playbooks/close-change.md`.
+2. Verify that evergreen docs have been updated in this branch.
+3. Ask whether a Decision Record is warranted using the test in
+   `$CLAUDE_HOME/docs/agents/policy/change-rhythm.md`.
+4. If yes, invoke `/agent-record-decision` with a proposed slug and
+   summary.
+5. After the PR is merged, delete `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+
+Closing fails open: if Step 4 is skipped, the change still merges. A
+missing Decision Record is a judgment call, not a gate.
+
+Pass any `$ARGUMENTS` through.</code></pre>
+      </details>
+
+      <details>
+        <summary>commands/agent-record-decision.md <span class="file-desc">Write a Decision Record</span></summary>
+<pre><code class="language-markdown">---
+description: Write a Decision Record under docs/agents/decisions/.
+---
+
+Workflow:
+1. Load `$CLAUDE_HOME/docs/agents/playbooks/record-decision.md`.
+2. Determine the next DR number by scanning existing `docs/agents/decisions/DR-*`.
+3. Ask for a slug and a status (proposed, accepted, superseded, rejected).
+4. Fill the Decision Record template with context, decision, consequences,
+   and alternatives considered.
+5. Reference any superseded DR by ID in the new record, and update the
+   superseded record's status line.
+6. Stage the new file. Do not auto-commit. The author decides when.
+
+This command is callable standalone, not only from `/agent-close-change`.
+Use it to capture rejected RFCs, incident postmortems, or any durable
+rationale that the commit message cannot hold on its own.
+
+Pass any `$ARGUMENTS` through.</code></pre>
+      </details>
+
+      <!-- ============================================================ -->
+      <!-- Policy                                                        -->
+      <!-- ============================================================ -->
+
+      <h2>Policy</h2>
+
+      <details>
+        <summary>docs/agents/policy/change-rhythm.md <span class="file-desc">Binding rules for the rhythm</span></summary>
+<pre><code class="language-markdown">---
+kind: policy
+binding: true
+scope: framework
+phases: [plan, implement, verify, commit]
+source_of_truth: $CLAUDE_HOME/docs/agents/policy/change-rhythm.md
+---
+
+# Change-Rhythm Policy
+
+## Phases
+
+Non-trivial work moves through four phases: plan, open, implement, close.
+Trivial changes (one-line fixes, typos, config tweaks) may collapse plan
+and implement into a single commit.
+
+## Scratch plans
+
+- Scratch plans live at `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+- Scratch plans are never committed to the repo.
+- Scratch plans are deleted once the change merges.
+- Do not write plans to `~/.claude/plans/` (Claude Code native) or to
+  `~/.claude/agent-governance/plans/` (framework install dir).
+
+## Commit messages
+
+- Use Conventional Commits: `type(scope): description` on the first line.
+- Commit bodies explain why. Constraints, alternatives, non-obvious context.
+- Keep commits small enough that one message covers them.
+- Reference Decision Records by ID (for example `DR-014`).
+
+## Evergreen docs
+
+- Evergreen docs update in the same commit as the behavior change that
+  invalidates them.
+- Evergreen docs include `CLAUDE.md`, `README.md`, `docs/agents/policy/*`,
+  `docs/agents/reference/*`, and any repo-specific architecture docs.
+- Never commit a change that leaves an evergreen doc stale.
+
+## Decision Records
+
+Write a Decision Record when (and only when) the change produces durable
+rationale that the commit message cannot hold on its own:
+
+- architectural shift
+- rejected alternative that is likely to be suggested again
+- failed or reverted approach
+- non-obvious constraint (compliance, performance, legal, business)
+- cross-cutting trade-off affecting more than one subsystem
+
+Do not write a Decision Record for routine bug fixes, cosmetic changes,
+or docs-only updates.
+
+## Decision Record shape
+
+- One decision per record.
+- Numbered sequentially: `DR-001`, `DR-002`, ...
+- Frontmatter: id, title, status, date.
+- Status is one of: proposed, accepted, superseded, rejected.
+- When a later DR supersedes an earlier one, update the earlier DR's
+  status to "superseded" and reference the new ID.</code></pre>
+      </details>
+
+      <!-- ============================================================ -->
+      <!-- Playbooks                                                     -->
+      <!-- ============================================================ -->
+
+      <h2>Playbooks</h2>
+
+      <details>
+        <summary>docs/agents/playbooks/plan-change.md <span class="file-desc">Write the scratch plan</span></summary>
+<pre><code class="language-markdown">---
+kind: playbook
+binding: false
+scope: framework
+phases: [plan]
+source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/plan-change.md
+---
+
+# Plan Change Playbook
+
+## Steps
+
+1. Resolve a slug. Short, hyphen-separated, descriptive.
+2. Open `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+3. Write three sections:
+   - Context: what is the current state and why does it need to change?
+   - Approach: what is the proposed path forward? Enumerate steps.
+   - Open: what is unresolved? What needs the author's input?
+4. Stop. Do not touch the repo yet.
+
+## Rules
+
+- The plan is private scratch. Write freely, revise freely.
+- Plans are deleted on merge. Do not treat them as archival.
+- If the plan exceeds a page, the change is probably too large. Consider
+  splitting.</code></pre>
+      </details>
+
+      <details>
+        <summary>docs/agents/playbooks/open-change.md <span class="file-desc">Branch + draft PR</span></summary>
+<pre><code class="language-markdown">---
+kind: playbook
+binding: false
+scope: framework
+phases: [plan, implement]
+source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/open-change.md
+---
+
+# Open Change Playbook
+
+## Steps
+
+1. Read the scratch plan at `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+2. Create a branch named after the slug.
+3. Derive the PR title from the plan context.
+4. Derive the PR description from the plan: summary, approach, open questions.
+5. Open the PR as a draft against the default base branch.
+6. Leave the scratch plan in place. It still guides implementation.
+
+## Rules
+
+- Always open the PR as a draft. Marking it ready for review is an explicit
+  step, usually at the end of implement.
+- The PR description is the first public artifact. It should read as a
+  standalone explanation, not as a copy of the scratch plan.
+- Auto-triggered self-review runs on the draft. See Part 3.</code></pre>
+      </details>
+
+      <details>
+        <summary>docs/agents/playbooks/implement-change.md <span class="file-desc">Execute in small commits</span></summary>
+<pre><code class="language-markdown">---
+kind: playbook
+binding: false
+scope: framework
+phases: [implement]
+source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/implement-change.md
+---
+
+# Implement Change Playbook
+
+## Steps
+
+1. Reload the scratch plan. Reload `policy/change-rhythm.md`.
+2. Walk the plan's approach steps, one at a time.
+3. After each coherent unit of work, commit. Use Conventional Commits.
+4. Update evergreen docs in the same commit as the behavior change.
+5. Revise the scratch plan as implementation reveals new information.
+6. Push to the draft PR. Auto-triggered self-review (Part 3) runs on
+   each push.
+
+## Rules
+
+- Keep commits small. Each commit message should make sense standalone.
+- Do not batch unrelated changes into one commit.
+- Do not leave evergreen docs stale across commits. If a commit changes
+  behavior described by an evergreen doc, update the doc in that commit.</code></pre>
+      </details>
+
+      <details>
+        <summary>docs/agents/playbooks/close-change.md <span class="file-desc">Merge + optional ADR + discard plan</span></summary>
+<pre><code class="language-markdown">---
+kind: playbook
+binding: false
+scope: framework
+phases: [verify, commit]
+source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/close-change.md
+---
+
+# Close Change Playbook
+
+## Steps
+
+1. Verify that evergreen docs are updated in this branch.
+2. Apply the Decision Record test from `policy/change-rhythm.md`.
+3. If a Decision Record is warranted, invoke `/agent-record-decision`.
+4. Mark the PR ready for review. Complete any outstanding review gates
+   (see Part 3).
+5. Merge.
+6. Delete `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+
+## Rules
+
+- The scratch plan is deleted on merge. No exceptions.
+- Skipping a Decision Record is a judgment call, not a policy violation.
+- Do not let a Decision Record block a merge. If the rationale is
+  important enough to slow a merge, that is itself a signal that the
+  record should be written before close, not after.</code></pre>
+      </details>
+
+      <details>
+        <summary>docs/agents/playbooks/record-decision.md <span class="file-desc">Write a Decision Record</span></summary>
+<pre><code class="language-markdown">---
+kind: playbook
+binding: false
+scope: framework
+phases: [commit]
+source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/record-decision.md
+---
+
+# Record Decision Playbook
+
+## Steps
+
+1. Scan `docs/agents/decisions/` for the highest existing DR number.
+2. Propose the next number. Confirm with the author.
+3. Ask for slug and status.
+4. Fill the Decision Record template (see reference/decision-record-template.md).
+5. If superseding an earlier DR, reference it by ID and update the earlier
+   DR's status line to "superseded".
+6. Stage the new file. Let the author commit when ready.
+
+## Rules
+
+- One decision per record. If the rationale spans multiple decisions,
+  write multiple records.
+- Keep records short. Long records signal that the decision is actually
+  several decisions bundled together.
+- A Decision Record does not need to explain background concepts.
+  Reference docs do that. A DR records the choice, not the tutorial.</code></pre>
+      </details>
+
+      <!-- ============================================================ -->
+      <!-- Reference                                                     -->
+      <!-- ============================================================ -->
+
+      <h2>Reference</h2>
+
+      <details>
+        <summary>docs/agents/reference/decision-record-template.md <span class="file-desc">Canonical DR shape</span></summary>
+<pre><code class="language-markdown">---
+kind: reference
+binding: false
+scope: framework
+phases: [commit]
+source_of_truth: $CLAUDE_HOME/docs/agents/reference/decision-record-template.md
+---
+
+# Decision Record Template
+
+```markdown
+---
+id: DR-NNN
+title: &lt;short imperative title&gt;
+status: proposed | accepted | superseded | rejected
+date: YYYY-MM-DD
+supersedes: [DR-XXX]   # optional
+superseded_by: [DR-YYY] # optional
+---
+
+# DR-NNN &middot; &lt;short imperative title&gt;
+
+## Context
+
+What is the situation that forced this decision? What constraints
+(technical, compliance, business) apply?
+
+## Decision
+
+What was decided. One sentence if possible.
+
+## Consequences
+
+What changes as a result. What becomes easier, what becomes harder,
+and what follow-up is implied.
+
+## Alternatives considered
+
+- Option A: why not
+- Option B: why not
+- Option C: chosen, for &lt;reason&gt;
+```
+
+## Status transitions
+
+- `proposed`: under discussion
+- `accepted`: in force
+- `superseded`: replaced by a later DR; reference it via `superseded_by`
+- `rejected`: considered and declined; keep for the record, do not delete</code></pre>
+      </details>
+
+      <!-- ============================================================ -->
+      <!-- Cross-link                                                    -->
+      <!-- ============================================================ -->
+
+      <div class="rfc-callout">
+        <p><a href="change-rhythm-for-claude-code.html">&larr; Back to Part 2: Change rhythm</a></p>
+        <p><strong>Series:</strong> <a href="agent-governance-for-claude-code.html">Part 1 &middot; Routing</a> &middot; <a href="review-and-verify-for-claude-code.html">Part 3 &middot; Review and verify</a></p>
+      </div>
+
+    </div>
+  </article>
+
+  <footer class="footer">
+    <p>Patrick Hogan &middot; 2026</p>
+  </footer>
+
+  <script>
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) nav.classList.add('nav-scrolled');
+      else nav.classList.remove('nav-scrolled');
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
