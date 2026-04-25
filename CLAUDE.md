@@ -38,12 +38,13 @@ Author: Patrick Hogan — staff engineer, builds production systems with AI.
 
 **The commit process for every significant change:**
 
-1. **Plan**: Write a scratch plan at `~/.claude/agent-governance-plans/<slug>.md`. Outside the repo. Private. Throwaway.
-2. **Open**: Create a branch and a draft PR derived from the plan.
-3. **Implement**: Small commits with Conventional Commits headers and why-focused bodies. Update evergreen docs in the same commit as the behavior change.
-4. **Close**: If the change produced durable rationale, invoke `/agent-record-decision` to write an ADR under `docs/agents/decisions/`. Merge. Delete the scratch plan.
+1. **Start** (`/agent-start-change`): Get governance docs ready and write a scratch plan at `~/.claude/agent-governance-plans/<slug>.md`. Outside the repo. Private. Throwaway. If a Claude Code Plan Mode `/plan` produced material, it can seed the scratch plan.
+2. **Resume** (`/agent-resume-change`, when needed): In a later session, reload the scratch plan and the governance docs and orient on current branch state. Within a single session, work flows directly out of start.
+3. **Close** (`/agent-close-change`): Verify evergreen docs are updated. If the change produced durable rationale, invoke `/agent-record-decision` to write an ADR under `docs/agents/decisions/`. Hand back to normal git/gh for the actual merge. Delete the scratch plan once merged.
 
-**Do not commit plans or reviews into the repo.** The scratch plan guides implementation, then is discarded. The commit sequence and the PR discussion are the narrative record. ADRs carry the durable rationale.
+Branch creation, push, and PR opening stay in `git` and `gh`. The framework deliberately does not own those.
+
+**Do not commit plans or reviews into the repo.** The scratch plan guides the change, then is discarded. The commit sequence and the PR discussion are the narrative record. ADRs carry the durable rationale.
 
 **Always update evergreen docs when:**
 - A technology decision changes or a new one is made: update CLAUDE.md tech decisions table
@@ -51,7 +52,7 @@ Author: Patrick Hogan — staff engineer, builds production systems with AI.
 - A new command, prerequisite, or workflow is added: update README.md and CLAUDE.md
 - Infrastructure changes: update CLAUDE.md infrastructure section
 
-**Historical note:** Changes prior to 2026-04-16 used a `docs/changes/NNNNNNN-*/plan.md` + `review.md` pattern. That directory is preserved for history but is no longer the workflow. See the three-part RFC series at `/blog/agent-governance-for-claude-code` for the rationale.
+**Historical note:** Changes prior to 2026-04-16 used a `docs/changes/NNNNNNN-*/plan.md` + `review.md` pattern. That directory is preserved for history but is no longer the workflow. See the two-part RFC series at `/blog/agent-governance-for-claude-code` for the rationale.
 
 ## Technology Decisions
 

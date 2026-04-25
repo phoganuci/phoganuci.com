@@ -144,66 +144,56 @@
       <h2>Change-Rhythm Commands</h2>
 
       <details>
-        <summary>commands/agent-plan-change.md <span class="file-desc">Write a scratch plan outside the repo</span></summary>
+        <summary>commands/agent-start-change.md <span class="file-desc">Load governance + create scratch plan (optional Plan Mode seed)</span></summary>
 <pre><code class="language-markdown">---
-description: Write a scratch plan to ~/.claude/agent-governance-plans/&lt;slug&gt;.md.
+description: Get governance docs ready and write a scratch plan to ~/.claude/agent-governance-plans/&lt;slug&gt;.md.
 ---
 
 Workflow:
-1. Derive a slug from `$ARGUMENTS`, or ask for one if not provided.
-2. Create (or overwrite) `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
-3. Load `$CLAUDE_HOME/docs/agents/playbooks/plan-change.md`.
-4. Prompt for context, approach, and open questions. Fill the file.
-5. Do not touch the repo. Do not stage or commit anything.
+1. Resolve a slug from `$ARGUMENTS`, or ask for one if not provided.
+2. Resolve an optional Plan Mode seed:
+   - If `--seed=&lt;path&gt;` is passed, use that path under `~/.claude/plans/`.
+   - Else, if a recent Plan Mode plan exists, offer to seed from it.
+   - If `--no-seed` is passed, start blank.
+3. Load `$CLAUDE_HOME/docs/agents/policy/change-rhythm.md`.
+4. Load `$CLAUDE_HOME/docs/agents/playbooks/start-change.md`.
+5. Create `~/.claude/agent-governance-plans/&lt;slug&gt;.md`. Seed from the
+   Plan Mode artifact if one was resolved; otherwise prompt for context,
+   approach, and open questions.
 6. Print the full path of the scratch plan for the author to iterate on.
+7. Do not create a branch. Do not stage or commit. Do not open a PR.
+   Branch and PR mechanics live in `git` and `gh`.
 
-The scratch plan is private working state. It is discarded on merge.
+The scratch plan is private working state. It is discarded at close.
 
-Pass any `$ARGUMENTS` through to the planning flow.</code></pre>
+Pass any `$ARGUMENTS` through to the start flow.</code></pre>
       </details>
 
       <details>
-        <summary>commands/agent-open-change.md <span class="file-desc">Turn a scratch plan into a branch + draft PR</span></summary>
+        <summary>commands/agent-resume-change.md <span class="file-desc">Reload context for an in-flight change</span></summary>
 <pre><code class="language-markdown">---
-description: Create a branch and a draft PR from a scratch plan.
+description: Reload the scratch plan and governance docs for an in-flight change.
 ---
 
 Workflow:
-1. Resolve the scratch plan at `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
-   Slug comes from `$ARGUMENTS` or is inferred from the current context.
-2. Load `$CLAUDE_HOME/docs/agents/playbooks/open-change.md`.
-3. Create a branch named after the slug.
-4. Produce a PR description derived from the plan.
-5. Open a draft PR against the repo's default base branch.
-6. Leave the scratch plan in place. It continues to guide implementation.
+1. Resolve the slug from `$ARGUMENTS`, or infer it from the current branch
+   name.
+2. Resolve the scratch plan at `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+   If it does not exist, stop and redirect to `/agent-start-change`.
+3. Load `$CLAUDE_HOME/docs/agents/policy/change-rhythm.md`.
+4. Load `$CLAUDE_HOME/docs/agents/playbooks/resume-change.md`.
+5. Reload the scratch plan. Re-read the open questions and the next step.
+6. Orient on current branch state: commits since branch creation, evergreen
+   docs touched, files in the diff that the plan has not yet acknowledged.
+7. Summarize where the change left off and what comes next.
 
-The draft PR is the trigger point for Part 3's auto-triggered self-review.
+Resume does not modify anything. It is a context-rebuild, not a write.
 
 Pass any `$ARGUMENTS` through.</code></pre>
       </details>
 
       <details>
-        <summary>commands/agent-implement-change.md <span class="file-desc">Execute the plan in small commits</span></summary>
-<pre><code class="language-markdown">---
-description: Execute the current plan in small, well-messaged commits.
----
-
-Workflow:
-1. Load the scratch plan at `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
-2. Load `$CLAUDE_HOME/docs/agents/policy/change-rhythm.md` for commit hygiene.
-3. Load `$CLAUDE_HOME/docs/agents/playbooks/implement-change.md`.
-4. Walk the plan step by step. Revise it as implementation reveals new info.
-5. Produce commits with Conventional Commits headers and why-focused bodies.
-6. Update evergreen docs (CLAUDE.md, README.md, architecture docs) in the
-   same commit as the behavior change that invalidates them.
-
-The plan is not the source of truth. The code is. Revise the plan freely.
-
-Pass any `$ARGUMENTS` through.</code></pre>
-      </details>
-
-      <details>
-        <summary>commands/agent-close-change.md <span class="file-desc">Merge, optional ADR, discard the scratch plan</span></summary>
+        <summary>commands/agent-close-change.md <span class="file-desc">Optional ADR + discard the scratch plan</span></summary>
 <pre><code class="language-markdown">---
 description: Close out a change. Verify docs. Maybe record a decision. Discard the scratch plan.
 ---
@@ -215,10 +205,12 @@ Workflow:
    `$CLAUDE_HOME/docs/agents/policy/change-rhythm.md`.
 4. If yes, invoke `/agent-record-decision` with a proposed slug and
    summary.
-5. After the PR is merged, delete `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+5. Once the PR is merged through normal git/gh flow, delete
+   `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
 
-Closing fails open: if Step 4 is skipped, the change still merges. A
-missing Decision Record is a judgment call, not a gate.
+Closing fails open: if Step 4 is skipped, the change still ships. A
+missing Decision Record is a judgment call, not a gate. Merging the PR
+itself is normal git/gh; close prepares for it, it does not perform it.
 
 Pass any `$ARGUMENTS` through.</code></pre>
       </details>
@@ -258,7 +250,7 @@ Pass any `$ARGUMENTS` through.</code></pre>
 kind: policy
 binding: true
 scope: framework
-phases: [plan, implement, verify, commit]
+phases: [start, resume, close]
 source_of_truth: $CLAUDE_HOME/docs/agents/policy/change-rhythm.md
 ---
 
@@ -266,9 +258,16 @@ source_of_truth: $CLAUDE_HOME/docs/agents/policy/change-rhythm.md
 
 ## Phases
 
-Non-trivial work moves through four phases: plan, open, implement, close.
-Trivial changes (one-line fixes, typos, config tweaks) may collapse plan
-and implement into a single commit.
+Non-trivial work moves through three phases: start, resume, close. Resume
+exists for cross-session continuation; within a single session, work flows
+directly from start to close. Trivial changes (one-line fixes, typos,
+config tweaks) may skip the rhythm entirely.
+
+## Boundaries
+
+The framework does not own branch creation, push, or PR opening. Those
+stay in `git` and `gh`. Start gets governance ready. Resume reloads it.
+Close discards the scratch plan.
 
 ## Scratch plans
 
@@ -324,93 +323,80 @@ or docs-only updates.
       <h2>Playbooks</h2>
 
       <details>
-        <summary>docs/agents/playbooks/plan-change.md <span class="file-desc">Write the scratch plan</span></summary>
+        <summary>docs/agents/playbooks/start-change.md <span class="file-desc">Load governance + create the scratch plan</span></summary>
 <pre><code class="language-markdown">---
 kind: playbook
 binding: false
 scope: framework
-phases: [plan]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/plan-change.md
+phases: [start]
+source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/start-change.md
 ---
 
-# Plan Change Playbook
+# Start Change Playbook
 
 ## Steps
 
 1. Resolve a slug. Short, hyphen-separated, descriptive.
-2. Open `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
-3. Write three sections:
+2. Resolve an optional Plan Mode seed:
+   - Explicit `--seed=&lt;path&gt;` wins.
+   - Else, scan `~/.claude/plans/` for a recent matching plan and offer it.
+   - `--no-seed` disables seeding.
+3. Load `policy/change-rhythm.md` so commit hygiene and ADR triggers are
+   in working memory.
+4. Open `~/.claude/agent-governance-plans/&lt;slug&gt;.md`. If a seed was
+   resolved, copy it as the starting content; otherwise, write three
+   sections:
    - Context: what is the current state and why does it need to change?
    - Approach: what is the proposed path forward? Enumerate steps.
    - Open: what is unresolved? What needs the author's input?
-4. Stop. Do not touch the repo yet.
+5. Stop. Do not touch the repo. Do not create a branch. Do not push.
+   Branch and PR mechanics live in `git` and `gh`.
 
 ## Rules
 
-- The plan is private scratch. Write freely, revise freely.
-- Plans are deleted on merge. Do not treat them as archival.
+- The scratch plan is private. Write freely, revise freely.
+- Plans are deleted at close. Do not treat them as archival.
 - If the plan exceeds a page, the change is probably too large. Consider
-  splitting.</code></pre>
+  splitting.
+- Plan Mode seeds are starting material, not source of truth. The scratch
+  plan diverges as implementation reveals new information.</code></pre>
       </details>
 
       <details>
-        <summary>docs/agents/playbooks/open-change.md <span class="file-desc">Branch + draft PR</span></summary>
+        <summary>docs/agents/playbooks/resume-change.md <span class="file-desc">Reload context for an in-flight change</span></summary>
 <pre><code class="language-markdown">---
 kind: playbook
 binding: false
 scope: framework
-phases: [plan, implement]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/open-change.md
+phases: [resume]
+source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/resume-change.md
 ---
 
-# Open Change Playbook
+# Resume Change Playbook
 
 ## Steps
 
-1. Read the scratch plan at `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
-2. Create a branch named after the slug.
-3. Derive the PR title from the plan context.
-4. Derive the PR description from the plan: summary, approach, open questions.
-5. Open the PR as a draft against the default base branch.
-6. Leave the scratch plan in place. It still guides implementation.
+1. Resolve the slug from the argument or from the current branch name.
+2. Confirm the scratch plan exists at
+   `~/.claude/agent-governance-plans/&lt;slug&gt;.md`. If not, redirect the
+   author to `/agent-start-change`.
+3. Reload `policy/change-rhythm.md`.
+4. Reload the scratch plan. Re-read the open questions and the next step.
+5. Inspect current branch state:
+   - commits since branch creation
+   - evergreen docs touched
+   - files in the diff that the plan does not yet acknowledge
+6. Summarize the gap between the plan and the current state. Surface any
+   open questions the author left for themselves.
 
 ## Rules
 
-- Always open the PR as a draft. Marking it ready for review is an explicit
-  step, usually at the end of implement.
-- The PR description is the first public artifact. It should read as a
-  standalone explanation, not as a copy of the scratch plan.
-- Auto-triggered self-review runs on the draft. See Part 3.</code></pre>
-      </details>
-
-      <details>
-        <summary>docs/agents/playbooks/implement-change.md <span class="file-desc">Execute in small commits</span></summary>
-<pre><code class="language-markdown">---
-kind: playbook
-binding: false
-scope: framework
-phases: [implement]
-source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/implement-change.md
----
-
-# Implement Change Playbook
-
-## Steps
-
-1. Reload the scratch plan. Reload `policy/change-rhythm.md`.
-2. Walk the plan's approach steps, one at a time.
-3. After each coherent unit of work, commit. Use Conventional Commits.
-4. Update evergreen docs in the same commit as the behavior change.
-5. Revise the scratch plan as implementation reveals new information.
-6. Push to the draft PR. Auto-triggered self-review (Part 3) runs on
-   each push.
-
-## Rules
-
-- Keep commits small. Each commit message should make sense standalone.
-- Do not batch unrelated changes into one commit.
-- Do not leave evergreen docs stale across commits. If a commit changes
-  behavior described by an evergreen doc, update the doc in that commit.</code></pre>
+- Resume is read-only. It does not stage, commit, or push.
+- Resume does not recreate the scratch plan. If the plan is missing, the
+  change has either closed or never started.
+- Within a single session, prefer continuing directly from start. Use
+  resume when context has actually been lost (a new session, a long
+  pause, a switch from another change).</code></pre>
       </details>
 
       <details>
@@ -419,7 +405,7 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/implement-change.md
 kind: playbook
 binding: false
 scope: framework
-phases: [verify, commit]
+phases: [close]
 source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/close-change.md
 ---
 
@@ -430,10 +416,9 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/close-change.md
 1. Verify that evergreen docs are updated in this branch.
 2. Apply the Decision Record test from `policy/change-rhythm.md`.
 3. If a Decision Record is warranted, invoke `/agent-record-decision`.
-4. Mark the PR ready for review. Complete any outstanding review gates
-   (see Part 3).
-5. Merge.
-6. Delete `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
+4. Hand back to the author for normal git/gh flow: mark the PR ready,
+   request review, merge.
+5. Once the PR is merged, delete `~/.claude/agent-governance-plans/&lt;slug&gt;.md`.
 
 ## Rules
 
@@ -441,7 +426,9 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/close-change.md
 - Skipping a Decision Record is a judgment call, not a policy violation.
 - Do not let a Decision Record block a merge. If the rationale is
   important enough to slow a merge, that is itself a signal that the
-  record should be written before close, not after.</code></pre>
+  record should be written before close, not after.
+- Close prepares for merge. It does not perform it. Merging stays in
+  `gh` (or whatever platform tool the team uses).</code></pre>
       </details>
 
       <details>
@@ -450,7 +437,7 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/close-change.md
 kind: playbook
 binding: false
 scope: framework
-phases: [commit]
+phases: [close]
 source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/record-decision.md
 ---
 
@@ -488,7 +475,7 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/record-decision.md
 kind: reference
 binding: false
 scope: framework
-phases: [commit]
+phases: [close]
 source_of_truth: $CLAUDE_HOME/docs/agents/reference/decision-record-template.md
 ---
 
@@ -541,7 +528,7 @@ and what follow-up is implied.
 
       <div class="rfc-callout">
         <p><a href="change-rhythm-for-claude-code.html">&larr; Back to Part 2: Change rhythm</a></p>
-        <p><strong>Series:</strong> <a href="agent-governance-for-claude-code.html">Part 1 &middot; Routing</a> &middot; <a href="review-and-verify-for-claude-code.html">Part 3 &middot; Review and verify</a></p>
+        <p><strong>Series:</strong> <a href="agent-governance-for-claude-code.html">Part 1 &middot; Routing</a></p>
       </div>
 
     </div>

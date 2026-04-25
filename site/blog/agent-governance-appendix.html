@@ -192,7 +192,7 @@ External memory is advisory only. Reload canonical docs at phase boundaries inst
 - **domain work**: use the repo's capability map when it has one; otherwise start with the shared capability map.
 - **routing friction repair**: load `$CLAUDE_HOME/docs/agents/playbooks/improve-docs.md`.
 
-Change-lifecycle capabilities (plan, open, implement, close, record-decision) are defined in the change-rhythm layer. Review, verify, and deploy capabilities are defined in the review-and-verify layer.
+Change-lifecycle capabilities (start, resume, close, record-decision) are defined in the change-rhythm layer.
 
 ## Command Surface
 
@@ -277,7 +277,7 @@ Pass any `$ARGUMENTS` through to the loaded docs.</code></pre>
       </details>
 
       <div class="rfc-callout">
-        <p>The change-lifecycle commands (<code>agent-plan-change</code>, <code>agent-open-change</code>, <code>agent-implement-change</code>, <code>agent-close-change</code>, <code>agent-record-decision</code>) are defined in the <a href="change-rhythm-appendix.html">part 2 appendix</a>. The auto-triggered review command (<code>agent-review-change</code>) is defined in the <a href="review-and-verify-appendix.html">part 3 appendix</a>.</p>
+        <p>The change-lifecycle commands (<code>agent-start-change</code>, <code>agent-resume-change</code>, <code>agent-close-change</code>, <code>agent-record-decision</code>) are defined in the <a href="change-rhythm-appendix.html">part 2 appendix</a>.</p>
       </div>
 
       <!-- ============================================================ -->
@@ -346,10 +346,9 @@ Covers framework-provided capabilities only. Repos add their own capability-map 
 
 ## Change and Review Workflows
 
-These are defined outside the routing layer. The part 2 and part 3 appendixes carry the canonical list:
+These are defined outside the routing layer. The part 2 appendix carries the canonical list:
 
-- change-lifecycle, record-decision: see the change-rhythm layer (part 2)
-- verify, review, deploy: see the review-and-verify layer (part 3)
+- change-lifecycle (start, resume, close), record-decision: see the change-rhythm layer (part 2)
 
 Repos add repo-specific workflow names to their own `docs/agents/router/capability-map.md`.</code></pre>
       </details>
@@ -515,7 +514,7 @@ source_of_truth: $CLAUDE_HOME/docs/agents/playbooks/improve-docs.md
 
       <div class="rfc-callout">
         <p><a href="agent-governance-for-claude-code.html">&larr; Back to Part 1: Routing</a></p>
-        <p><strong>Series:</strong> <a href="change-rhythm-appendix.html">Part 2 appendix &middot; Change rhythm</a> &middot; <a href="review-and-verify-appendix.html">Part 3 appendix &middot; Review and verify</a></p>
+        <p><strong>Series:</strong> <a href="change-rhythm-appendix.html">Part 2 appendix &middot; Change rhythm</a></p>
       </div>
 
     </div>

@@ -164,7 +164,7 @@
   <header class="post-header post-header--hero">
     <canvas class="hero-canvas" id="heroCanvas"></canvas>
     <div class="hero-content">
-      <span class="section-label fade-in">RFC &middot; Part 1 of 3</span>
+      <span class="section-label fade-in">RFC &middot; Part 1 of 2</span>
       <h1 class="fade-in">Routing<br>Claude Code</h1>
       <p class="hero-subtitle fade-in">A three-layer model for Claude Code governance: framework, personal, and repo. The framework installs into its own namespace so it never collides with Claude Code itself or with the user's own files.</p>
       <div class="post-meta fade-in">
@@ -191,7 +191,6 @@
         <ol>
           <li><span class="current">Routing</span> &middot; this post &middot; how layers compose and how docs get loaded</li>
           <li><a href="change-rhythm-for-claude-code.html">Change rhythm</a> &middot; scratch plans, phase discipline, and ADRs as the only durable artifact</li>
-          <li><a href="review-and-verify-for-claude-code.html">Review and verify</a> &middot; auto-triggered self-review on every PR, verification gates, and deployment</li>
         </ol>
       </div>
 
@@ -217,7 +216,7 @@
         <p>The core rule is simple: the framework owns process, the personal layer owns a user's cross-repo preferences, and the repo layer owns local truth. The framework installs into its own namespace so none of those layers collide.</p>
       </div>
 
-      <p class="fade-in">The <a href="agent-governance-appendix.html">appendix</a> contains the complete file skeletons for the routing layer. <a href="change-rhythm-for-claude-code.html">Part 2</a> covers the change-rhythm layer. <a href="review-and-verify-for-claude-code.html">Part 3</a> covers review, verification, and deployment.</p>
+      <p class="fade-in">The <a href="agent-governance-appendix.html">appendix</a> contains the complete file skeletons for the routing layer. <a href="change-rhythm-for-claude-code.html">Part 2</a> covers the change-rhythm layer that sits on top of it.</p>
 
       <!-- ============================================================ -->
       <!-- Problem                                                       -->
@@ -496,7 +495,7 @@ graph TD
 
       <h2 class="fade-in">Routing Capabilities</h2>
 
-      <p class="fade-in">The routing layer has three capabilities of its own: adopting the framework in a new repo, growing a repo's local routing, and repairing routing friction. Everything else (change bundles, verify, review, deploy) is scoped to parts 2 and 3.</p>
+      <p class="fade-in">The routing layer has three capabilities of its own: adopting the framework in a new repo, growing a repo's local routing, and repairing routing friction. The change lifecycle is scoped to part 2.</p>
 
       <h4 class="fade-in">Adopt</h4>
 
@@ -547,7 +546,7 @@ graph LR
 
       <p class="fade-in">These commands are process-oriented. They load canonical docs and guide the workflow. They are not the place for hidden repo-specific standards or arbitrary scaffolding logic. More specific commands should be repo-local.</p>
 
-      <p class="fade-in">Change lifecycle commands (<code>/agent-plan-change</code>, <code>/agent-open-change</code>, <code>/agent-implement-change</code>, <code>/agent-close-change</code>, <code>/agent-record-decision</code>) are defined in <a href="change-rhythm-for-claude-code.html">part 2</a>. The auto-triggered review command (<code>/agent-review-change</code>) is defined in <a href="review-and-verify-for-claude-code.html">part 3</a>.</p>
+      <p class="fade-in">Change lifecycle commands (<code>/agent-start-change</code>, <code>/agent-resume-change</code>, <code>/agent-close-change</code>, <code>/agent-record-decision</code>) are defined in <a href="change-rhythm-for-claude-code.html">part 2</a>.</p>
 
       <!-- ============================================================ -->
       <!-- Extension                                                     -->
@@ -696,7 +695,7 @@ company-claude adopt-repo</code></pre>
         <li>keep the global command surface small and namespaced</li>
       </ul>
 
-      <p class="fade-in">Parts 2 and 3 of this series cover the change lifecycle and the review/verify/deploy discipline that sit on top of this routing layer.</p>
+      <p class="fade-in"><a href="change-rhythm-for-claude-code.html">Part 2</a> covers the change lifecycle that sits on top of this routing layer.</p>
 
       <!-- ============================================================ -->
       <!-- Appendix Link + Series Nav                                    -->
@@ -704,7 +703,7 @@ company-claude adopt-repo</code></pre>
 
       <div class="rfc-callout fade-in">
         <p><strong>Appendix:</strong> The complete routing-layer file skeletons are available in the <a href="agent-governance-appendix.html">implementation appendix</a>.</p>
-        <p><strong>Series:</strong> <a href="change-rhythm-for-claude-code.html">Part 2 &middot; Change rhythm</a> &middot; <a href="review-and-verify-for-claude-code.html">Part 3 &middot; Review and verify</a></p>
+        <p><strong>Series:</strong> <a href="change-rhythm-for-claude-code.html">Part 2 &middot; Change rhythm</a></p>
       </div>
 
     </div>

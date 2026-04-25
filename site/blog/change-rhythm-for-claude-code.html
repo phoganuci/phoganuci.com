@@ -164,7 +164,7 @@
   <header class="post-header post-header--hero">
     <canvas class="hero-canvas" id="heroCanvas"></canvas>
     <div class="hero-content">
-      <span class="section-label fade-in">RFC &middot; Part 2 of 3</span>
+      <span class="section-label fade-in">RFC &middot; Part 2 of 2</span>
       <h1 class="fade-in">Change<br>Rhythm</h1>
       <p class="hero-subtitle fade-in">A lighter change rhythm for Claude Code. Scratch plans live outside the repo. Commit messages carry the narrative. Decision Records are the only durable artifact, and negative decisions are first-class.</p>
       <div class="post-meta fade-in">
@@ -190,8 +190,7 @@
         <div class="series-eyebrow">Series &middot; Agent Governance for Claude Code</div>
         <ol>
           <li><a href="agent-governance-for-claude-code.html">Routing</a> &middot; how layers compose and how docs get loaded</li>
-          <li><span class="current">Change rhythm</span> &middot; this post &middot; scratch plans, phase discipline, and ADRs as the only durable artifact</li>
-          <li><a href="review-and-verify-for-claude-code.html">Review and verify</a> &middot; auto-triggered self-review on every PR, verification gates, and deployment</li>
+          <li><span class="current">Change rhythm</span> &middot; this post &middot; start, resume, close, and ADRs as the only durable artifact</li>
         </ol>
       </div>
 
@@ -206,18 +205,18 @@
       <p class="fade-in">The change-rhythm layer standardizes:</p>
 
       <ul class="fade-in">
-        <li>four phases (plan, open, implement, close) treated as workflow, not paperwork</li>
-        <li>scratch plans living outside the repo at <code>~/.claude/agent-governance-plans/</code></li>
+        <li>three phases (start, resume, close) treated as workflow, not paperwork</li>
+        <li>scratch plans living outside the repo at <code>~/.claude/agent-governance-plans/</code>, optionally seeded from a Claude Code Plan Mode session</li>
         <li>commit messages and PR history as the primary narrative layer</li>
         <li>Decision Records as the only durable artifact, including negative and failed-approach decisions</li>
-        <li>five <code>agent-*</code> commands that automate the rhythm</li>
+        <li>four <code>agent-*</code> commands that automate the rhythm</li>
       </ul>
 
       <div class="rfc-callout fade-in">
         <p>The core rule is simple. Scratch plans are throwaway. Commit messages carry the story. A Decision Record is written only when a change carries durable rationale that the commit message cannot hold on its own.</p>
       </div>
 
-      <p class="fade-in">The <a href="change-rhythm-appendix.html">appendix</a> contains the command shims, the change-rhythm playbooks, and a sample Decision Record template. <a href="agent-governance-for-claude-code.html">Part 1</a> covered the routing layer this rhythm sits on top of. <a href="review-and-verify-for-claude-code.html">Part 3</a> covers review, verification, and deployment.</p>
+      <p class="fade-in">The <a href="change-rhythm-appendix.html">appendix</a> contains the command shims, the change-rhythm playbooks, and a sample Decision Record template. <a href="agent-governance-for-claude-code.html">Part 1</a> covered the routing layer this rhythm sits on top of.</p>
 
       <!-- ============================================================ -->
       <!-- Problem                                                       -->
@@ -254,13 +253,13 @@
       <h2 class="fade-in">Goals</h2>
 
       <ul class="fade-in">
-        <li>Keep phase discipline (plan, open, implement, close) as the workflow spine.</li>
+        <li>Keep phase discipline (start, resume, close) as the workflow spine.</li>
         <li>Make the durable artifact distinct from the transient artifact.</li>
         <li>Give negative and failed-approach decisions a first-class home.</li>
         <li>Let commit messages and PR history do the narrative work they are already good at.</li>
         <li>Keep the scratch-plan surface out of the repo so authors can write freely.</li>
+        <li>Stay compatible with Claude Code's native Plan Mode so a <code>/plan</code> session can seed a change without rewriting it.</li>
         <li>Provide a small command set that automates the rhythm without adding ceremony.</li>
-        <li>Hand cleanly off to the review and verify layer for what happens once a PR exists.</li>
       </ul>
 
       <!-- ============================================================ -->
@@ -270,9 +269,9 @@
       <h2 class="fade-in">Non-Goals</h2>
 
       <ul class="fade-in">
-        <li>Replace git, GitHub, or any PR tool.</li>
+        <li>Replace git, GitHub, or any PR tool. Branch creation, pushing, and PR opening stay in the standard tools.</li>
         <li>Prescribe a single Decision Record format for every repo.</li>
-        <li>Define the review, verify, or deployment discipline. Those live in part 3.</li>
+        <li>Define a code-review or deployment discipline. Those are adjacent and out of scope here.</li>
         <li>Force every change through the full rhythm. Trivial one-line fixes do not need a scratch plan.</li>
         <li>Replace repo-local architecture or runbook docs with Decision Records.</li>
       </ul>
@@ -287,7 +286,7 @@
 
       <h3 class="fade-in">1. Phases as Rhythm</h3>
 
-      <p class="fade-in">Non-trivial work moves through four phases. Each phase has a clear output, and each output is a real artifact somewhere in the system, not a document written for the sake of process.</p>
+      <p class="fade-in">Non-trivial work moves through three phases. Each phase has a clear output, and each output is a real artifact somewhere in the system, not a document written for the sake of process.</p>
 
       <table class="doc-types fade-in">
         <thead>
@@ -298,20 +297,16 @@
         </thead>
         <tbody>
           <tr>
-            <td>Plan</td>
-            <td>A scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code>. Private, throwaway, outside the repo. The agent and the author reason freely here.</td>
+            <td>Start</td>
+            <td>Governance docs loaded for the change, plus a scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code>. The scratch plan is optionally seeded from a Claude Code Plan Mode <code>/plan</code> session. Private, throwaway, outside the repo. The agent and the author reason freely here. The framework does not touch git or GitHub during start; branches and PRs stay in the standard tools.</td>
           </tr>
           <tr>
-            <td>Open</td>
-            <td>A branch and a draft PR. The PR description is the first public summary of intent. From this point forward, the PR is the canonical working surface.</td>
-          </tr>
-          <tr>
-            <td>Implement</td>
-            <td>Small commits with clear messages. The commit sequence is the primary narrative. Each commit describes what changed and why, in the same message that shows up in <code>git log</code>.</td>
+            <td>Resume</td>
+            <td>The same governance docs and scratch plan reloaded in a later session. Resume is the explicit "I am back" command: it re-establishes the context (policy, playbooks, plan, current branch state) without recreating any of it. Within a single session, work proceeds directly from start; resume exists for the realistic case where a change spans days or sessions.</td>
           </tr>
           <tr>
             <td>Close</td>
-            <td>Merge. Discard the scratch plan. Write a Decision Record if and only if the change produced durable rationale that the commit messages cannot hold on their own.</td>
+            <td>Discard the scratch plan. Write a Decision Record if and only if the change produced durable rationale that the commit messages cannot hold on their own. Merging the PR itself is normal git/gh; close prepares for it, it does not perform it.</td>
           </tr>
         </tbody>
       </table>
@@ -319,23 +314,23 @@
       <div class="diagram-container fade-in">
         <pre class="mermaid">
 graph LR
-    PLAN["Plan<br/><i>scratch file outside repo</i>"]:::routing
-    OPEN["Open<br/><i>branch + draft PR</i>"]:::api
-    IMPL["Implement<br/><i>small commits, clear messages</i>"]:::data
-    CLOSE["Close<br/><i>merge + optional ADR</i>"]:::onDemand
+    START["Start<br/><i>load governance + scratch plan<br/>(optional Plan Mode seed)</i>"]:::routing
+    RESUME["Resume<br/><i>reload context in a later session</i>"]:::api
+    CLOSE["Close<br/><i>discard plan + optional ADR</i>"]:::onDemand
 
-    PLAN --> OPEN
-    OPEN --> IMPL
-    IMPL --> CLOSE
+    START --> RESUME
+    RESUME --> CLOSE
+    START --> CLOSE
 
     classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
     classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
-    classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
     classDef onDemand fill:#3A2054,stroke:#B07CD8,color:#fff,stroke-width:1.5px
         </pre>
       </div>
 
-      <p class="fade-in">The phases are rhythm, not paperwork. They describe the shape of work, not a set of documents that must be produced. Trivial changes (a one-line fix, a typo, a config tweak) can collapse plan and implement into a single commit and skip the rest. The discipline applies when the change is big enough to benefit from thinking first.</p>
+      <p class="fade-in">The phases are rhythm, not paperwork. They describe the shape of work, not a set of documents that must be produced. Trivial changes (a one-line fix, a typo, a config tweak) can skip the rhythm entirely. The discipline applies when the change is big enough to benefit from thinking first, or long enough that the next session needs a way back into context.</p>
+
+      <p class="fade-in">Three things deliberately stay out of the framework's lifecycle: branch creation, push, and PR opening. Those are well-handled by <code>git</code> and <code>gh</code> already, and pulling them into <code>agent-*</code> commands would either duplicate that surface or constrain it. Start gets governance ready. Resume reloads it. Close discards the scratch plan. Everything else stays in the tools that already do it well.</p>
 
       <!-- 2. Scratch Plans -->
 
@@ -373,11 +368,17 @@ with a standard session token.
 
       <p class="fade-in">This file is not a deliverable. It is a working surface. The agent and the author can revise it freely as implementation reveals new information. When the change merges, the file is deleted. Nothing about it is committed to the repo.</p>
 
+      <h4 class="fade-in">Seeding from Claude Code Plan Mode</h4>
+
+      <p class="fade-in">Claude Code's native Plan Mode (<code>/plan</code>) produces a structured plan during exploration. That plan is exactly the right starting material for a scratch plan, and the framework does not require the author to retype it. <code>/agent-start-change</code> accepts an optional plan reference (a path under <code>~/.claude/plans/</code>, or the most recent plan if no reference is given) and uses it to seed <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code>.</p>
+
+      <p class="fade-in">After seeding, the scratch plan is the working surface. The original Plan Mode artifact stays where Claude Code put it; the scratch plan diverges as implementation reveals new information. The two paths are deliberately separate so that Plan Mode remains usable on its own, and so that a framework reinstall never disturbs Plan Mode state.</p>
+
       <!-- 3. Commit Messages -->
 
       <h3 class="fade-in">3. Commit Messages as Primary Narrative</h3>
 
-      <p class="fade-in">Once a PR is open, the commit sequence is the primary narrative layer. A well-formed commit message does what a committed <code>review.md</code> used to do: it tells a future reader what the change is, what motivated it, and what was considered.</p>
+      <p class="fade-in">Once commits start landing on the branch, the commit sequence is the primary narrative layer. A well-formed commit message does what a committed <code>review.md</code> used to do: it tells a future reader what the change is, what motivated it, and what was considered.</p>
 
       <p class="fade-in">The framework's policy on commit messages is minimal and operational:</p>
 
@@ -524,27 +525,29 @@ Reverted. The shadow cluster is decommissioned.
 
       <h2 class="fade-in">Change-Rhythm Capabilities</h2>
 
-      <p class="fade-in">The rhythm is automated through five <code>agent-*</code> commands. Each command corresponds to a phase, except for <code>agent-record-decision</code>, which is callable standalone whenever a decision needs to be preserved.</p>
+      <p class="fade-in">The rhythm is automated through four <code>agent-*</code> commands: one for each phase, plus <code>agent-record-decision</code>, which is callable standalone whenever a decision needs to be preserved.</p>
 
-      <h4 class="fade-in">Plan Change</h4>
+      <h4 class="fade-in">Start Change</h4>
 
-      <p class="fade-in"><code>/agent-plan-change</code> writes a scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code>. It does not touch the repo. It prompts for context, the approach, and the open questions, and leaves the file open for iteration. The slug is derived from the intent and can be passed explicitly.</p>
+      <p class="fade-in"><code>/agent-start-change</code> gets governance docs ready for a new change. It loads the change-rhythm policy and the relevant playbook, resolves a slug from the intent (or from the explicit argument), and writes a scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code>.</p>
 
-      <h4 class="fade-in">Open Change</h4>
+      <p class="fade-in">If a Claude Code <code>/plan</code> session produced a recent plan, <code>/agent-start-change</code> will offer to seed the scratch plan from it. Pass an explicit plan path to override, or pass <code>--no-seed</code> to start blank.</p>
 
-      <p class="fade-in"><code>/agent-open-change</code> turns a scratch plan into a branch and a draft PR. It reads the plan, creates the branch, pushes an initial empty commit or a small scaffold, and opens the PR with a description derived from the plan. From this point, the PR is the working surface, not the scratch file.</p>
+      <p class="fade-in">The command does not create a branch. It does not push. It does not open a pull request. Those stay in <code>git</code> and <code>gh</code>, where they belong.</p>
 
-      <h4 class="fade-in">Implement Change</h4>
+      <h4 class="fade-in">Resume Change</h4>
 
-      <p class="fade-in"><code>/agent-implement-change</code> executes the plan in small commits with clear messages. It loads the scratch plan for reference, loads the framework policy on commit hygiene, and walks the change step by step. The plan can be revised during implementation; it is never the source of truth, the code is.</p>
+      <p class="fade-in"><code>/agent-resume-change</code> reloads context for an in-flight change in a later session. It resolves the slug from the argument or from the current branch, reloads the change-rhythm policy, reloads the scratch plan, and orients on the current branch state (commits since start, evergreen docs touched, open questions in the plan). After resume, the agent is back where it left off without rediscovering the framework on every session boundary.</p>
+
+      <p class="fade-in">Within a single session, work flows directly out of <code>/agent-start-change</code>. Resume exists for the realistic case where a change spans days and sessions, not as a required intermediate step.</p>
 
       <h4 class="fade-in">Close Change</h4>
 
-      <p class="fade-in"><code>/agent-close-change</code> runs at merge time. It verifies that evergreen docs have been updated, prompts the author on whether a Decision Record is warranted, and if so, invokes <code>/agent-record-decision</code>. Once the PR is merged, the scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code> is deleted.</p>
+      <p class="fade-in"><code>/agent-close-change</code> runs at the end of the change. It verifies that evergreen docs have been updated, prompts the author on whether a Decision Record is warranted, and if so, invokes <code>/agent-record-decision</code>. Once the PR is merged through normal git/gh flow, the scratch plan at <code>~/.claude/agent-governance-plans/&lt;slug&gt;.md</code> is deleted.</p>
 
       <h4 class="fade-in">Record Decision</h4>
 
-      <p class="fade-in"><code>/agent-record-decision</code> writes a Decision Record under <code>docs/agents/decisions/</code>. It can be called from <code>/agent-close-change</code> at merge time, or standalone at any point (for example, to record a rejected RFC, or to capture a lesson from an incident). It enforces the decision-record shape: a single decision, a status, a context, the alternatives considered, and the consequences.</p>
+      <p class="fade-in"><code>/agent-record-decision</code> writes a Decision Record under <code>docs/agents/decisions/</code>. It can be called from <code>/agent-close-change</code> at change end, or standalone at any point (for example, to record a rejected RFC, or to capture a lesson from an incident). It enforces the decision-record shape: a single decision, a status, a context, the alternatives considered, and the consequences.</p>
 
       <!-- ============================================================ -->
       <!-- Usage                                                         -->
@@ -557,29 +560,25 @@ Reverted. The shadow cluster is decommissioned.
       <div class="diagram-container fade-in">
         <pre class="mermaid">
 graph LR
-  PLAN["/agent-plan-change<br/>scratch plan<br/>outside the repo"]:::routing
-  OPEN["/agent-open-change<br/>branch + draft PR"]:::api
-  IMPL["/agent-implement-change<br/>small commits"]:::data
-  CLOSE["/agent-close-change<br/>merge + optional ADR"]:::onDemand
+  START["/agent-start-change<br/>load governance<br/>+ scratch plan"]:::routing
+  RESUME["/agent-resume-change<br/>reload context<br/>in a later session"]:::api
+  CLOSE["/agent-close-change<br/>discard plan<br/>+ optional ADR"]:::onDemand
   DR["/agent-record-decision<br/>standalone ADR"]:::decision
 
-  PLAN --> OPEN
-  OPEN --> IMPL
-  IMPL --> CLOSE
+  START --> RESUME
+  RESUME --> CLOSE
+  START --> CLOSE
   CLOSE -.-> DR
   DR -.-> CLOSE
 
   classDef routing fill:#5C3E14,stroke:#E8A849,color:#fff,stroke-width:1.5px
   classDef api fill:#1B3D3A,stroke:#4ECDC4,color:#fff,stroke-width:1.5px
-  classDef data fill:#2A3054,stroke:#7B93DB,color:#fff,stroke-width:1.5px
   classDef onDemand fill:#3A2054,stroke:#B07CD8,color:#fff,stroke-width:1.5px
   classDef decision fill:#4A1E3A,stroke:#E85D75,color:#fff,stroke-width:1.5px
         </pre>
       </div>
 
       <p class="fade-in">The commands are process-oriented. They do not know anything about a specific repo's domain. Repo-specific change wizards (for example, <code>/frontend-change</code>) belong in the repo layer and can call these commands internally.</p>
-
-      <p class="fade-in">Part 3 begins where <code>/agent-open-change</code> ends. The draft PR it produces is the trigger point for the auto-triggered self-review described in the next post.</p>
 
       <!-- ============================================================ -->
       <!-- Example                                                       -->
@@ -590,12 +589,13 @@ graph LR
       <p class="fade-in">Consider the shadow-database migration referenced above. The rhythm produces the following trail:</p>
 
       <ol class="fade-in">
-        <li><code>/agent-plan-change shadow-db</code> writes <code>~/.claude/agent-governance-plans/shadow-db.md</code>. The file explains the goal, the mirroring approach, and the open questions.</li>
-        <li><code>/agent-open-change</code> creates a branch, opens a draft PR titled "Shadow-DB rollout for reporting pipeline," and uses the plan as the PR description.</li>
-        <li><code>/agent-implement-change</code> walks the change: add shadow writer, add comparison reporter, stage-deploy, observe.</li>
-        <li>The observation period exposes that mirrored writes are adding unacceptable latency to the primary path. The team decides to revert.</li>
-        <li><code>/agent-record-decision DR-022-reverted-shadow-db</code> writes the Decision Record (shown above) under <code>docs/agents/decisions/</code>.</li>
-        <li>The PR is force-closed with a revert commit. The scratch plan at <code>~/.claude/agent-governance-plans/shadow-db.md</code> is deleted.</li>
+        <li>The author runs Claude Code's <code>/plan</code> mode to think through the rollout. Plan Mode writes a plan under <code>~/.claude/plans/</code>.</li>
+        <li><code>/agent-start-change shadow-db</code> seeds <code>~/.claude/agent-governance-plans/shadow-db.md</code> from the Plan Mode artifact and loads the change-rhythm policy. No branch, no PR; just the scratch plan and the loaded governance.</li>
+        <li>The author creates a branch with <code>git checkout -b shadow-db</code> and starts implementing. Commits use Conventional Commits and update evergreen docs in the same commit as behavior changes.</li>
+        <li>Mid-change, work pauses for two days. On return, <code>/agent-resume-change</code> reloads the scratch plan, the policy, and orients on the current branch state. Work continues.</li>
+        <li>Once a draft PR exists (opened with <code>gh pr create --draft</code>), the observation period exposes that mirrored writes are adding unacceptable latency to the primary path. The team decides to revert.</li>
+        <li><code>/agent-close-change</code> prompts on whether a Decision Record is warranted. The author confirms, and <code>/agent-record-decision DR-022-reverted-shadow-db</code> writes the Decision Record (shown above) under <code>docs/agents/decisions/</code>.</li>
+        <li>The PR is closed with a revert commit. The scratch plan at <code>~/.claude/agent-governance-plans/shadow-db.md</code> is deleted.</li>
       </ol>
 
       <p class="fade-in">The durable record is one Decision Record plus the revert commit. The scratch plan never entered the repo. The team's next attempt (DR-024, blue/green cutover) can reference DR-022 and skip the failed path without rediscovering it the hard way.</p>
@@ -614,7 +614,8 @@ graph LR
         <li>The Decision Record catalog is short and high-signal, because it is only written for durable rationale.</li>
         <li>Negative and reverted decisions are first-class, so lessons survive branches.</li>
         <li>Evergreen docs stay accurate, because they ship in the same commit as behavior changes.</li>
-        <li>The five-command surface is thin enough to live inside a repeatable rhythm.</li>
+        <li>The four-command surface is thin enough to live inside a repeatable rhythm, and resume specifically handles the cross-session reality of AI-assisted work.</li>
+        <li>Branch and PR mechanics stay in <code>git</code> and <code>gh</code>, where they are already well-handled.</li>
       </ul>
 
       <h3 class="fade-in">Costs</h3>
@@ -637,15 +638,15 @@ graph LR
       <p class="fade-in">Adopt this rhythm once the routing layer from part 1 is in place:</p>
 
       <ul class="fade-in">
-        <li>install the five <code>agent-*</code> commands under <code>~/.claude/commands/</code></li>
+        <li>install the four <code>agent-*</code> commands under <code>~/.claude/commands/</code></li>
         <li>keep scratch plans outside the repo at <code>~/.claude/agent-governance-plans/</code></li>
+        <li>let <code>/agent-start-change</code> seed from Claude Code Plan Mode when a <code>/plan</code> session was used</li>
         <li>retire any existing committed <code>plan.md</code> / <code>review.md</code> pattern</li>
         <li>add <code>docs/agents/decisions/</code> to each repo and start numbering Decision Records</li>
         <li>treat commit messages as the narrative, not a summary</li>
         <li>update evergreen docs in the same commit as the change that invalidates them</li>
+        <li>open and merge PRs with <code>gh</code>; the framework deliberately stays out of branch and PR mechanics</li>
       </ul>
-
-      <p class="fade-in">Part 3 completes the series with the discipline that sits on top of this rhythm: auto-triggered self-review on every PR, the review dimensions that structure it, verification gates, and deployment.</p>
 
       <!-- ============================================================ -->
       <!-- Appendix Link + Series Nav                                    -->
@@ -653,7 +654,7 @@ graph LR
 
       <div class="rfc-callout fade-in">
         <p><strong>Appendix:</strong> The change-rhythm command shims, playbooks, and a Decision Record template are available in the <a href="change-rhythm-appendix.html">implementation appendix</a>.</p>
-        <p><strong>Series:</strong> <a href="agent-governance-for-claude-code.html">Part 1 &middot; Routing</a> &middot; <a href="review-and-verify-for-claude-code.html">Part 3 &middot; Review and verify</a></p>
+        <p><strong>Series:</strong> <a href="agent-governance-for-claude-code.html">Part 1 &middot; Routing</a></p>
       </div>
 
     </div>
