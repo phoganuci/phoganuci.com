@@ -471,6 +471,16 @@ Reverted. The shadow cluster is decommissioned.
 
       <p class="fade-in">Decision Records are not a replacement for architecture docs, runbooks, or reference material. Those live under <code>docs/agents/reference/</code> and are allowed to be long, opinionated, and evergreen. A Decision Record is frozen to the moment of the decision and only updated by superseding records.</p>
 
+      <h4 class="fade-in">Capture as a step, not a habit</h4>
+
+      <p class="fade-in">Without the workflow, durable rationale survives only if the author remembers to write it down. That is not reliable. The same person who would have written a Decision Record on Tuesday forgets by Thursday; the next agent picking up the change has no signal that one was even owed.</p>
+
+      <p class="fade-in">The rhythm makes the Decision Record test a structural step. <code>/agent-close-change</code> loads <code>policy/change-rhythm.md</code>, applies the five-trigger test against the change, and prompts the author. The author still decides (the test is a checkpoint, not a generator), but the question is asked every time, against the same criteria.</p>
+
+      <p class="fade-in">The same property holds across sessions. <code>/agent-resume-change</code> reloads <code>policy/change-rhythm.md</code> along with the scratch plan, so rationale that was emerging in session one is still in working memory in session three, with the same trigger test waiting at close. The information persists because the workflow reloads it, not because the author carries it.</p>
+
+      <p class="fade-in">This is the load-bearing claim of the rhythm. Following the commands turns durable-rationale capture from a habit into a structural step. Reliability is not absolute (the test is a judgment call, and "no Decision Record needed" is a valid answer), but it is far higher than any model that depends on the author noticing in the right moment.</p>
+
       <!-- 5. Docs Workflow -->
 
       <h3 class="fade-in">5. Evergreen Docs in the Same Commit</h3>
