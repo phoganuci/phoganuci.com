@@ -224,17 +224,17 @@
 
       <h2 class="fade-in">Problem</h2>
 
-      <p class="fade-in">A common pattern for AI-assisted change management, and the one an earlier draft of this RFC proposed, is to require every non-trivial change to produce two committed artifacts: a <code>plan.md</code> written before the work starts, and a <code>review.md</code> written after. Both live under <code>docs/changes/NNNNNNN-slug/</code> and ship in the same commit as the code change.</p>
+      <p class="fade-in">A change-management framework needs answers to two questions. What guides the work as it happens? And what record survives once the work has shipped?</p>
 
-      <p class="fade-in">That shape has four concrete problems.</p>
+      <p class="fade-in">The natural-looking answer collapses both questions into one artifact pair: a plan file written before the work starts, and a review file written after, both committed alongside the code. That shape has four concrete problems.</p>
 
       <h4 class="fade-in">It treats a transient artifact as if it were durable</h4>
 
-      <p class="fade-in">A plan written before a change is exploratory by nature. It becomes obsolete the moment implementation begins. Committing it into the repo freezes an early-stage document into version history, where it competes for attention with the actual result. Future readers encountering <code>docs/changes/0000042-migrate-auth/plan.md</code> cannot tell whether it still represents reality, and neither can the next agent loading it.</p>
+      <p class="fade-in">A plan written before a change is exploratory by nature. It becomes obsolete the moment implementation begins. Committing it into the repo freezes an early-stage document into version history, where it competes for attention with the actual result. Future readers cannot tell whether it still represents reality, and neither can the next agent loading it.</p>
 
       <h4 class="fade-in">It duplicates git and PR history</h4>
 
-      <p class="fade-in">A <code>review.md</code> describing what was built, what changed from the plan, and what was learned is largely the same information already captured by the PR description, the commit sequence, and the PR review thread. Maintaining a separate committed file on top of that produces three competing narratives, each with slightly different content.</p>
+      <p class="fade-in">A retrospective file describing what was built, what changed from the plan, and what was learned is largely the same information already captured by the PR description, the commit sequence, and the PR review thread. Maintaining a separate committed file on top of those produces three competing narratives, each with slightly different content.</p>
 
       <h4 class="fade-in">It applies polish pressure</h4>
 
@@ -242,9 +242,9 @@
 
       <h4 class="fade-in">It fails negative decisions</h4>
 
-      <p class="fade-in">The most valuable durable records are the ones that prevent repeated mistakes: "we tried X, reverted, because Y," or "we considered X and rejected it because Z." In a plan-and-review model, a failed-and-reverted change produces only a revert commit, with no document that preserves the lesson. The rationale disappears with the branch.</p>
+      <p class="fade-in">The most valuable durable records are the ones that prevent repeated mistakes: "we tried X, reverted, because Y," or "we considered X and rejected it because Z." When the plan and the review live as committed files tied to a successful merge, a failed-and-reverted change produces only a revert commit, with no document that preserves the lesson. The rationale disappears with the branch.</p>
 
-      <p class="fade-in">All four problems share a root cause. The framework conflated "the process of changing the system" with "the durable record of decisions the system depends on." Those are different artifacts with different lifetimes and different audiences.</p>
+      <p class="fade-in">All four problems share a root cause. The model conflates "the process of changing the system" with "the durable record of decisions the system depends on." Those are different artifacts with different lifetimes and different audiences, and they want different homes.</p>
 
       <!-- ============================================================ -->
       <!-- Goals                                                         -->
@@ -378,7 +378,7 @@ with a standard session token.
 
       <h3 class="fade-in">3. Commit Messages as Primary Narrative</h3>
 
-      <p class="fade-in">Once commits start landing on the branch, the commit sequence is the primary narrative layer. A well-formed commit message does what a committed <code>review.md</code> used to do: it tells a future reader what the change is, what motivated it, and what was considered.</p>
+      <p class="fade-in">Once commits start landing on the branch, the commit sequence is the primary narrative layer. A well-formed commit message tells a future reader what the change is, what motivated it, and what was considered.</p>
 
       <p class="fade-in">The framework's policy on commit messages is minimal and operational:</p>
 
@@ -486,13 +486,11 @@ Reverted. The shadow cluster is decommissioned.
 
       <p class="fade-in">This is the one documentation discipline that is not optional. Stale evergreen docs are worse than no docs: they mislead both humans and agents. If the change touches behavior that an evergreen doc describes, the doc update ships with the code.</p>
 
-      <!-- 6. Narrative After docs/changes -->
+      <!-- 6. Where the narrative lives -->
 
-      <h3 class="fade-in">6. What Replaces a Browsable <code>docs/changes/</code></h3>
+      <h3 class="fade-in">6. Where the Narrative Lives</h3>
 
-      <p class="fade-in">A committed <code>docs/changes/</code> directory does give one thing the new rhythm does not: a browsable "here is what has happened in this repo" view that does not require any tool beyond a file browser. That view is genuinely useful for onboarding and for quickly scanning recent activity.</p>
-
-      <p class="fade-in">The new rhythm replaces it with three sources that together cover the same ground:</p>
+      <p class="fade-in">If plans are throwaway and reviews are not committed, where does someone learn what happened in this repo? Three sources, each with a clear job:</p>
 
       <table class="doc-types fade-in">
         <thead>
@@ -504,20 +502,20 @@ Reverted. The shadow cluster is decommissioned.
         <tbody>
           <tr>
             <td><code>git log</code></td>
-            <td>Every change that shipped, with its message and diff. The commit sequence is the full narrative.</td>
+            <td>Every change that shipped, with its message and diff. The commit sequence is the full narrative, line by line.</td>
           </tr>
           <tr>
             <td>Merged PR list</td>
-            <td>Grouped, titled, discussed changes with external context. A GitHub PR list is the closest equivalent to the old <code>docs/changes/</code> browser.</td>
+            <td>Grouped, titled, discussed changes with external context. The right surface for "what has been happening" at a higher altitude than commits.</td>
           </tr>
           <tr>
             <td><code>docs/agents/decisions/</code></td>
-            <td>The durable architectural record. Fewer entries than a change log, higher signal per entry.</td>
+            <td>The durable architectural record. Fewer entries than a change log, higher signal per entry. The right surface for "why is this the way it is."</td>
           </tr>
         </tbody>
       </table>
 
-      <p class="fade-in">The trade is deliberate. The new rhythm loses a low-effort browse view in exchange for narratives that stay accurate, a decision catalog that is short and focused, and no dual-maintenance burden between code and process artifacts.</p>
+      <p class="fade-in">Each source has a single job, and the three together cover the full range from "what literally changed in this commit" to "why does this subsystem exist at all." Nothing is duplicated across them, and nothing has to be polished into a separate committed artifact to make the narrative work.</p>
 
       <!-- ============================================================ -->
       <!-- Capabilities                                                  -->
@@ -623,11 +621,11 @@ graph LR
       <ul class="fade-in">
         <li>Authors must write better commit messages. The rhythm depends on them.</li>
         <li>Deciding when to write a Decision Record is a judgment call; some teams will under-record and others over-record.</li>
-        <li>A browsable <code>docs/changes/</code> view goes away. Readers who want a quick scan rely on <code>git log</code>, the PR list, and the decision catalog instead.</li>
-        <li>Scratch plans living outside the repo means they do not participate in PR review. That is the point, but it means context that used to be in the plan has to move into the PR description or the commit messages.</li>
+        <li>Scratch plans living outside the repo means they do not participate in PR review. That is the point, but it means context the author wants reviewers to see has to move into the PR description or the commit messages.</li>
+        <li>Reading the repo's history requires three habits (commits, PR list, decisions) instead of one directory. The discipline pays off, but the muscle has to be built.</li>
       </ul>
 
-      <p class="fade-in">These costs are acceptable because they buy a cleaner split between transient and durable artifacts, a realistic home for negative decisions, and an end to the dual-maintenance burden between committed process docs and the code they describe.</p>
+      <p class="fade-in">These costs are acceptable because they buy a cleaner split between transient and durable artifacts, a realistic home for negative decisions, and narratives that stay accurate without dual-maintenance.</p>
 
       <!-- ============================================================ -->
       <!-- Recommendation                                                -->
@@ -641,7 +639,6 @@ graph LR
         <li>install the four <code>agent-*</code> commands under <code>~/.claude/commands/</code></li>
         <li>keep scratch plans outside the repo at <code>~/.claude/agent-governance-plans/</code></li>
         <li>let <code>/agent-start-change</code> seed from Claude Code Plan Mode when a <code>/plan</code> session was used</li>
-        <li>retire any existing committed <code>plan.md</code> / <code>review.md</code> pattern</li>
         <li>add <code>docs/agents/decisions/</code> to each repo and start numbering Decision Records</li>
         <li>treat commit messages as the narrative, not a summary</li>
         <li>update evergreen docs in the same commit as the change that invalidates them</li>
